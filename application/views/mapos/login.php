@@ -57,7 +57,7 @@
                     <img src="<?= base_url() ?>assets/img/logo-zenydesk.png" alt="ZenyDesk" style="max-height: 45px; max-width: 220px; width: auto; height: auto; object-fit: contain;">
                   </a>
                 </div>
-                <div id="mcell" style="padding: 0 0 20px 0; color: #a0aec0; font-size: 11px; text-align: center;">Versão: <?= $this->config->item('app_version'); ?></div>
+                <div id="mcell" style="padding: 0 0 20px 0; color: #a0aec0; font-size: 11px; text-align: center;">Zenydesk-O.S &bull; v<?= $this->config->item('app_version'); ?></div>
                 <div class="input-field">
                   <label class="fas fa-user" for="nome"></label>
                   <input id="email" name="email" type="text" placeholder="Email">

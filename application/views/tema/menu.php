@@ -1,14 +1,17 @@
 <!--sidebar-menu-->
 <nav id="sidebar">
-    <div id="newlog" style="display: flex; justify-content: center; align-items: center; padding: 12px 10px;">
-        <a href="<?= site_url('mapos'); ?>" style="display: flex; justify-content: center; align-items: center; text-decoration: none;">
-            <img src="<?= base_url(); ?>assets/img/logo-zenydesk.png" alt="ZenyDesk" style="max-height: 32px; max-width: 150px; object-fit: contain;">
+    <div id="newlog" style="display: flex; justify-content: center; align-items: center; padding: 14px 10px; margin-bottom: 6px;">
+        <a href="<?= site_url('mapos'); ?>" style="display: flex; justify-content: center; align-items: center; text-decoration: none; width: 100%;">
+            <img src="<?= base_url(); ?>assets/img/logo-zenydesk.png" alt="ZenyDesk" class="logo-expanded" style="max-height: 38px; max-width: 190px; width: auto; object-fit: contain; display: block; margin: 0 auto;">
+            <img src="<?= base_url(); ?>assets/img/favicon.png" alt="ZenyDesk" class="logo-collapsed" style="max-height: 32px; max-width: 32px; width: auto; display: none; margin: 0 auto;">
         </a>
     </div>
-        <div class="title1">
-            <?= $configuration['app_theme'] == 'white' ||  $configuration['app_theme'] == 'whitegreen' ? '<img src="' . base_url() . 'assets/img/logo-mapos.png">' : '<img src="' . base_url() . 'assets/img/logo-mapos-branco.png">'; ?>
-        </div>
-    </div>
+    <style>
+        #sidebar.open .logo-expanded { display: none !important; }
+        #sidebar.open .logo-collapsed { display: block !important; }
+        #sidebar:not(.open) .logo-expanded { display: block !important; }
+        #sidebar:not(.open) .logo-collapsed { display: none !important; }
+    </style>
     <a href="#" class="visible-phone">
         <div class="mode">
             <div class="moon-menu">
