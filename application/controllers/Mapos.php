@@ -42,6 +42,14 @@ class Mapos extends MY_Controller
         return $this->layout();
     }
 
+    public function sobre()
+    {
+        $this->data['menuPainel'] = 'Sobre';
+        $this->data['view'] = 'mapos/sobre';
+
+        return $this->layout();
+    }
+
     public function alterarSenha()
     {
         $current_user = $this->mapos_model->getById($this->session->userdata('id_admin'));

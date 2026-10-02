@@ -43,7 +43,7 @@ $parse_email = $this->input->get('e');
     <div class="main-login">
         <div class="left-login">
             <h1 class="h-one">Área do Cliente</h1>
-            <img src="<?php echo base_url() ?>assets/img/forms-animate.svg" class="left-login-imagec" alt="Map-OS 5.0">
+            <img src="<?php echo base_url() ?>assets/img/forms-animate.svg" class="left-login-imagec" alt="Certimix OS">
         </div>
 
         <div id="loginbox">
@@ -54,15 +54,12 @@ $parse_email = $this->input->get('e');
                         <div class="container">
                             <div class="card card-cad">
                                 <div class="content">
-                                    <div id="newlog">
-                                        <div class="icon2">
-                                            <img src="<?php echo base_url() ?>assets/img/logo-two.png">
-                                        </div>
-                                        <div class="title01">
-                                            <img src="<?php echo base_url() ?>assets/img/logo-mapos-branco.png">
-                                        </div>
+                                    <div id="newlog" style="display: flex; justify-content: center; align-items: center; margin-bottom: 8px;">
+                                        <a href="https://zenydesk.com" target="_blank" style="display: inline-block; text-decoration: none;">
+                                            <img src="<?= base_url() ?>assets/img/logo-zenydesk.png" alt="ZenyDesk" style="max-height: 45px; max-width: 220px; width: auto; height: auto; object-fit: contain;">
+                                        </a>
                                     </div>
-                                    <div id="mcell">Versão: <?= $this->config->item('app_version'); ?></div>
+                                    <div id="mcell" style="padding: 0 0 20px 0; color: #a0aec0; font-size: 11px; text-align: center;">Área do Cliente &bull; v<?= $this->config->item('app_version'); ?></div>
                                     <div class="control-group">
                                         <div class="controls">
                                             <div class="main_input_box">
@@ -86,9 +83,11 @@ $parse_email = $this->input->get('e');
                                     <div class="links-uteis"><a href="<?= site_url('mine/resetarSenha') ?>">
                                             <p style="margin:0px 0 18px">Esqueceu a senha?</p>
                                         </a></div>
-                                    <div class="links-uteis"><a href="https://github.com/RamonSilva20/mapos">
-                                            <p><?= date('Y'); ?> &copy; Ramon Silva</p>
-                                        </a></div>
+                                    <div class="links-uteis" style="margin-top: 15px; font-size: 13px; text-align: center;">
+                                        <a href="https://zenydesk.com" target="_blank" style="color: #a0aec0; text-decoration: none; font-weight: 500;">
+                                            zenydesk.com
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>

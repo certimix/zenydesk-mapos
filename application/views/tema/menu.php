@@ -1,9 +1,10 @@
 <!--sidebar-menu-->
 <nav id="sidebar">
-    <div id="newlog">
-        <div class="icon2">
-            <img src="<?php echo base_url() ?>assets/img/logo-two.png">
-        </div>
+    <div id="newlog" style="display: flex; justify-content: center; align-items: center; padding: 12px 10px;">
+        <a href="<?= site_url('mapos'); ?>" style="display: flex; justify-content: center; align-items: center; text-decoration: none;">
+            <img src="<?= base_url(); ?>assets/img/logo-zenydesk.png" alt="ZenyDesk" style="max-height: 32px; max-width: 150px; object-fit: contain;">
+        </a>
+    </div>
         <div class="title1">
             <?= $configuration['app_theme'] == 'white' ||  $configuration['app_theme'] == 'whitegreen' ? '<img src="' . base_url() . 'assets/img/logo-mapos.png">' : '<img src="' . base_url() . 'assets/img/logo-mapos-branco.png">'; ?>
         </div>
@@ -141,6 +142,13 @@
         </div>
 
         <div class="botton-content">
+            <li class="">
+                <a class="tip-bottom" title="Sobre a Certimix" href="<?= site_url('mapos/sobre'); ?>">
+                    <i class='bx bx-info-circle iconX'></i>
+                    <span class="title">Sobre</span>
+                    <span class="title-tooltip">Sobre a Certimix</span>
+                </a>
+            </li>
             <li class="">
                 <a class="tip-bottom" title="" href="<?= site_url('login/sair'); ?>">
                     <i class='bx bx-log-out-circle iconX'></i>

@@ -67,3 +67,4 @@ services:
       - "${MYSQL_MAPOS_PORT}:3306"
     volumes:
       - "./data/db/mysql:/var/lib/mysql"
+      - "../banco.sql:/docker-entrypoint-initdb.d/init.sql:ro"

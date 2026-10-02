@@ -83,6 +83,7 @@
           <ul class="dropdown-menu">
             <li class=""><a title="Área do Cliente" href="<?= site_url(); ?>/mine" target="_blank"> <span class="text">Área do Cliente</span></a></li>
             <li class=""><a title="Meu Perfil" href="<?= site_url('mapos/minhaConta'); ?>"><span class="text">Meu Perfil</span></a></li>
+            <li class=""><a title="Sobre a Certimix" href="<?= site_url('mapos/sobre'); ?>"><span class="text">Sobre a Certimix</span></a></li>
             <li class="divider"></li>
             <li class=""><a title="Sair do Sistema" href="<?= site_url('login/sair'); ?>"><i class='bx bx-log-out-circle'></i> <span class="text">Sair do Sistema</span></a></li>
           </ul>

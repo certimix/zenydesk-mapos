@@ -35,7 +35,7 @@
   ?>
       </h1>
       <h2 class="h-two"> Ao Sistema de Controle de Ordens de Serviço</h2>
-      <img src="<?php echo base_url() ?>assets/img/dashboard-animate.svg" class="left-login-image" alt="Map-OS - Versão: <?= $this->config->item('app_version'); ?>">
+      <img src="<?php echo base_url() ?>assets/img/dashboard-animate.svg" class="left-login-image" alt="ZenyDesk - Versão: <?= $this->config->item('app_version'); ?>">
     </div>
     <form class="form-vertical" id="formLogin" method="post" action="<?= site_url('login/verificarLogin') ?>">
       <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
@@ -52,15 +52,12 @@
           <div class="container">
             <div class="card">
               <div class="content">
-                <div id="newlog">
-                  <div class="icon2">
-                    <img src="<?php echo base_url() ?>assets/img/logo-two.png">
-                  </div>
-                  <div class="title01">
-                    <?= '<img src="' . base_url() . 'assets/img/logo-mapos-branco.png">'; ?>
-                  </div>
+                <div id="newlog" style="display: flex; justify-content: center; align-items: center; margin-bottom: 8px;">
+                  <a href="https://zenydesk.com" target="_blank" style="display: inline-block; text-decoration: none;">
+                    <img src="<?= base_url() ?>assets/img/logo-zenydesk.png" alt="ZenyDesk" style="max-height: 45px; max-width: 220px; width: auto; height: auto; object-fit: contain;">
+                  </a>
                 </div>
-                <div id="mcell">Versão: <?= $this->config->item('app_version'); ?></div>
+                <div id="mcell" style="padding: 0 0 20px 0; color: #a0aec0; font-size: 11px; text-align: center;">Versão: <?= $this->config->item('app_version'); ?></div>
                 <div class="input-field">
                   <label class="fas fa-user" for="nome"></label>
                   <input id="email" name="email" type="text" placeholder="Email">
@@ -72,14 +69,15 @@
                 <div class="center">
                   <button id="btn-acessar">Acessar</button>
                 </div>
-                <div class="links-uteis"><a href="https://github.com/RamonSilva20/mapos">
-                    <p><?= date('Y'); ?> &copy; Ramon Silva</p>
+                <div class="links-uteis" style="margin-top: 18px; font-size: 13px; text-align: center;">
+                  <a href="https://zenydesk.com" target="_blank" style="color: #a0aec0; text-decoration: none; font-weight: 500;">
+                    zenydesk.com
                   </a>
                 </div>
                 <a href="#notification" id="call-modal" role="button" class="btn" data-toggle="modal" style="display: none ">notification</a>
                 <div id="notification" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                   <div class="modal-header">
-                    <h4 id="myModalLabel">Map-OS</h4>
+                    <h4 id="myModalLabel">ZenyDesk</h4>
                   </div>
                   <div class="modal-body">
                     <h5 style="text-align: center" id="message">Os dados de acesso estão incorretos, por favor tente novamente!</h5>
@@ -96,7 +94,7 @@
       <a href="#notification" id="call-modal" role="button" class="btn" data-toggle="modal" style="display: none ">notification</a>
       <div id="notification" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-header">
-          <h4 id="myModalLabel">Map-OS</h4>
+          <h4 id="myModalLabel">ZenyDesk</h4>
         </div>
         <div class="modal-body">
           <h5 style="text-align: center" id="message">Os dados de acesso estão incorretos, por favor tente novamente!</h5>
