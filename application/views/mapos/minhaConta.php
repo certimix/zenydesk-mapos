@@ -156,6 +156,7 @@
             <div class="row-fluid">
                 <div class="span12" style="min-height: 260px">
                     <form id="formSenha" action="<?= site_url('mapos/alterarSenha'); ?>" method="post">
+                        <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
 
                         <div class="span12" style="margin-left: 0">
                             <label for="">Senha Atual</label>

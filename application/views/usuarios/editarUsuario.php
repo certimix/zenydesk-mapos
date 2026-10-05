@@ -16,6 +16,7 @@
                     echo '<div class="alert alert-danger">' . $custom_error . '</div>';
                 } ?>
                 <form action="<?php echo current_url(); ?>" id="formUsuario" method="post" class="form-horizontal">
+                    <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
                     <div class="control-group">
                         <?php echo form_hidden('idUsuarios', $result->idUsuarios) ?>
                         <label for="nome" class="control-label">Nome<span class="required">*</span></label>

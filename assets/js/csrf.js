@@ -1,19 +1,29 @@
 function getCookie(name) {
-    var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+    if (!name) return null;
+    var match = document.cookie.match(new RegExp('(^|;\\s*)' + name + '=([^;]+)'));
     if (match) {
-        return match[2];
+        return decodeURIComponent(match[2]);
     }
+    return null;
 }
 
 function setCsrfTokenInAllForms(csrfTokenName, csrfCookieName) {
-    $('input[name="' + csrfTokenName + '"]').remove();
+    if (!csrfTokenName) return;
+    var cookieVal = getCookie(csrfCookieName);
     var forms = document.querySelectorAll("form");
     forms.forEach(function (form) {
-        var csrfInput = document.createElement('input');
-        csrfInput.type = 'hidden';
-        csrfInput.name = csrfTokenName;
-        csrfInput.value = getCookie(csrfCookieName);
-        form.appendChild(csrfInput);
+        var existing = form.querySelector('input[name="' + csrfTokenName + '"]');
+        if (!existing) {
+            if (cookieVal) {
+                var csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = csrfTokenName;
+                csrfInput.value = cookieVal;
+                form.appendChild(csrfInput);
+            }
+        } else if (cookieVal) {
+            existing.value = cookieVal;
+        }
     });
 }
 
@@ -23,6 +33,21 @@ $(document).ready(function () {
     var csrfCookieName = $('meta[name="csrf-cookie-name"]').attr('content');
 
     setCsrfTokenInAllForms(csrfTokenName, csrfCookieName);
+
+    // Garante que antes de qualquer submit de formulario o token CSRF esteja presente e atualizado
+    $(document).on('submit', 'form', function () {
+        if (csrfTokenName && csrfCookieName) {
+            var tokenVal = getCookie(csrfCookieName);
+            if (tokenVal) {
+                var input = $(this).find('input[name="' + csrfTokenName + '"]');
+                if (input.length === 0) {
+                    $(this).prepend('<input type="hidden" name="' + csrfTokenName + '" value="' + tokenVal + '">');
+                } else {
+                    input.val(tokenVal);
+                }
+            }
+        }
+    });
 
     $.ajaxSetup({
         credentials: "include",
