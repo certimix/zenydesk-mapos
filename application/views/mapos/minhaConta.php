@@ -96,11 +96,14 @@
 </style>
 <div class="span6" style="margin-left: 0">
     <div class="widget-box">
-        <div class="widget-title" style="margin: -10px 0 0">
-            <span class="icon">
-                <i class="fas fa-user"></i>
-            </span>
-            <h5>Minha Conta</h5>
+        <div class="widget-title" style="margin: -10px 0 0; display: flex; justify-content: space-between; align-items: center; padding-right: 15px;">
+            <div>
+                <span class="icon">
+                    <i class="fas fa-user"></i>
+                </span>
+                <h5>Minha Conta</h5>
+            </div>
+            <a href="<?= site_url('usuarios/editar/' . $usuario->idUsuarios); ?>" class="btn btn-primary btn-mini"><i class="bx bx-edit"></i> Editar Meus Dados</a>
         </div>
         <div class="widget-contentMC" style="margin: 20px 0 0;">
             <div id="userMC">
@@ -123,6 +126,8 @@
                     <ul class="site-stats">
                         <li class="bg_ls span12"><strong>Nome:
                                 <?= $usuario->nome ?></strong></li>
+                        <li class="bg_ly span12" style="margin-left: 0"><strong>CPF / CNPJ:
+                                <?= $usuario->cpf ?></strong></li>
                         <li class="bg_lb span12" style="margin-left: 0"><strong>Telefone:
                                 <?= $usuario->telefone ?></strong></li>
                         <li class="bg_lg span12" style="margin-left: 0"><strong>Email:

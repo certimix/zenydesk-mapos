@@ -31,9 +31,9 @@
                     </div>
 
                     <div class="control-group">
-                        <label for="cpf" class="control-label">CPF<span class="required">*</span></label>
+                        <label for="cpf" class="control-label">CPF / CNPJ<span class="required">*</span></label>
                         <div class="controls">
-                            <input class="" type="text" id="cpfUser" name="cpf" value="<?php echo set_value('cpf'); ?>" />
+                            <input class="cpfUser" type="text" id="cpfUser" name="cpf" value="<?php echo set_value('cpf'); ?>" />
                         </div>
                     </div>
 

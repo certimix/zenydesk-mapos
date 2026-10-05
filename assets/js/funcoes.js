@@ -1,7 +1,17 @@
 $(function () {
     $("#celular").mask("(00) 00000-0000")
     $("#cep").mask("00000-000")
-    $('#cpfUser').mask('000.000.000-00', { reverse: true });
+    
+    // Máscara dinâmica CPF (11 dígitos) e CNPJ (14 dígitos) para usuários
+    var cpfCnpjUserMask = function (val) {
+        return val.replace(/\D/g, '').length > 11 ? '00.000.000/0000-00' : '000.000.000-009';
+    },
+    cpfCnpjUserOptions = {
+        onKeyPress: function (val, e, field, options) {
+            field.mask(cpfCnpjUserMask.apply({}, arguments), options);
+        }
+    };
+    $('#cpfUser, .cpfUser').mask(cpfCnpjUserMask, cpfCnpjUserOptions);
     $('.cnpjEmitente').mask('00.000.000/0000-00', { reverse: true });
 });
 
@@ -12,13 +22,7 @@ $(function () {
             $(".cpfcnpjmine").prop('readonly', true);
         }
     }
-    if ($('.cpfUser').val() != null) {
-        var cpfUser = $('.cpfUser').val().length;
-        if (cpfUser == "14") {
-            $(".cpfUser").prop('readonly', true);
-        }
-    }
-
+    // Campos de usuários 100% editáveis - sem bloqueio readonly
 });
 
 $(function () {

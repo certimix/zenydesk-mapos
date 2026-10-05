@@ -32,9 +32,9 @@
                     </div>
 
                     <div class="control-group">
-                        <label for="cpf" class="control-label">CPF<span class="required">*</span></label>
+                        <label for="cpf" class="control-label">CPF / CNPJ<span class="required">*</span></label>
                         <div class="controls">
-                            <input class="cpfUser" type="text" name="cpf" value="<?php echo $result->cpf; ?>"/>
+                            <input class="cpfUser" id="cpfUser" type="text" name="cpf" value="<?php echo $result->cpf; ?>"/>
                         </div>
                     </div>
                     <div class="control-group">
