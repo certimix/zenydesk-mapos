@@ -10,7 +10,10 @@ class Usuarios extends MY_Controller
     {
         parent::__construct();
 
-        if (! $this->permission->checkPermission($this->session->userdata('permissao'), 'cUsuario')) {
+        $segmentId = $this->uri->segment(3);
+        $isSelfEdit = ($this->uri->segment(2) == 'editar' && $segmentId && $segmentId == $this->session->userdata('id_admin'));
+
+        if (! $isSelfEdit && ! $this->permission->checkPermission($this->session->userdata('permissao'), 'cUsuario')) {
             $this->session->set_flashdata('error', 'Você não tem permissão para configurar os usuários.');
             redirect(base_url());
         }

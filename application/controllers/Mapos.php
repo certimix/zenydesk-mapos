@@ -173,9 +173,9 @@ class Mapos extends MY_Controller
     // Auxiliar interno: como método público seria acessível via /mapos/do_upload_user.
     protected function do_upload_user()
     {
-        if (!$this->permission->checkPermission($this->session->userdata('permissao'), 'cEmitente')) {
-            $this->session->set_flashdata('error', 'Você não tem permissão para configurar emitente.');
-            redirect(base_url());
+        if (!$this->session->userdata('logado')) {
+            $this->session->set_flashdata('error', 'Sessão expirada. Faça login novamente.');
+            redirect(site_url('login'));
         }
 
         $this->load->library('upload');
@@ -183,23 +183,24 @@ class Mapos extends MY_Controller
         $image_upload_folder = FCPATH . 'assets/userImage/';
 
         if (!file_exists($image_upload_folder)) {
-            mkdir($image_upload_folder, DIR_WRITE_MODE, true);
+            @mkdir($image_upload_folder, DIR_WRITE_MODE, true);
         }
 
         $this->upload_config = [
             'upload_path' => $image_upload_folder,
             'allowed_types' => 'png|jpg|jpeg|bmp',
-            'max_size' => 2048,
+            'max_size' => 4096,
             'remove_space' => true,
             'encrypt_name' => true,
         ];
 
         $this->upload->initialize($this->upload_config);
 
-        if (!$this->upload->do_upload()) {
-            $upload_error = $this->upload->display_errors();
-            print_r($upload_error);
-            exit();
+        if (!$this->upload->do_upload('userfile')) {
+            $upload_error = $this->upload->display_errors('', '');
+            $this->session->set_flashdata('error', 'Erro no upload: ' . ($upload_error ?: 'Formato ou tamanho inválido.'));
+            redirect(site_url('mapos/minhaConta'));
+            return false;
         } else {
             $file_info = [$this->upload->data()];
 
@@ -334,34 +335,91 @@ class Mapos extends MY_Controller
 
     public function uploadUserImage()
     {
-        if (!$this->permission->checkPermission($this->session->userdata('permissao'), 'cUsuario')) {
-            $this->session->set_flashdata('error', 'Você não tem permissão para mudar a foto.');
-            redirect(base_url());
+        if (!$this->session->userdata('logado')) {
+            $this->session->set_flashdata('error', 'Sessão expirada. Faça login novamente.');
+            redirect(site_url('login'));
         }
 
         $id = $this->session->userdata('id_admin');
         if ($id == null || !is_numeric($id)) {
-            $this->session->set_flashdata('error', 'Ocorreu um erro ao tentar alterar sua foto.');
+            $this->session->set_flashdata('error', 'Ocorreu um erro ao identificar o usuário.');
             redirect(site_url('mapos/minhaConta'));
         }
 
         $usuario = $this->mapos_model->getById($id);
-
-        if (is_file(FCPATH . 'assets/userImage/' . $usuario->url_image_user)) {
-            unlink(FCPATH . 'assets/userImage/' . $usuario->url_image_user);
+        if (!$usuario) {
+            $this->session->set_flashdata('error', 'Usuário não encontrado.');
+            redirect(site_url('mapos/minhaConta'));
         }
 
         $image = $this->do_upload_user();
-        $imageUserPath = $image;
-        $retorno = $this->mapos_model->editImageUser($id, $imageUserPath);
+        if ($image) {
+            if (!empty($usuario->url_image_user) && is_file(FCPATH . 'assets/userImage/' . $usuario->url_image_user)) {
+                @unlink(FCPATH . 'assets/userImage/' . $usuario->url_image_user);
+            }
 
-        if ($retorno) {
-            $this->session->set_userdata('url_image_user', $imageUserPath);
-            $this->session->set_flashdata('success', 'Foto alterada com sucesso.');
-            log_info('Alterou a Imagem do Usuario.');
-        } else {
-            $this->session->set_flashdata('error', 'Ocorreu um erro ao tentar alterar sua foto.');
+            $imageUserPath = $image;
+            $retorno = $this->mapos_model->editImageUser($id, $imageUserPath);
+
+            if ($retorno) {
+                $this->session->set_userdata('url_image_user', $imageUserPath);
+                $this->session->set_flashdata('success', 'Foto de perfil alterada com sucesso!');
+                log_info('Alterou a imagem de perfil do usuário.');
+            } else {
+                $this->session->set_flashdata('error', 'Ocorreu um erro ao atualizar a foto no banco de dados.');
+            }
         }
+        redirect(site_url('mapos/minhaConta'));
+    }
+
+    public function editarDados()
+    {
+        if (!$this->session->userdata('logado')) {
+            redirect(site_url('login'));
+        }
+
+        $id = $this->session->userdata('id_admin');
+        if ($id == null || !is_numeric($id)) {
+            $this->session->set_flashdata('error', 'Usuário não identificado.');
+            redirect(site_url('mapos/minhaConta'));
+        }
+
+        $this->load->library('form_validation');
+        $this->form_validation->set_rules('nome', 'Nome', 'trim|required');
+        $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email');
+        $this->form_validation->set_rules('telefone', 'Telefone', 'trim');
+
+        if ($this->form_validation->run() == false) {
+            $this->session->set_flashdata('error', validation_errors() ?: 'Por favor, preencha os campos obrigatórios corretamente.');
+            redirect(site_url('mapos/minhaConta'));
+            return;
+        }
+
+        $data = [
+            'nome' => $this->input->post('nome'),
+            'rg' => $this->input->post('rg'),
+            'cpf' => $this->input->post('cpf'),
+            'telefone' => $this->input->post('telefone'),
+            'celular' => $this->input->post('celular'),
+            'email' => $this->input->post('email'),
+            'cep' => $this->input->post('cep'),
+            'rua' => $this->input->post('rua'),
+            'numero' => $this->input->post('numero'),
+            'bairro' => $this->input->post('bairro'),
+            'cidade' => $this->input->post('cidade'),
+            'estado' => $this->input->post('estado'),
+        ];
+
+        $retorno = $this->mapos_model->editDadosUsuario($id, $data);
+        if ($retorno) {
+            $this->session->set_userdata('nome_admin', $data['nome']);
+            $this->session->set_userdata('email_admin', $data['email']);
+            $this->session->set_flashdata('success', 'Seus dados foram atualizados com sucesso!');
+            log_info('Alterou seus dados pessoais em Minha Conta.');
+        } else {
+            $this->session->set_flashdata('error', 'Ocorreu um erro ao salvar as alterações.');
+        }
+
         redirect(site_url('mapos/minhaConta'));
     }
 

@@ -103,7 +103,7 @@
                 </span>
                 <h5>Minha Conta</h5>
             </div>
-            <a href="<?= site_url('usuarios/editar/' . $usuario->idUsuarios); ?>" class="btn btn-primary btn-mini"><i class="bx bx-edit"></i> Editar Meus Dados</a>
+            <a href="#modalEditarDados" data-toggle="modal" role="button" class="btn btn-primary btn-mini"><i class="bx bx-edit"></i> Editar Meus Dados</a>
         </div>
         <div class="widget-contentMC" style="margin: 20px 0 0;">
             <div id="userMC">
@@ -182,22 +182,126 @@
 
 <div id="modalImageUser" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <form action="<?= site_url('mapos/uploadUserImage'); ?>" id="formImageUser" enctype="multipart/form-data" method="post" class="form-horizontal">
+        <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h3 id="">MapOS - Atualizar Imagem do Usuario</h3>
+            <h3 id="">Atualizar Foto de Perfil</h3>
         </div>
         <div class="modal-body">
-            <div class="span12 alert alert-info">Selecione uma nova imagem do usuario. Tamanho indicado (130 X 130).</div>
+            <div class="span12 alert alert-info">Selecione uma nova imagem de perfil. Formatos aceitos: PNG, JPG, JPEG, BMP (máx 4MB).</div>
             <div class="control-group">
                 <label for="userfile" class="control-label"><span class="required">Foto*</span></label>
                 <div class="controls">
-                    <input type="file" name="userfile" value="" />
+                    <input type="file" name="userfile" value="" required />
                 </div>
             </div>
         </div>
         <div class="modal-footer" style="display:flex;justify-content: center">
             <button class="button btn btn-warning" data-dismiss="modal" aria-hidden="true" id="btnCancelExcluir"><span class="button__icon"><i class="bx bx-x"></i></span><span class="button__text2">Cancelar</span></button>
-            <button class="button btn btn-primary"><span class="button__icon"><i class="bx bx-sync"></i></span><span class="button__text2">Atualizar</span></button>
+            <button type="submit" class="button btn btn-primary"><span class="button__icon"><i class="bx bx-sync"></i></span><span class="button__text2">Atualizar</span></button>
+        </div>
+    </form>
+</div>
+
+<div id="modalEditarDados" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="modalEditarDadosLabel" aria-hidden="true" style="width: 700px; margin-left: -350px;">
+    <form action="<?= site_url('mapos/editarDados'); ?>" id="formEditarDados" method="post" class="form-horizontal">
+        <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="modalEditarDadosLabel"><i class="bx bx-edit"></i> Editar Meus Dados</h3>
+        </div>
+        <div class="modal-body" style="max-height: 450px; overflow-y: auto;">
+            <div class="control-group">
+                <label for="edit_nome" class="control-label">Nome<span class="required">*</span></label>
+                <div class="controls">
+                    <input id="edit_nome" type="text" name="nome" value="<?= html_escape($usuario->nome); ?>" required class="span10" />
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="edit_cpf" class="control-label">CPF / CNPJ</label>
+                <div class="controls">
+                    <input id="edit_cpf" type="text" name="cpf" value="<?= html_escape($usuario->cpf); ?>" class="span10" />
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="edit_rg" class="control-label">RG</label>
+                <div class="controls">
+                    <input id="edit_rg" type="text" name="rg" value="<?= html_escape($usuario->rg ?? ''); ?>" class="span10" />
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="edit_telefone" class="control-label">Telefone<span class="required">*</span></label>
+                <div class="controls">
+                    <input id="edit_telefone" type="text" name="telefone" value="<?= html_escape($usuario->telefone); ?>" required class="span10" />
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="edit_celular" class="control-label">Celular</label>
+                <div class="controls">
+                    <input id="edit_celular" type="text" name="celular" value="<?= html_escape($usuario->celular ?? ''); ?>" class="span10" />
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="edit_email" class="control-label">E-mail<span class="required">*</span></label>
+                <div class="controls">
+                    <input id="edit_email" type="email" name="email" value="<?= html_escape($usuario->email); ?>" required class="span10" />
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="edit_cep" class="control-label">CEP</label>
+                <div class="controls">
+                    <input id="edit_cep" type="text" name="cep" value="<?= html_escape($usuario->cep ?? ''); ?>" class="span10" />
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="edit_rua" class="control-label">Rua</label>
+                <div class="controls">
+                    <input id="edit_rua" type="text" name="rua" value="<?= html_escape($usuario->rua ?? ''); ?>" class="span10" />
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="edit_numero" class="control-label">Número</label>
+                <div class="controls">
+                    <input id="edit_numero" type="text" name="numero" value="<?= html_escape($usuario->numero ?? ''); ?>" class="span10" />
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="edit_bairro" class="control-label">Bairro</label>
+                <div class="controls">
+                    <input id="edit_bairro" type="text" name="bairro" value="<?= html_escape($usuario->bairro ?? ''); ?>" class="span10" />
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="edit_cidade" class="control-label">Cidade</label>
+                <div class="controls">
+                    <input id="edit_cidade" type="text" name="cidade" value="<?= html_escape($usuario->cidade ?? ''); ?>" class="span10" />
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="edit_estado" class="control-label">Estado</label>
+                <div class="controls">
+                    <input id="edit_estado" type="text" name="estado" value="<?= html_escape($usuario->estado ?? ''); ?>" class="span10" />
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer" style="display:flex; justify-content: center; gap: 10px;">
+            <button class="button btn btn-warning" data-dismiss="modal" aria-hidden="true">
+                <span class="button__icon"><i class="bx bx-x"></i></span><span class="button__text2">Cancelar</span>
+            </button>
+            <button type="submit" class="button btn btn-primary">
+                <span class="button__icon"><i class="bx bx-save"></i></span><span class="button__text2">Salvar Alterações</span>
+            </button>
         </div>
     </form>
 </div>
