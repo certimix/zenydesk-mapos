@@ -359,7 +359,7 @@ class Vendas extends MY_Controller
         $this->vendas_model->delete('itens_de_vendas', 'vendas_id', $id);
         $this->vendas_model->delete('vendas', 'idVendas', $id);
         if ((int) $venda->faturado === 1) {
-            $this->vendas_model->delete('lancamentos', 'descricao', "Fatura de Venda - #${id}");
+            $this->vendas_model->delete('lancamentos', 'descricao', 'Fatura de Venda - #' . $id);
         }
 
         log_info('Removeu uma venda. ID: ' . $id);
@@ -595,7 +595,7 @@ class Vendas extends MY_Controller
             if ($tipoDesconto == 'percentual') {
                 $valorDesconto = $valorTotal * ($valorDesconto / 100);
             } elseif ($tipoDesconto == 'real') {
-                $valorDesconto = $valorDesconto;
+                $valorDesconto = (float) $valorDesconto;
             } else {
                 $valorDesconto = 0;
             }
@@ -730,9 +730,9 @@ class Vendas extends MY_Controller
             redirect(base_url());
         }
 
-        $venda = $this->Vendas_model->getById($id);
-        $produtos = $this->Vendas_model->getProdutos($id);
-        $total = $this->Vendas_model->getTotalVendas($id);
+        $venda = $this->vendas_model->getById($id);
+        $produtos = $this->vendas_model->getProdutos($id);
+        $total = $this->vendas_model->getTotalVendas($id);
         
         $data['venda'] = $venda;
         $data['produtos'] = $produtos;

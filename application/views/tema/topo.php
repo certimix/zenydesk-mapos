@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 
+<?php $configuration = (isset($configuration) && is_array($configuration)) ? $configuration : []; ?>
 <head>
   <title><?= (!empty($configuration['app_name']) && $configuration['app_name'] !== 'Certimix OS') ? $configuration['app_name'] : 'Zenydesk OS' ?></title>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="csrf-token-name" content="<?= config_item("csrf_token_name") ?>">
-  <meta name="csrf-cookie-name" content="<?= config_item("csrf_cookie_name") ?>">
+  <meta name="csrf-token-name" content="<?= $this->config->item("csrf_token_name") ?>">
+  <meta name="csrf-cookie-name" content="<?= $this->config->item("csrf_cookie_name") ?>">
   <meta name="csrf-token-hash" content="<?= $this->security->get_csrf_hash() ?>">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -19,22 +20,23 @@
   <link rel="stylesheet" href="<?= base_url(); ?>assets/css/matrix-media.css" />
   <link href="<?= base_url(); ?>assets/font-awesome/css/font-awesome.css" rel="stylesheet" />
   <link rel="stylesheet" href="<?= base_url(); ?>assets/css/fullcalendar.css" />
-  <?php if ($configuration['app_theme'] == 'white') { ?>
+  <?php $appTheme = $configuration['app_theme'] ?? ''; ?>
+  <?php if ($appTheme === 'white') { ?>
     <link rel="stylesheet" href="<?= base_url(); ?>assets/css/tema-white.css" />
   <?php } ?>
-  <?php if ($configuration['app_theme'] == 'puredark') { ?>
+  <?php if ($appTheme === 'puredark') { ?>
     <link rel="stylesheet" href="<?= base_url(); ?>assets/css/tema-pure-dark.css" />
   <?php } ?>
-  <?php if ($configuration['app_theme'] == 'darkviolet') { ?>
+  <?php if ($appTheme === 'darkviolet') { ?>
     <link rel="stylesheet" href="<?= base_url(); ?>assets/css/tema-dark-violet.css" />
   <?php } ?>
-  <?php if ($configuration['app_theme'] == 'darkorange') { ?>
+  <?php if ($appTheme === 'darkorange') { ?>
     <link rel="stylesheet" href="<?= base_url(); ?>assets/css/tema-dark-orange.css" />
   <?php } ?>
-  <?php if ($configuration['app_theme'] == 'whitegreen') { ?>
+  <?php if ($appTheme === 'whitegreen') { ?>
     <link rel="stylesheet" href="<?= base_url(); ?>assets/css/tema-white-green.css" />
   <?php } ?>
-  <?php if ($configuration['app_theme'] == 'whiteblack') { ?>
+  <?php if ($appTheme === 'whiteblack') { ?>
     <link rel="stylesheet" href="<?= base_url(); ?>assets/css/tema-white-black.css" />
   <?php } ?>
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
@@ -153,13 +155,14 @@
                 $userPhoto = $this->session->userdata('url_image_user');
             }
             if ((empty($userPhoto) || !is_file(FCPATH . 'assets/userImage/' . $userPhoto)) && $this->session->userdata('id_admin')) {
-                $CI = &get_instance();
-                $CI->load->database();
-                $dbUser = $CI->db->select('url_image_user')->get_where('usuarios', ['idUsuarios' => $this->session->userdata('id_admin')])->row();
-                if ($dbUser && !empty($dbUser->url_image_user) && is_file(FCPATH . 'assets/userImage/' . $dbUser->url_image_user)) {
-                    $userPhoto = $dbUser->url_image_user;
-                    $this->session->set_userdata('url_image_user_admin', $userPhoto);
-                    $this->session->set_userdata('url_image_user', $userPhoto);
+                $dbInstance = isset($this->db) ? $this->db : null;
+                if ($dbInstance) {
+                    $dbUser = $dbInstance->select('url_image_user')->get_where('usuarios', ['idUsuarios' => $this->session->userdata('id_admin')])->row();
+                    if ($dbUser && !empty($dbUser->url_image_user) && is_file(FCPATH . 'assets/userImage/' . $dbUser->url_image_user)) {
+                        $userPhoto = $dbUser->url_image_user;
+                        $this->session->set_userdata('url_image_user_admin', $userPhoto);
+                        $this->session->set_userdata('url_image_user', $userPhoto);
+                    }
                 }
             }
             $userAvatarUrl = (!empty($userPhoto) && is_file(FCPATH . 'assets/userImage/' . $userPhoto))
