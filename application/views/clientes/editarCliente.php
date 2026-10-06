@@ -89,6 +89,7 @@
                 echo '<div class="alert alert-danger">' . $custom_error . '</div>';
             } ?>
             <form action="<?php echo current_url(); ?>" id="formCliente" method="post" class="form-horizontal">
+                <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
                 <div class="widget-content nopadding tab-content">
                     <div class="span6">
                         <div class="control-group">

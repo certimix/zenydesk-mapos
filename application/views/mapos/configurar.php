@@ -18,6 +18,7 @@
                 <li><a data-toggle="tab" href="#menu7">E-mail</a></li>
             </ul>
             <form action="<?php echo current_url(); ?>" id="formConfigurar" method="post" class="form-horizontal">
+                <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
                 <div class="widget-content nopadding tab-content">
                     <?php echo $custom_error; ?>
                     <!-- Menu Gerais -->
