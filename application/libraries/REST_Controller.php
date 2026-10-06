@@ -424,7 +424,7 @@ abstract class REST_Controller extends CI_Controller
     /**
      * @var Format
      */
-    private $format;
+    protected $format;
 
     /**
      * @var bool
