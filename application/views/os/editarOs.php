@@ -365,21 +365,27 @@ foreach ($servicos as $s) {
                         <!--Anexos-->
                         <div class="tab-pane" id="tab5">
                             <div class="span12" style="padding: 1%; margin-left: 0">
+                                <div class="alert alert-info" style="display:flex; align-items:center; gap:10px; margin-bottom:15px; border-radius:6px; background:#f0fdf4; border:1px solid #bbf7d0; color:#166534;">
+                                    <i class="bx bx-shield-quarter" style="font-size:24px; color:#16a34a; flex-shrink:0;"></i>
+                                    <div>
+                                        <strong>Política de Retenção de Fotos (5 Anos):</strong> As fotos enviadas (formatos <strong>JPEG, PNG e JPG</strong>) são guardadas por <strong>5 anos</strong> no banco de dados com mecanismo de <strong>auto-exclusão automática</strong> permanente após 5 anos do envio.
+                                    </div>
+                                </div>
                                 <div class="span12 well" style="padding: 1%; margin-left: 0" id="form-anexos">
                                     <form id="formAnexos" enctype="multipart/form-data" action="javascript:;"
-                                        accept-charset="utf-8" s method="post">
+                                        accept-charset="utf-8" method="post">
                                         <div class="span10">
                                             <input type="hidden" name="idOsServico" id="idOsServico"
                                                 value="<?php echo $result->idOs; ?>" />
-                                            <label for="">Anexo</label>
+                                            <label for="">Fotos / Anexos <small style="color: #64748b; font-weight: normal;">(JPEG, PNG, JPG - Retenção de 5 anos)</small></label>
                                             <input type="file" class="span12" name="userfile[]" multiple="multiple"
-                                                size="20" />
+                                                accept="image/jpeg,image/png,image/jpg" size="20" />
                                         </div>
                                         <div class="span2">
-                                            <label for="">.</label>
-                                            <button class="button btn btn-success">
-                                                <span class="button__icon"><i class='bx bx-paperclip'></i></span><span
-                                                    class="button__text2">Anexar</span></button>
+                                            <label for="">&nbsp;</label>
+                                            <button class="button btn btn-success" style="width: 100%;">
+                                                <span class="button__icon"><i class='bx bx-camera'></i></span><span
+                                                    class="button__text2">Enviar Foto</span></button>
                                         </div>
                                     </form>
                                 </div>
@@ -393,10 +399,14 @@ foreach ($servicos as $s) {
                                             $thumb = $a->url . '/thumbs/' . $a->thumb;
                                             $link = $a->url . '/' . $a->anexo;
                                         }
-                                        echo '<div class="span3" style="min-height: 150px; margin-left: 0">
-                                                    <a style="min-height: 150px;" href="#modal-anexo" imagem="' . $a->idAnexos . '" link="' . $link . '" role="button" class="btn anexo span12" data-toggle="modal">
-                                                        <img src="' . $thumb . '" alt="">
+                                        $expTxt = !empty($a->data_expiracao) ? date('d/m/Y', strtotime($a->data_expiracao)) : date('d/m/Y', strtotime('+5 years'));
+                                        $badgeExp = '<div style="margin-top: 5px; font-size: 11px; color: #64748b; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 2px 4px; text-align: center;"><i class="bx bx-time-five" style="color: #f59e0b;"></i> Expira: ' . $expTxt . '</div>';
+
+                                        echo '<div class="span3" style="min-height: 180px; margin-left: 0; margin-bottom: 15px; padding-right: 10px;">
+                                                    <a style="min-height: 140px; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 6px;" href="#modal-anexo" imagem="' . $a->idAnexos . '" link="' . $link . '" expiracao="' . $expTxt . '" role="button" class="btn anexo span12" data-toggle="modal">
+                                                        <img src="' . $thumb . '" alt="" style="max-height: 130px; object-fit: contain;">
                                                     </a>
+                                                    ' . $badgeExp . '
                                                 </div>';
                                     }
 ?>
@@ -457,7 +467,7 @@ if (!$anotacoes) {
     aria-hidden="true">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="myModalLabel">Visualizar Anexo</h3>
+        <h3 id="myModalLabel">Visualizar Foto / Anexo</h3>
     </div>
     <div class="modal-body">
         <div class="span12" id="div-visualizar-anexo" style="text-align: center">
@@ -465,6 +475,7 @@ if (!$anotacoes) {
                 <div class='bar' style='width: 100%'></div>
             </div>
         </div>
+        <div id="info-anexo" style="text-align: center; margin-top: 15px;"></div>
     </div>
     <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Fechar</button>
@@ -1195,8 +1206,14 @@ if (!$anotacoes) {
             event.preventDefault();
             var link = $(this).attr('link');
             var id = $(this).attr('imagem');
+            var exp = $(this).attr('expiracao');
             var url = '<?php echo base_url(); ?>index.php/os/excluirAnexo/';
-            $("#div-visualizar-anexo").html('<img src="' + link + '" alt="">');
+            $("#div-visualizar-anexo").html('<img src="' + link + '" alt="" style="max-height: 420px; max-width: 100%; border-radius: 6px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">');
+            if (exp) {
+                $("#info-anexo").html('<span class="badge badge-warning" style="font-size: 11px; padding: 5px 12px; background: #fef3c7; color: #92400e; border: 1px solid #fde68a; border-radius: 20px;"><i class="bx bx-time-five"></i> Retenção legal de 5 anos — Auto-exclusão agendada para: ' + exp + '</span>');
+            } else {
+                $("#info-anexo").empty();
+            }
             $("#excluir-anexo").attr('link', url + id);
 
             $("#download").attr('href', "<?php echo base_url(); ?>index.php/os/downloadanexo/" + id);

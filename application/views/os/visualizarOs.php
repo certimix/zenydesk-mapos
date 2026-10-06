@@ -245,7 +245,13 @@ if (!empty($result->cidade) || !empty($result->estado) || !empty($result->cep)) 
                                                 $thumb = $a->url . '/thumbs/' . $a->thumb;
                                                 $link = $a->url . '/' . $a->anexo;
                                             }
-                                            echo '<div class="span3" style="min-height: 150px; margin-left: 0"><a style="min-height: 150px;" href="#modal-anexo" imagem="' . $a->idAnexos . '" link="' . $link . '" role="button" class="btn anexo span12" data-toggle="modal"><img src="' . $thumb . '" alt=""></a></div>';
+                                            $expTxt = !empty($a->data_expiracao) ? date('d/m/Y', strtotime($a->data_expiracao)) : date('d/m/Y', strtotime('+5 years'));
+                                            echo '<div class="span3" style="min-height: 180px; margin-left: 0; margin-bottom: 15px; padding-right: 10px;">
+                                                    <a style="min-height: 140px; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 6px;" href="#modal-anexo" imagem="' . $a->idAnexos . '" link="' . $link . '" expiracao="' . $expTxt . '" role="button" class="btn anexo span12" data-toggle="modal">
+                                                        <img src="' . $thumb . '" alt="" style="max-height: 130px; object-fit: contain;">
+                                                    </a>
+                                                    <div style="margin-top: 5px; font-size: 11px; color: #64748b; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 2px 4px; text-align: center;"><i class="bx bx-time-five" style="color: #f59e0b;"></i> Expira: ' . $expTxt . '</div>
+                                                  </div>';
                                         } ?>
                                     </th>
                                 </tbody>
@@ -340,7 +346,7 @@ if (!empty($result->cidade) || !empty($result->estado) || !empty($result->cep)) 
     aria-hidden="true">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-        <h3 id="myModalLabel">Visualizar Anexo</h3>
+        <h3 id="myModalLabel">Visualizar Foto / Anexo</h3>
     </div>
     <div class="modal-body">
         <div class="span12" id="div-visualizar-anexo" style="text-align: center">
@@ -348,6 +354,7 @@ if (!empty($result->cidade) || !empty($result->estado) || !empty($result->cep)) 
                 <div class='bar' style='width: 100%'></div>
             </div>
         </div>
+        <div id="info-anexo" style="text-align: center; margin-top: 15px;"></div>
     </div>
     <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Fechar</button>
@@ -394,8 +401,14 @@ if (!empty($result->cidade) || !empty($result->estado) || !empty($result->cep)) 
             event.preventDefault();
             var link = $(this).attr('link');
             var id = $(this).attr('imagem');
+            var exp = $(this).attr('expiracao');
             var url = '<?php echo base_url(); ?>index.php/os/excluirAnexo/';
-            $("#div-visualizar-anexo").html('<img src="' + link + '" alt="">');
+            $("#div-visualizar-anexo").html('<img src="' + link + '" alt="" style="max-height: 420px; max-width: 100%; border-radius: 6px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">');
+            if (exp) {
+                $("#info-anexo").html('<span class="badge badge-warning" style="font-size: 11px; padding: 5px 12px; background: #fef3c7; color: #92400e; border: 1px solid #fde68a; border-radius: 20px;"><i class="bx bx-time-five"></i> Retenção legal de 5 anos — Auto-exclusão agendada para: ' + exp + '</span>');
+            } else {
+                $("#info-anexo").empty();
+            }
             $("#excluir-anexo").attr('link', url + id);
             $("#download").attr('href', "<?php echo base_url(); ?>index.php/os/downloadanexo/" + id);
 

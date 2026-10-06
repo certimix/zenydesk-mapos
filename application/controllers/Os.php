@@ -43,6 +43,8 @@ class Os extends MY_Controller
     {
         $this->load->library('pagination');
         $this->load->model('mapos_model');
+        // Auto-exclusão preventiva de fotos que ultrapassaram o prazo de retenção de 5 anos
+        $this->os_model->limparFotosExpiradas();
 
         $where_array = [];
 
@@ -985,12 +987,201 @@ class Os extends MY_Controller
         }
     }
 
+    public function anexarFotos()
+    {
+        if (! $this->permission->checkPermission($this->session->userdata('permissao'), 'eOs')) {
+            echo json_encode(['result' => false, 'mensagem' => 'Você não tem permissão para enviar fotos nesta O.S.']);
+            exit();
+        }
+
+        $idOsServico = (int) ($this->input->post('idOsServico') ?: $this->input->post('idOs'));
+
+        if ($idOsServico <= 0 || ! $this->os_model->getById($idOsServico)) {
+            echo json_encode(['result' => false, 'mensagem' => 'Ordem de serviço inválida.']);
+            exit();
+        }
+
+        // Executa a auto-exclusão preventiva de fotos que atingiram 5 anos
+        $this->os_model->limparFotosExpiradas();
+
+        $this->load->library('upload');
+        $this->load->library('image_lib');
+
+        $directory = FCPATH . 'assets' . DIRECTORY_SEPARATOR . 'anexos' . DIRECTORY_SEPARATOR . date('m-Y') . DIRECTORY_SEPARATOR . 'OS-' . $idOsServico;
+
+        if (! is_dir($directory . DIRECTORY_SEPARATOR . 'thumbs')) {
+            try {
+                mkdir($directory . DIRECTORY_SEPARATOR . 'thumbs', 0755, true);
+            } catch (Exception $e) {
+                echo json_encode(['result' => false, 'mensagem' => 'Erro ao criar diretório para fotos: ' . $e->getMessage()]);
+                exit();
+            }
+        }
+
+        // Formatos estritamente permitidos para fotos: JPEG, PNG e JPG
+        $upload_conf = [
+            'upload_path' => $directory,
+            'allowed_types' => 'jpg|jpeg|png|JPG|JPEG|PNG',
+            'max_size' => 15360, // 15MB
+        ];
+
+        $this->upload->initialize($upload_conf);
+
+        $fotosInput = !empty($_FILES['fotos']) ? $_FILES['fotos'] : (!empty($_FILES['userfile']) ? $_FILES['userfile'] : null);
+
+        if (!$fotosInput || empty($fotosInput['name'][0])) {
+            echo json_encode(['result' => false, 'mensagem' => 'Nenhuma foto selecionada. Selecione arquivos nos formatos JPEG, PNG ou JPG.']);
+            exit();
+        }
+
+        $filesToUpload = [];
+        if (is_array($fotosInput['name'])) {
+            foreach ($fotosInput['name'] as $idx => $name) {
+                if (!empty($name)) {
+                    $filesToUpload['foto_' . $idx] = [
+                        'name' => $fotosInput['name'][$idx],
+                        'type' => $fotosInput['type'][$idx],
+                        'tmp_name' => $fotosInput['tmp_name'][$idx],
+                        'error' => $fotosInput['error'][$idx],
+                        'size' => $fotosInput['size'][$idx],
+                    ];
+                }
+            }
+        } else {
+            $filesToUpload['foto_0'] = $fotosInput;
+        }
+
+        $error = [];
+        $success = [];
+        $dataCadastro = date('Y-m-d H:i:s');
+        $dataExpiracao = date('Y-m-d H:i:s', strtotime('+5 years'));
+
+        foreach ($filesToUpload as $field_name => $file_data) {
+            $_FILES[$field_name] = $file_data;
+
+            if (! $this->upload->do_upload($field_name)) {
+                $error[] = $file_data['name'] . ': ' . $this->upload->display_errors('', '');
+            } else {
+                $upload_data = $this->upload->data();
+                $ext = strtolower(pathinfo($upload_data['file_name'], PATHINFO_EXTENSION));
+
+                if (! in_array($ext, ['jpg', 'jpeg', 'png'])) {
+                    @unlink($upload_data['full_path']);
+                    $error[] = $file_data['name'] . ': Formato inválido. Apenas fotos JPEG, PNG e JPG são permitidas.';
+                    continue;
+                }
+
+                $new_file_name = 'foto_' . uniqid() . '.' . $ext;
+                $new_file_path = $upload_data['file_path'] . $new_file_name;
+                rename($upload_data['full_path'], $new_file_path);
+
+                $thumb_name = 'thumb_' . $new_file_name;
+                $resize_conf = [
+                    'source_image' => $new_file_path,
+                    'new_image' => $upload_data['file_path'] . 'thumbs' . DIRECTORY_SEPARATOR . $thumb_name,
+                    'width' => 300,
+                    'height' => 220,
+                    'maintain_ratio' => true,
+                ];
+
+                $this->image_lib->initialize($resize_conf);
+                $this->image_lib->resize();
+                $this->image_lib->clear();
+
+                $urlBase = base_url('assets' . DIRECTORY_SEPARATOR . 'anexos' . DIRECTORY_SEPARATOR . date('m-Y') . DIRECTORY_SEPARATOR . 'OS-' . $idOsServico);
+                $inserted = $this->os_model->anexar($idOsServico, $new_file_name, $urlBase, $thumb_name, $directory, 'foto', $dataCadastro, $dataExpiracao);
+
+                if ($inserted) {
+                    $success[] = [
+                        'nome' => $new_file_name,
+                        'url' => $urlBase . '/' . $new_file_name,
+                        'thumb' => $urlBase . '/thumbs/' . $thumb_name,
+                        'data_cadastro' => date('d/m/Y H:i', strtotime($dataCadastro)),
+                        'data_expiracao' => date('d/m/Y H:i', strtotime($dataExpiracao)),
+                    ];
+                } else {
+                    $error[] = $file_data['name'] . ': Erro ao salvar registro no banco de dados.';
+                }
+            }
+        }
+
+        if (count($success) > 0) {
+            log_info("Fotos enviadas para a OS ID {$idOsServico}. Total: " . count($success) . " fotos (retenção 5 anos até " . date('d/m/Y', strtotime($dataExpiracao)) . ").");
+            echo json_encode([
+                'result' => true,
+                'mensagem' => count($success) . ' foto(s) enviada(s) com sucesso! Guardadas no banco por 5 anos (até ' . date('d/m/Y', strtotime($dataExpiracao)) . ').',
+                'fotos' => $success,
+                'erros' => $error,
+            ]);
+        } else {
+            echo json_encode([
+                'result' => false,
+                'mensagem' => 'Não foi possível enviar as fotos. ' . implode(' ', $error),
+                'erros' => $error,
+            ]);
+        }
+    }
+
+    public function getFotosOs($id = null)
+    {
+        if (! $this->permission->checkPermission($this->session->userdata('permissao'), 'vOs')) {
+            echo json_encode(['result' => false, 'mensagem' => 'Sem permissão para visualizar fotos.']);
+            exit();
+        }
+
+        $idOs = (int) ($id ?: $this->input->get('idOs') ?: $this->input->post('idOs'));
+        if ($idOs <= 0) {
+            echo json_encode(['result' => false, 'mensagem' => 'OS não informada.']);
+            exit();
+        }
+
+        // Auto-exclusão periódica de fotos que atingiram 5 anos
+        $this->os_model->limparFotosExpiradas();
+
+        $fotos = $this->os_model->getFotosOs($idOs);
+        $result = [];
+
+        foreach ($fotos as $f) {
+            $isImg = !empty($f->thumb) || in_array(strtolower(pathinfo($f->anexo, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif']);
+            $thumbUrl = !empty($f->thumb) ? $f->url . '/thumbs/' . $f->thumb : ($isImg ? $f->url . '/' . $f->anexo : base_url('assets/img/icon-file.png'));
+            $fullUrl = $f->url . '/' . $f->anexo;
+
+            $dataCad = !empty($f->data_cadastro) ? date('d/m/Y H:i', strtotime($f->data_cadastro)) : 'Desconhecida';
+            $dataExp = !empty($f->data_expiracao) ? date('d/m/Y', strtotime($f->data_expiracao)) : date('d/m/Y', strtotime('+5 years'));
+
+            $result[] = [
+                'id' => $f->idAnexos,
+                'nome' => $f->anexo,
+                'url' => $fullUrl,
+                'thumb' => $thumbUrl,
+                'data_cadastro' => $dataCad,
+                'data_expiracao' => $dataExp,
+                'tipo' => $f->tipo ?? 'foto',
+            ];
+        }
+
+        echo json_encode(['result' => true, 'idOs' => $idOs, 'fotos' => $result]);
+    }
+
+    public function autoLimparFotos()
+    {
+        $removidos = $this->os_model->limparFotosExpiradas();
+        $msg = "Rotina de auto-exclusão executada. Total de fotos com mais de 5 anos excluídas: {$removidos}.";
+        if (is_cli()) {
+            echo $msg . PHP_EOL;
+        } else {
+            echo json_encode(['result' => true, 'mensagem' => $msg, 'total_excluidos' => $removidos]);
+        }
+    }
+
     public function excluirAnexo($id = null)
     {
         if (! $this->permission->checkPermission($this->session->userdata('permissao'), 'eOs')) {
             $this->session->set_flashdata('error', 'Você não tem permissão para editar O.S.');
             redirect(base_url());
         }
+
+        $id = $id ?: $this->input->post('idAnexo') ?: $this->input->post('id');
 
         if ($id == null || ! is_numeric($id)) {
             echo json_encode(['result' => false, 'mensagem' => 'Erro ao tentar excluir anexo.']);
@@ -999,17 +1190,21 @@ class Os extends MY_Controller
             $file = $this->db->get('anexos', 1)->row();
             $idOs = $this->input->post('idOs');
 
-            unlink($file->path . DIRECTORY_SEPARATOR . $file->anexo);
+            if ($file) {
+                if (!empty($file->path) && !empty($file->anexo) && file_exists($file->path . DIRECTORY_SEPARATOR . $file->anexo)) {
+                    @unlink($file->path . DIRECTORY_SEPARATOR . $file->anexo);
+                }
 
-            if ($file->thumb != null) {
-                unlink($file->path . DIRECTORY_SEPARATOR . 'thumbs' . DIRECTORY_SEPARATOR . $file->thumb);
+                if (!empty($file->path) && !empty($file->thumb) && file_exists($file->path . DIRECTORY_SEPARATOR . 'thumbs' . DIRECTORY_SEPARATOR . $file->thumb)) {
+                    @unlink($file->path . DIRECTORY_SEPARATOR . 'thumbs' . DIRECTORY_SEPARATOR . $file->thumb);
+                }
             }
 
             if ($this->os_model->delete('anexos', 'idAnexos', $id) == true) {
-                log_info('Removeu anexo de uma OS. ID (OS): ' . $idOs);
-                echo json_encode(['result' => true, 'mensagem' => 'Anexo excluído com sucesso.']);
+                log_info('Removeu anexo/foto de uma OS. ID (OS): ' . $idOs);
+                echo json_encode(['result' => true, 'mensagem' => 'Anexo/Foto excluído com sucesso.']);
             } else {
-                echo json_encode(['result' => false, 'mensagem' => 'Erro ao tentar excluir anexo.']);
+                echo json_encode(['result' => false, 'mensagem' => 'Erro ao tentar excluir anexo/foto.']);
             }
         }
     }

@@ -266,20 +266,102 @@ class Os_model extends CI_Model
         }
     }
 
-    public function anexar($os, $anexo, $url, $thumb, $path)
+    public function checkAnexosExpirationColumns()
     {
+        try {
+            if (!$this->db->field_exists('data_expiracao', 'anexos')) {
+                $this->db->query("ALTER TABLE `anexos` ADD COLUMN `data_cadastro` DATETIME DEFAULT CURRENT_TIMESTAMP, ADD COLUMN `data_expiracao` DATETIME NULL, ADD COLUMN `tipo` VARCHAR(20) DEFAULT 'foto', ADD INDEX `idx_anexos_expiracao` (`data_expiracao`)");
+                $this->db->query("UPDATE `anexos` SET `data_cadastro` = NOW(), `data_expiracao` = DATE_ADD(NOW(), INTERVAL 5 YEAR) WHERE `data_expiracao` IS NULL");
+            }
+        } catch (\Throwable $e) {
+            // Silencia em ambientes onde o usuário do banco não possui permissão DDL
+        }
+    }
+
+    public function anexar($os, $anexo, $url, $thumb, $path, $tipo = 'foto', $dataCadastro = null, $dataExpiracao = null)
+    {
+        $this->checkAnexosExpirationColumns();
+
+        $dataCadastro = $dataCadastro ?? date('Y-m-d H:i:s');
+        // Política de Retenção: 5 anos de validade
+        $dataExpiracao = $dataExpiracao ?? date('Y-m-d H:i:s', strtotime('+5 years', strtotime($dataCadastro)));
+
         $this->db->set('anexo', $anexo);
         $this->db->set('url', $url);
         $this->db->set('thumb', $thumb);
         $this->db->set('path', $path);
         $this->db->set('os_id', $os);
+        if ($this->db->field_exists('tipo', 'anexos')) {
+            $this->db->set('tipo', $tipo);
+        }
+        if ($this->db->field_exists('data_cadastro', 'anexos')) {
+            $this->db->set('data_cadastro', $dataCadastro);
+        }
+        if ($this->db->field_exists('data_expiracao', 'anexos')) {
+            $this->db->set('data_expiracao', $dataExpiracao);
+        }
 
         return $this->db->insert('anexos');
+    }
+
+    public function limparFotosExpiradas()
+    {
+        $this->checkAnexosExpirationColumns();
+
+        if (!$this->db->field_exists('data_expiracao', 'anexos')) {
+            return 0;
+        }
+
+        // Busca fotos cuja data de expiração atingiu ou passou de 5 anos
+        $this->db->where('data_expiracao IS NOT NULL');
+        $this->db->where('data_expiracao <=', date('Y-m-d H:i:s'));
+        $expirados = $this->db->get('anexos')->result();
+
+        $totalExcluidos = 0;
+        if (!empty($expirados)) {
+            foreach ($expirados as $file) {
+                // Remove arquivo principal do disco
+                if (!empty($file->path) && !empty($file->anexo)) {
+                    $arquivoPrincipal = $file->path . DIRECTORY_SEPARATOR . $file->anexo;
+                    if (file_exists($arquivoPrincipal)) {
+                        @unlink($arquivoPrincipal);
+                    }
+                }
+
+                // Remove miniatura/thumb do disco
+                if (!empty($file->path) && !empty($file->thumb)) {
+                    $arquivoThumb = $file->path . DIRECTORY_SEPARATOR . 'thumbs' . DIRECTORY_SEPARATOR . $file->thumb;
+                    if (file_exists($arquivoThumb)) {
+                        @unlink($arquivoThumb);
+                    }
+                }
+
+                // Remove o registro do banco de dados
+                $this->db->where('idAnexos', $file->idAnexos);
+                $this->db->delete('anexos');
+                $totalExcluidos++;
+            }
+
+            if ($totalExcluidos > 0) {
+                log_info("Auto-exclusão de fotos de OS: {$totalExcluidos} foto(s) com mais de 5 anos removida(s) automaticamente do banco e do disco.");
+            }
+        }
+
+        return $totalExcluidos;
     }
 
     public function getAnexos($os)
     {
         $this->db->where('os_id', $os);
+
+        return $this->db->get('anexos')->result();
+    }
+
+    public function getFotosOs($os)
+    {
+        $this->checkAnexosExpirationColumns();
+        $this->db->where('os_id', $os);
+        $this->db->order_by('idAnexos', 'desc');
 
         return $this->db->get('anexos')->result();
     }

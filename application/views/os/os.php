@@ -6,6 +6,60 @@
   select {
     width: 70px;
   }
+  .btn-nwe-foto {
+    background: #0284c7;
+    color: #ffffff !important;
+    border: none;
+    padding: 6px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    line-height: 1;
+    font-size: 14px;
+    transition: all 0.2s;
+  }
+  .btn-nwe-foto:hover {
+    background: #0369a1;
+    color: #ffffff !important;
+    transform: translateY(-1px);
+  }
+  .card-foto-os {
+    position: relative;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .card-foto-os:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.12);
+  }
+  .card-foto-thumb {
+    width: 100%;
+    height: 110px;
+    object-fit: cover;
+    display: block;
+    cursor: pointer;
+  }
+  .card-foto-body {
+    padding: 6px 8px;
+    font-size: 11px;
+    background: #f8fafc;
+    border-top: 1px solid #f1f5f9;
+  }
+  .badge-retencao {
+    background: #e0f2fe;
+    color: #0369a1;
+    border: 1px solid #bae6fd;
+    border-radius: 4px;
+    padding: 2px 4px;
+    font-size: 10px;
+    font-weight: 600;
+    display: inline-block;
+  }
 </style>
 <div class="new122">
     <div class="widget-title" style="margin: -20px 0 0">
@@ -173,6 +227,7 @@ foreach ($results as $r) {
     if ($editavel) {
         echo '<a style="margin-right: 1%" href="' . base_url() . 'index.php/os/editar/' . $r->idOs . '" class="btn-nwe3" title="Editar OS"><i class="bx bx-edit"></i></a>';
     }
+    echo '<a style="margin-right: 1%" href="#modal-fotos" role="button" data-toggle="modal" os="' . $r->idOs . '" class="btn-nwe-foto btn-abrir-fotos" title="Fotos da OS (JPEG, PNG, JPG) - Retenção 5 Anos"><i class="bx bx-camera"></i></a>';
     if ($this->permission->checkPermission($this->session->userdata('permissao'), 'dOs') && $editavel) {
         echo '<a href="#modal-excluir" role="button" data-toggle="modal" os="' . $r->idOs . '" class="btn-nwe4" title="Excluir OS"><i class="bx bx-trash-alt"></i></a>  ';
     }
@@ -205,14 +260,206 @@ foreach ($results as $r) {
             </div>
         </form>
     </div>
+    <!-- Modal de Fotos da OS (Retenção 5 Anos) -->
+    <div id="modal-fotos" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="modalFotosLabel" aria-hidden="true" style="width: 760px; margin-left: -380px;">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 id="modalFotosLabel"><i class="bx bx-camera" style="color: #0284c7;"></i> Fotos da OS #<span id="modalFotoOsNum"></span></h4>
+        </div>
+        <div class="modal-body" style="max-height: 480px; overflow-y: auto;">
+            <!-- Aviso da Política de Retenção de 5 Anos -->
+            <div class="alert alert-info" style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                <i class="bx bx-shield-quarter" style="font-size: 26px; color: #0284c7; flex-shrink: 0;"></i>
+                <div style="font-size: 12px; line-height: 1.4;">
+                    <strong>Retenção de 5 Anos no Banco de Dados:</strong> As fotos anexadas (formatos <strong>JPEG, PNG e JPG</strong>) são guardadas por <strong>5 anos</strong> no banco de dados e possuem mecanismo automatizado de auto-exclusão após o término desse período.
+                </div>
+            </div>
+
+            <!-- Formulário de Envio de Fotos -->
+            <form id="formUploadFotos" enctype="multipart/form-data" method="post" action="<?= site_url('os/anexarFotos') ?>" style="margin-bottom: 15px;">
+                <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
+                <input type="hidden" id="modalFotoOsId" name="idOsServico" value="" />
+                
+                <div style="background: #f8fafc; border: 2px dashed #94a3b8; border-radius: 8px; padding: 14px 18px; text-align: center;">
+                    <div style="font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 6px;">
+                        <i class="bx bx-cloud-upload" style="font-size: 22px; vertical-align: middle; color: #0284c7;"></i>
+                        Selecione as fotos da bancada/equipamento:
+                    </div>
+                    <input type="file" name="fotos[]" id="inputFotosOs" accept="image/jpeg,image/png,image/jpg,.jpg,.jpeg,.png" multiple="multiple" style="margin-bottom: 8px;" required />
+                    <div style="font-size: 11px; color: #64748b; margin-bottom: 10px;">Formatos aceitos: <strong>JPEG, PNG e JPG</strong> (fotos individuais ou múltiplas).</div>
+                    <button type="submit" id="btnEnviarFotos" class="button btn btn-primary">
+                        <span class="button__icon"><i class="bx bx-upload"></i></span>
+                        <span class="button__text2">Enviar Fotos</span>
+                    </button>
+                </div>
+            </form>
+
+            <div id="fotoUploadProgresso" style="display: none; margin-bottom: 15px;">
+                <div class="progress progress-striped active" style="margin-bottom: 0;">
+                    <div class="bar" style="width: 100%;">Enviando fotos e gerando miniaturas...</div>
+                </div>
+            </div>
+
+            <!-- Galeria de Fotos -->
+            <h5 style="border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; margin-top: 15px; font-weight: 600;">
+                <i class="bx bx-images"></i> Fotos Armazenadas (<span id="totalFotosOs">0</span>)
+            </h5>
+            <div id="galeriaFotosOs" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-top: 10px;">
+                <div style="grid-column: 1 / -1; text-align: center; color: #94a3b8; padding: 20px;">
+                    Carregando fotos...
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="button btn btn-warning" data-dismiss="modal" aria-hidden="true">
+                <span class="button__icon"><i class="bx bx-x"></i></span><span class="button__text2">Fechar</span>
+            </button>
+        </div>
+    </div>
 </div>
 
 <script type="text/javascript">
     $(document).ready(function() {
         $(document).on('click', 'a', function(event) {
             var os = $(this).attr('os');
-            $('#idOs').val(os);
+            if (os) {
+                $('#idOs').val(os);
+            }
         });
+
+        function carregarFotosOs(idOs) {
+            $('#galeriaFotosOs').html('<div style="grid-column: 1 / -1; text-align: center; color: #94a3b8; padding: 20px;"><i class="bx bx-loader-alt bx-spin" style="font-size: 24px;"></i><br>Carregando fotos da OS...</div>');
+            $.ajax({
+                url: '<?= site_url('os/getFotosOs') ?>',
+                type: 'GET',
+                data: { idOs: idOs },
+                dataType: 'json'
+            }).done(function(data) {
+                if (data.result && data.fotos) {
+                    $('#totalFotosOs').text(data.fotos.length);
+                    if (data.fotos.length === 0) {
+                        $('#galeriaFotosOs').html('<div style="grid-column: 1 / -1; text-align: center; color: #94a3b8; padding: 25px;"><i class="bx bx-image" style="font-size: 32px; color: #cbd5e1;"></i><br>Nenhuma foto anexada a esta OS até o momento.</div>');
+                        return;
+                    }
+                    var html = '';
+                    data.fotos.forEach(function(f) {
+                        html += '<div class="card-foto-os">';
+                        html += '<a href="' + f.url + '" target="_blank" title="Clique para ampliar">';
+                        html += '<img src="' + f.thumb + '" class="card-foto-thumb" alt="' + f.nome + '">';
+                        html += '</a>';
+                        html += '<div class="card-foto-body">';
+                        html += '<div style="font-weight: 600; color: #334155; margin-bottom: 2px;">Envio: ' + f.data_cadastro + '</div>';
+                        html += '<div class="badge-retencao"><i class="bx bx-time-five"></i> Expira em: ' + f.data_expiracao + '</div>';
+                        html += '<div style="margin-top: 6px; display: flex; justify-content: space-between; align-items: center;">';
+                        html += '<a href="' + f.url + '" target="_blank" class="btn btn-mini btn-info" title="Ver foto em tamanho real"><i class="bx bx-zoom-in"></i></a>';
+                        html += '<button type="button" class="btn btn-mini btn-danger btn-excluir-foto-os" data-id="' + f.id + '" data-os="' + idOs + '" title="Excluir Foto"><i class="bx bx-trash"></i></button>';
+                        html += '</div>';
+                        html += '</div>';
+                        html += '</div>';
+                    });
+                    $('#galeriaFotosOs').html(html);
+                } else {
+                    $('#galeriaFotosOs').html('<div style="grid-column: 1 / -1; text-align: center; color: #ef4444; padding: 20px;">Não foi possível carregar as fotos.</div>');
+                }
+            }).fail(function() {
+                $('#galeriaFotosOs').html('<div style="grid-column: 1 / -1; text-align: center; color: #ef4444; padding: 20px;">Erro de conexão ao buscar fotos.</div>');
+            });
+        }
+
+        $(document).on('click', '.btn-abrir-fotos', function() {
+            var os = $(this).attr('os');
+            $('#modalFotoOsId').val(os);
+            $('#modalFotoOsNum').text(os);
+            $('#inputFotosOs').val('');
+            carregarFotosOs(os);
+        });
+
+        $('#formUploadFotos').on('submit', function(e) {
+            e.preventDefault();
+            var form = this;
+            var formData = new FormData(form);
+            var idOs = $('#modalFotoOsId').val();
+
+            $('#btnEnviarFotos').prop('disabled', true);
+            $('#fotoUploadProgresso').show();
+
+            $.ajax({
+                url: $(form).attr('action'),
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: 'json'
+            }).done(function(data) {
+                $('#btnEnviarFotos').prop('disabled', false);
+                $('#fotoUploadProgresso').hide();
+                if (data.result) {
+                    Swal.fire({
+                        type: 'success',
+                        title: 'Sucesso!',
+                        text: data.mensagem
+                    });
+                    $('#inputFotosOs').val('');
+                    carregarFotosOs(idOs);
+                } else {
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Atenção',
+                        text: data.mensagem
+                    });
+                }
+            }).fail(function() {
+                $('#btnEnviarFotos').prop('disabled', false);
+                $('#fotoUploadProgresso').hide();
+                Swal.fire({
+                    type: 'error',
+                    title: 'Erro',
+                    text: 'Ocorreu um erro ao enviar as fotos. Verifique os formatos (JPEG, PNG, JPG).'
+                });
+            });
+        });
+
+        $(document).on('click', '.btn-excluir-foto-os', function(e) {
+            e.preventDefault();
+            var idFoto = $(this).data('id');
+            var idOs = $(this).data('os');
+
+            Swal.fire({
+                title: 'Excluir Foto?',
+                text: 'Deseja realmente remover esta foto da Ordem de Serviço?',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sim, excluir!',
+                cancelButtonText: 'Cancelar'
+            }).then(function(result) {
+                if (result.value) {
+                    $.ajax({
+                        url: '<?= site_url('os/excluirAnexo') ?>',
+                        type: 'POST',
+                        data: { idAnexo: idFoto, idOs: idOs },
+                        dataType: 'json'
+                    }).done(function(res) {
+                        if (res.result) {
+                            Swal.fire({
+                                type: 'success',
+                                title: 'Excluída!',
+                                text: 'Foto removida com sucesso.'
+                            });
+                            carregarFotosOs(idOs);
+                        } else {
+                            Swal.fire({
+                                type: 'error',
+                                title: 'Erro',
+                                text: res.mensagem || 'Erro ao excluir.'
+                            });
+                        }
+                    });
+                }
+            });
+        });
+
         $(document).on('click', '#excluir-notificacao', function(event) {
             event.preventDefault();
             $.ajax({
