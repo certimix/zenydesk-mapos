@@ -9,7 +9,20 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 require APPPATH . '/libraries/REST_Controller.php';
 
-
+/**
+ * @property CI_Loader $load
+ * @property CI_Input $input
+ * @property CI_DB_query_builder $db
+ * @property CI_Pagination $pagination
+ * @property CI_URI $uri
+ * @property CI_Security $security
+ * @property CI_Form_validation $form_validation
+ * @property Conecte_model $Conecte_model
+ * @property Os_model $os_model
+ * @property Mapos_model $mapos_model
+ * @property Audit_model $Audit_model
+ * @property object $CI
+ */
 class ClientOsController extends REST_Controller
 {
     public function __construct()
@@ -47,7 +60,7 @@ class ClientOsController extends REST_Controller
         }
     }
 
-    public function os_get(int $id = null)
+    public function os_get(?int $id = null)
     {
         $clientLogged = $this->logged_client();
         if (! $id) {
@@ -187,7 +200,7 @@ class ClientOsController extends REST_Controller
         $this->load->model('Audit_model');
         $log_data = [
             'Usuario' => '[APP]',
-            'tarefa' => 'Cliente ' . $this->logged_client()->usuario->nomeCliente . " Adicionou uma OS Nº ${osId} pelo APP",
+            'tarefa' => 'Cliente ' . $this->logged_client()->usuario->nomeCliente . " Adicionou uma OS Nº {$osId} pelo APP",
             'data' => date('Y-m-d'),
             'hora' => date('H:i:s'),
             'ip' => $_SERVER['REMOTE_ADDR']

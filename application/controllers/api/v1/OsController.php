@@ -4,6 +4,23 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 require APPPATH . '/libraries/REST_Controller.php';
 
+/**
+ * @property CI_Loader $load
+ * @property CI_Input $input
+ * @property CI_DB_query_builder $db
+ * @property CI_Form_validation $form_validation
+ * @property CI_Upload $upload
+ * @property CI_Image_lib $image_lib
+ * @property object $CI
+ * @property Permission $permission
+ * @property Os_model $os_model
+ * @property Api_model $Api_model
+ * @property Mapos_model $mapos_model
+ * @property Usuarios_model $usuarios_model
+ * @property Produtos_model $produtos_model
+ * @property Servicos_model $servicos_model
+ * @property Email_model $email_model
+ */
 class OsController extends REST_Controller
 {
     public function __construct()
@@ -378,7 +395,7 @@ class OsController extends REST_Controller
         $this->os_model->delete('anexos', 'os_id', $id);
 
         if ((int) $os->faturado === 1) {
-            $this->os_model->delete('lancamentos', 'descricao', "Fatura de OS - #${id}");
+            $this->os_model->delete('lancamentos', 'descricao', "Fatura de OS - #{$id}");
         }
 
         if ($this->os_model->delete('os', 'idOs', $id)) {

@@ -4,6 +4,26 @@ if (! defined('BASEPATH')) {
     exit('No direct script access allowed');
 }
 
+/**
+ * @property CI_Loader $load
+ * @property CI_Input $input
+ * @property CI_Output $output
+ * @property CI_Session $session
+ * @property CI_Pagination $pagination
+ * @property CI_URI $uri
+ * @property CI_Form_validation $form_validation
+ * @property CI_DB_query_builder $db
+ * @property CI_Upload $upload
+ * @property CI_Image_lib $image_lib
+ * @property CI_Zip $zip
+ * @property Permission $permission
+ * @property Os_model $os_model
+ * @property Os_model $Os_model
+ * @property Mapos_model $mapos_model
+ * @property Usuarios_model $usuarios_model
+ * @property Produtos_model $produtos_model
+ * @property Email_model $email_model
+ */
 class Os extends MY_Controller
 {
     public function __construct()
@@ -629,7 +649,7 @@ class Os extends MY_Controller
         $this->os_model->delete('anexos', 'os_id', $id);
         $this->os_model->delete('os', 'idOs', $id);
         if ((int) $os->faturado === 1) {
-            $this->os_model->delete('lancamentos', 'descricao', "Fatura de OS - #${id}");
+            $this->os_model->delete('lancamentos', 'descricao', "Fatura de OS - #{$id}");
         }
 
         log_info('Removeu uma OS. ID: ' . $id);

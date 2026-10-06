@@ -4,6 +4,23 @@ if (! defined('BASEPATH')) {
     exit('No direct script access allowed');
 }
 
+/**
+ * @property CI_Loader $load
+ * @property CI_Input $input
+ * @property CI_Output $output
+ * @property CI_Session $session
+ * @property CI_Pagination $pagination
+ * @property CI_URI $uri
+ * @property CI_Form_validation $form_validation
+ * @property CI_DB_query_builder $db
+ * @property Permission $permission
+ * @property Vendas_model $vendas_model
+ * @property Mapos_model $mapos_model
+ * @property Clientes_model $clientes_model
+ * @property Produtos_model $produtos_model
+ * @property Usuarios_model $usuarios_model
+ * @property Email_model $email_model
+ */
 class Vendas extends MY_Controller
 {
     public function __construct()

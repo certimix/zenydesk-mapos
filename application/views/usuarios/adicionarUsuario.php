@@ -1,3 +1,7 @@
+<?php
+$custom_error = $custom_error ?? '';
+$permissoes = $permissoes ?? [];
+?>
 <script src="<?php echo base_url() ?>assets/js/jquery.mask.min.js"></script>
 <script src="<?php echo base_url() ?>assets/js/sweetalert2.all.min.js"></script>
 <script src="<?php echo base_url() ?>assets/js/funcoes.js"></script>
@@ -12,7 +16,7 @@
                 <h5>Cadastro de Usuário</h5>
             </div>
             <div class="widget-content nopadding tab-content">
-                <?php if ($custom_error != '') {
+                <?php if (!empty($custom_error)) {
                     echo '<div class="alert alert-danger">' . $custom_error . '</div>';
                 } ?>
                 <form action="<?php echo current_url(); ?>" id="formUsuario" method="post" class="form-horizontal">
