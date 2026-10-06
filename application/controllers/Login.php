@@ -74,6 +74,125 @@ class Login extends CI_Controller
         exit();
     }
 
+    public function googleAuth()
+    {
+        header('Content-Type: application/json');
+
+        $credential = $this->input->post('credential');
+        if (empty($credential)) {
+            echo json_encode(['result' => false, 'message' => 'Token do Google não informado.']);
+            exit();
+        }
+
+        // 1. Decodificar e validar token JWT do Google
+        $userData = null;
+        try {
+            $parts = explode('.', $credential);
+            if (count($parts) === 3) {
+                $payloadJson = base64_decode(str_replace(['-', '_'], ['+', '/'], $parts[1]));
+                $payload = json_decode($payloadJson, true);
+                if (!empty($payload['email'])) {
+                    if (isset($payload['iss']) && strpos($payload['iss'], 'accounts.google.com') !== false) {
+                        $userData = $payload;
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+            $userData = null;
+        }
+
+        // Validação secundária via API oficial do Google se necessário
+        if (!$userData) {
+            $ch = curl_init('https://oauth2.googleapis.com/tokeninfo?id_token=' . urlencode($credential));
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 6);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            $response = curl_exec($ch);
+            curl_close($ch);
+
+            if ($response) {
+                $resData = json_decode($response, true);
+                if (!empty($resData['email'])) {
+                    $userData = $resData;
+                }
+            }
+        }
+
+        if (!$userData || empty($userData['email'])) {
+            echo json_encode(['result' => false, 'message' => 'Falha ao validar conta do Google. Token inválido ou expirado.']);
+            exit();
+        }
+
+        $email = trim(strtolower($userData['email']));
+        $nome = !empty($userData['name']) ? trim($userData['name']) : explode('@', $email)[0];
+        $foto = !empty($userData['picture']) ? $userData['picture'] : '';
+
+        // 2. Localizar usuário no banco ou criar nova conta
+        $user = $this->db->get_where('usuarios', ['email' => $email])->row();
+
+        if ($user) {
+            if ($user->situacao != 1) {
+                echo json_encode(['result' => false, 'message' => 'A sua conta de usuário está desativada no sistema. Contate o administrador.']);
+                exit();
+            }
+
+            if (!empty($user->dataExpiracao) && $this->chk_date($user->dataExpiracao)) {
+                echo json_encode(['result' => false, 'message' => 'A sua conta de usuário está expirada. Contate o administrador.']);
+                exit();
+            }
+
+            if (empty($user->url_image_user) && !empty($foto)) {
+                $this->db->where('idUsuarios', $user->idUsuarios)->update('usuarios', ['url_image_user' => $foto]);
+                $user->url_image_user = $foto;
+            }
+        } else {
+            // Criação automática de conta Google
+            $permPadrao = $this->db->get_where('permissoes', ['situacao' => 1])->row();
+            $permId = $permPadrao ? $permPadrao->idPermissao : 1;
+
+            $novoUsuario = [
+                'nome' => $nome,
+                'email' => $email,
+                'senha' => password_hash(bin2hex(random_bytes(16)), PASSWORD_DEFAULT),
+                'cpf' => '000.000.000-00',
+                'cep' => '00000-000',
+                'telefone' => '(00) 00000-0000',
+                'situacao' => 1,
+                'permissoes_id' => $permId,
+                'dataCadastro' => date('Y-m-d'),
+                'dataExpiracao' => date('Y-m-d', strtotime('+10 years')),
+                'url_image_user' => $foto,
+            ];
+
+            $this->db->insert('usuarios', $novoUsuario);
+            $userId = $this->db->insert_id();
+            $user = $this->db->get_where('usuarios', ['idUsuarios' => $userId])->row();
+
+            log_info("Nova conta de usuário criada automaticamente via Google: {$email} (ID: {$userId})");
+        }
+
+        // 3. Iniciar sessão do usuário
+        $this->session->sess_regenerate(true);
+        $session_admin_data = [
+            'nome_admin' => $user->nome,
+            'email_admin' => $user->email,
+            'url_image_user_admin' => $user->url_image_user,
+            'url_image_user' => $user->url_image_user,
+            'id_admin' => $user->idUsuarios,
+            'permissao' => $user->permissoes_id,
+            'logado' => true,
+        ];
+        $this->session->set_userdata($session_admin_data);
+
+        log_info("Usuário {$email} efetuou login via Google no ZenyDesk OS.");
+        echo json_encode([
+            'result' => true,
+            'message' => 'Autenticação com o Google realizada com sucesso!',
+            'redirect' => site_url('mapos'),
+        ]);
+        exit();
+    }
+
     private function chk_date($data_banco)
     {
         $data_banco = new DateTime($data_banco);

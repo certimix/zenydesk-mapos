@@ -12,8 +12,8 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
   <link rel="shortcut icon" type="image/png" href="<?= base_url(); ?>assets/img/favicon.png" />
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 
 <body>
@@ -77,6 +77,27 @@
                   <a href="https://zenydesk.com" target="_blank" style="color: #a0aec0; text-decoration: none; font-weight: 500;">
                     zenydesk.com
                   </a>
+                </div>
+
+                <!-- Divisor Google -->
+                <div style="display: flex; align-items: center; text-align: center; margin: 18px 0 14px 0;">
+                  <div style="flex-grow: 1; border-bottom: 1px solid rgba(255, 255, 255, 0.12);"></div>
+                  <span style="padding: 0 10px; color: #718096; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">ou continue com</span>
+                  <div style="flex-grow: 1; border-bottom: 1px solid rgba(255, 255, 255, 0.12);"></div>
+                </div>
+
+                <!-- Botão Oficial Google Identity Services & Fallback -->
+                <div id="googleButtonWrapper" style="display: flex; justify-content: center; width: 100%; min-height: 44px;">
+                  <div id="googleButtonContainer" style="display: flex; justify-content: center; width: 100%;"></div>
+                </div>
+
+                <button type="button" id="btnGoogleCustom" style="display: none; width: 100%; background: #ffffff; color: #1f2937; border: 1px solid #e5e7eb; border-radius: 22px; padding: 10px 16px; font-size: 13px; font-weight: 600; cursor: pointer; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-top: 4px;">
+                  <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.6h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.9z"/><path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3 0-.8.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15s.7 5.3 1.9 7.7l3.7-2.9z"/><path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.4-6.4-5.2L1.9 16C3.7 19.7 7.5 23 12 23z"/></svg>
+                  <span>Entrar com o Google</span>
+                </button>
+
+                <div id="googleLoading" style="display: none; text-align: center; color: #38bdf8; font-size: 12px; margin-top: 10px;">
+                  <i class="fas fa-spinner fa-spin" style="margin-right: 6px;"></i> Conectando com o Google...
                 </div>
                 <a href="#notification" id="call-modal" role="button" class="btn" data-toggle="modal" style="display: none ">notification</a>
                 <div id="notification" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -175,7 +196,91 @@
           $(element).parents('.control-group').addClass('success');
         }
       });
+
+      // Configuração e Renderização do Google Identity Services
+      var GOOGLE_CLIENT_ID = "<?= $_ENV['GOOGLE_CLIENT_ID'] ?? '615444982313-dvtl6p7jtb7smte977430comtvu118ge.apps.googleusercontent.com'; ?>";
+
+      function inicializarGoogleAuth() {
+        if (window.google && window.google.accounts && window.google.accounts.id) {
+          try {
+            google.accounts.id.initialize({
+              client_id: GOOGLE_CLIENT_ID,
+              callback: handleGoogleCredentialResponse,
+              auto_select: false,
+              cancel_on_tap_outside: true
+            });
+            google.accounts.id.renderButton(
+              document.getElementById("googleButtonContainer"),
+              {
+                type: "standard",
+                theme: "outline",
+                size: "large",
+                text: "continue_with",
+                shape: "pill",
+                logo_alignment: "left",
+                width: 280,
+                locale: "pt-BR"
+              }
+            );
+          } catch (err) {
+            console.warn("Google Render:", err);
+            $("#googleButtonContainer").hide();
+            $("#btnGoogleCustom").css('display', 'flex');
+          }
+        } else {
+          setTimeout(inicializarGoogleAuth, 300);
+        }
+      }
+
+      inicializarGoogleAuth();
+
+      $("#btnGoogleCustom").on('click', function() {
+        if (window.google && window.google.accounts && window.google.accounts.id) {
+          google.accounts.id.prompt();
+        } else {
+          alert("Serviço do Google temporariamente indisponível.");
+        }
+      });
     });
+
+    function handleGoogleCredentialResponse(response) {
+      if (response && response.credential) {
+        $("#googleLoading").show();
+        $("#googleButtonWrapper").hide();
+        $("#btnGoogleCustom").hide();
+
+        var csrfName = "<?= $this->security->get_csrf_token_name(); ?>";
+        var csrfHash = $("input[name='" + csrfName + "']").val() || "<?= $this->security->get_csrf_hash(); ?>";
+
+        var postData = {
+          credential: response.credential
+        };
+        postData[csrfName] = csrfHash;
+
+        $.ajax({
+          url: "<?= site_url('login/googleAuth'); ?>",
+          type: "POST",
+          dataType: "json",
+          data: postData,
+          success: function(res) {
+            if (res.result) {
+              window.location.href = res.redirect || "<?= site_url('mapos'); ?>";
+            } else {
+              $("#googleLoading").hide();
+              $("#googleButtonWrapper").show();
+              $("#message").text(res.message || "Erro ao autenticar com o Google.");
+              $("#call-modal").trigger("click");
+            }
+          },
+          error: function() {
+            $("#googleLoading").hide();
+            $("#googleButtonWrapper").show();
+            $("#message").text("Ocorreu um erro de comunicação ao autenticar com o Google.");
+            $("#call-modal").trigger("click");
+          }
+        });
+      }
+    }
   </script>
 </body>
 
