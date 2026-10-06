@@ -37,6 +37,10 @@ class Mapos extends MY_Controller
     public function minhaConta()
     {
         $this->data['usuario'] = $this->mapos_model->getById($this->session->userdata('id_admin'));
+        if ($this->data['usuario'] && !empty($this->data['usuario']->url_image_user)) {
+            $this->session->set_userdata('url_image_user', $this->data['usuario']->url_image_user);
+            $this->session->set_userdata('url_image_user_admin', $this->data['usuario']->url_image_user);
+        }
         $this->data['view'] = 'mapos/minhaConta';
 
         return $this->layout();
@@ -363,6 +367,7 @@ class Mapos extends MY_Controller
 
             if ($retorno) {
                 $this->session->set_userdata('url_image_user', $imageUserPath);
+                $this->session->set_userdata('url_image_user_admin', $imageUserPath);
                 $this->session->set_flashdata('success', 'Foto de perfil alterada com sucesso!');
                 log_info('Alterou a imagem de perfil do usuário.');
             } else {

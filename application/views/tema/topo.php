@@ -124,28 +124,48 @@
     <div id="userr" style="padding-right:45px;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;">
       <div class="user-names userT0">
         <?php
-        function saudacao()
-        {
-            $hora = date('H');
-            if ($hora >= 00 && $hora < 12) {
-                return 'Bom dia, ';
-            } elseif ($hora >= 12 && $hora < 18) {
-                return 'Boa tarde, ';
-            } else {
-                return 'Boa noite, ';
+        if (!function_exists('saudacao')) {
+            function saudacao()
+            {
+                $hora = (int) date('H');
+                if ($hora >= 0 && $hora < 12) {
+                    return 'Bom dia, ';
+                } elseif ($hora >= 12 && $hora < 18) {
+                    return 'Boa tarde, ';
+                } else {
+                    return 'Boa noite, ';
+                }
             }
         }
 
-  $login = '';
-  echo saudacao($login); // Irá retornar conforme o horário
-  ?>
+        echo saudacao();
+        ?>
       </div>
       <div class="userT"><?= $this->session->userdata('nome_admin') ?></div>
 
       <section class="sec_profile">
         <div class="profile">
           <div class="profile-img">
-            <a href="<?= site_url('mapos/minhaConta'); ?>"><img src="<?= !is_file(FCPATH . "assets/userImage/" . $this->session->userdata('url_image_user_admin')) ?  base_url() . "assets/img/User.png" : base_url() . "assets/userImage/" . $this->session->userdata('url_image_user_admin') ?>" alt=""></a>
+            <?php
+            $userPhoto = $this->session->userdata('url_image_user_admin');
+            if (empty($userPhoto)) {
+                $userPhoto = $this->session->userdata('url_image_user');
+            }
+            if ((empty($userPhoto) || !is_file(FCPATH . 'assets/userImage/' . $userPhoto)) && $this->session->userdata('id_admin')) {
+                $CI = &get_instance();
+                $CI->load->database();
+                $dbUser = $CI->db->select('url_image_user')->get_where('usuarios', ['idUsuarios' => $this->session->userdata('id_admin')])->row();
+                if ($dbUser && !empty($dbUser->url_image_user) && is_file(FCPATH . 'assets/userImage/' . $dbUser->url_image_user)) {
+                    $userPhoto = $dbUser->url_image_user;
+                    $this->session->set_userdata('url_image_user_admin', $userPhoto);
+                    $this->session->set_userdata('url_image_user', $userPhoto);
+                }
+            }
+            $userAvatarUrl = (!empty($userPhoto) && is_file(FCPATH . 'assets/userImage/' . $userPhoto))
+                ? base_url('assets/userImage/' . $userPhoto)
+                : base_url('assets/img/User.png');
+            ?>
+            <a href="<?= site_url('mapos/minhaConta'); ?>"><img src="<?= $userAvatarUrl ?>" alt=""></a>
           </div>
         </div>
       </section>
