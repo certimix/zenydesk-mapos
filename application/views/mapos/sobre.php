@@ -13,7 +13,7 @@
                         <img src="<?= base_url() ?>assets/img/logo-certimix.png" alt="Certimix Tecnologia" style="max-height: 80px; width: auto;" />
                     </div>
 
-                    <h3 style="color: #2d3748; margin-bottom: 10px; font-weight: 700;">Certimix OS &mdash; Sistema de Gestão de Ordens de Serviço</h3>
+                    <h3 style="color: #2d3748; margin-bottom: 10px; font-weight: 700;">Zenydesk OS &mdash; Sistema de Gestão de Ordens de Serviço</h3>
                     <p style="color: #718096; max-width: 700px; margin: 0 auto 25px auto; font-size: 14px; line-height: 1.6;">
                         Plataforma completa e dedicada para controle de ordens de serviço, assistência técnica, orçamentos, vendas de balcão, clientes e financeiro.
                     </p>

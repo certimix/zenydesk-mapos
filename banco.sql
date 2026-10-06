@@ -636,7 +636,7 @@ CREATE TABLE IF NOT EXISTS `migrations` (
 );
 
 INSERT IGNORE INTO `configuracoes` (`idConfig`, `config`, `valor`) VALUES
-(2, 'app_name', 'Certimix OS'),
+(2, 'app_name', 'Zenydesk OS'),
 (3, 'app_theme', 'white'),
 (4, 'per_page', '10'),
 (5, 'os_notification', 'cliente'),

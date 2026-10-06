@@ -12,7 +12,7 @@ class Configuracoes extends Seeder
             [
                 'idConfig' => 2,
                 'config' => 'app_name',
-                'valor' => 'Certimix OS',
+                'valor' => 'Zenydesk OS',
             ],
             [
                 'idConfig' => 3,

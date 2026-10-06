@@ -23,7 +23,7 @@ class MY_Controller extends CI_Controller
             'first_tag_close' => '</li>',
             'last_tag_open' => '<li>',
             'last_tag_close' => '</li>',
-            'app_name' => 'Certimix OS',
+            'app_name' => 'Zenydesk OS',
             'app_theme' => 'default',
             'os_notification' => 'cliente',
             'control_estoque' => '1',
@@ -53,6 +53,10 @@ class MY_Controller extends CI_Controller
 
         foreach ($configuracoes as $c) {
             $this->data['configuration'][$c->config] = $c->valor;
+        }
+
+        if (empty($this->data['configuration']['app_name']) || in_array($this->data['configuration']['app_name'], ['Certimix OS', 'Map-OS', 'Map-Os', 'Map OS'])) {
+            $this->data['configuration']['app_name'] = 'Zenydesk OS';
         }
     }
 

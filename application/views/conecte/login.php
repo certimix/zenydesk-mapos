@@ -47,7 +47,7 @@ $parse_email = $this->input->get('e');
     <div class="main-login">
         <div class="left-login">
             <h1 class="h-one">Área do Cliente</h1>
-            <img src="<?php echo base_url() ?>assets/img/forms-animate.svg" class="left-login-imagec" alt="Certimix OS">
+            <img src="<?php echo base_url() ?>assets/img/forms-animate.svg" class="left-login-imagec" alt="Zenydesk OS">
         </div>
 
         <div id="loginbox">

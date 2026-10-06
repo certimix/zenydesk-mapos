@@ -2,7 +2,7 @@
 <html lang="pt-br">
 
 <head>
-  <title><?= $configuration['app_name'] ?: 'Zenydesk-O.S' ?></title>
+  <title><?= (!empty($configuration['app_name']) && $configuration['app_name'] !== 'Certimix OS') ? $configuration['app_name'] : 'Zenydesk OS' ?></title>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="csrf-token-name" content="<?= config_item("csrf_token_name") ?>">
