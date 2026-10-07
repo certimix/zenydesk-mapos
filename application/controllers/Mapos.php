@@ -7,6 +7,13 @@ class Mapos extends MY_Controller
     {
         parent::__construct();
         $this->load->model('mapos_model');
+
+        // Redireciona URLs legadas com /mapos para a URL oficial Zenydesk.OS na barra do navegador
+        if ($this->uri->segment(1) === 'mapos') {
+            $segments = $this->uri->segment_array();
+            $remaining = implode('/', array_slice($segments, 1));
+            redirect('Zenydesk.OS' . ($remaining ? '/' . $remaining : ''), 'location', 301);
+        }
     }
 
     public function index()

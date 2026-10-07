@@ -89,8 +89,8 @@
           <a href="#" class="tip-right dropdown-toggle" data-toggle="dropdown" title="Perfis"><i class='bx bx-user-circle iconN'></i><span class="text"></span></a>
           <ul class="dropdown-menu">
             <li class=""><a title="Área do Cliente" href="<?= site_url(); ?>/mine" target="_blank"> <span class="text">Área do Cliente</span></a></li>
-            <li class=""><a title="Meu Perfil" href="<?= site_url('mapos/minhaConta'); ?>"><span class="text">Meu Perfil</span></a></li>
-            <li class=""><a title="Sobre a Certimix" href="<?= site_url('mapos/sobre'); ?>"><span class="text">Sobre a Certimix</span></a></li>
+            <li class=""><a title="Meu Perfil" href="<?= site_url('Zenydesk.OS/minhaConta'); ?>"><span class="text">Meu Perfil</span></a></li>
+            <li class=""><a title="Sobre a Certimix" href="<?= site_url('Zenydesk.OS/sobre'); ?>"><span class="text">Sobre a Certimix</span></a></li>
             <li class="divider"></li>
             <li class=""><a title="Sair do Sistema" href="<?= site_url('login/sair'); ?>"><i class='bx bx-log-out-circle'></i> <span class="text">Sair do Sistema</span></a></li>
           </ul>
@@ -111,13 +111,13 @@
         <li class="dropdown">
           <a href="#" class="tip-right dropdown-toggle" data-toggle="dropdown" title="Configurações"><i class='bx bx-cog iconN'></i><span class="text"></span></a>
           <ul class="dropdown-menu">
-            <li><a href="<?= site_url('mapos/configurar') ?>">Sistema</a></li>
+            <li><a href="<?= site_url('Zenydesk.OS/configurar') ?>">Sistema</a></li>
             <li><a href="<?= site_url('usuarios') ?>">Usuários</a></li>
-            <li><a href="<?= site_url('mapos/emitente') ?>">Emitente</a></li>
+            <li><a href="<?= site_url('Zenydesk.OS/emitente') ?>">Emitente</a></li>
             <li><a href="<?= site_url('permissoes') ?>">Permissões</a></li>
             <li><a href="<?= site_url('auditoria') ?>">Auditoria</a></li>
-            <li><a href="<?= site_url('mapos/emails') ?>">Emails</a></li>
-            <li><a href="<?= site_url('mapos/backup') ?>">Backup</a></li>
+            <li><a href="<?= site_url('Zenydesk.OS/emails') ?>">Emails</a></li>
+            <li><a href="<?= site_url('Zenydesk.OS/backup') ?>">Backup</a></li>
           </ul>
         </li>
       </ul>
@@ -169,7 +169,7 @@
                 ? base_url('assets/userImage/' . $userPhoto)
                 : base_url('assets/img/User.png');
             ?>
-            <a href="<?= site_url('mapos/minhaConta'); ?>"><img src="<?= $userAvatarUrl ?>" alt=""></a>
+            <a href="<?= site_url('Zenydesk.OS/minhaConta'); ?>"><img src="<?= $userAvatarUrl ?>" alt=""></a>
           </div>
         </div>
       </section>
@@ -180,7 +180,7 @@
 
   <!--start-top-serch-->
   <div style="display: none" id="search">
-    <form action="<?= site_url('mapos/pesquisar') ?>">
+    <form action="<?= site_url('Zenydesk.OS/pesquisar') ?>">
       <input type="text" name="termo" placeholder="Pesquisar..." />
       <button type="submit" class="tip-bottom" title="Pesquisar"><i class="fas fa-search fa-white"></i></button>
     </form>

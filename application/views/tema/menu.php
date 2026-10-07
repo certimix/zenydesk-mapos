@@ -1,7 +1,7 @@
 <!--sidebar-menu-->
 <nav id="sidebar">
     <div id="newlog" style="display: flex; justify-content: center; align-items: center; padding: 14px 10px; margin-bottom: 6px;">
-        <a href="<?= site_url('mapos'); ?>" style="display: flex; justify-content: center; align-items: center; text-decoration: none; width: 100%;">
+        <a href="<?= site_url('Zenydesk.OS'); ?>" style="display: flex; justify-content: center; align-items: center; text-decoration: none; width: 100%;">
             <img src="<?= base_url(); ?>assets/img/logo-zenydesk.png" alt="ZenyDesk" class="logo-expanded" style="max-height: 38px; max-width: 190px; width: auto; object-fit: contain; display: block; margin: 0 auto;">
             <img src="<?= base_url(); ?>assets/img/favicon.png" alt="ZenyDesk" class="logo-collapsed" style="max-height: 32px; max-width: 32px; width: auto; display: none; margin: 0 auto;">
         </a>
@@ -22,7 +22,7 @@
     </a>
     <!-- Start Pesquisar-->
     <li class="search-box">
-        <form style="display: flex" action="<?= site_url('mapos/pesquisar') ?>">
+        <form style="display: flex" action="<?= site_url('Zenydesk.OS/pesquisar') ?>">
         <button style="background:transparent;border:transparent" type="submit" class="tip-bottom" title="">
                 <i class='bx bx-search iconX'></i></button>
                 <input style="background:transparent;<?= $configuration['app_theme'] == 'white' ? 'color:#313030;' : 'color:#fff;' ?>border:transparent" type="search" name="termo" placeholder="Pesquise aqui...">
@@ -146,7 +146,7 @@
 
         <div class="botton-content">
             <li class="">
-                <a class="tip-bottom" title="Sobre a Certimix" href="<?= site_url('mapos/sobre'); ?>">
+                <a class="tip-bottom" title="Sobre a Certimix" href="<?= site_url('Zenydesk.OS/sobre'); ?>">
                     <i class='bx bx-info-circle iconX'></i>
                     <span class="title">Sobre</span>
                     <span class="title-tooltip">Sobre a Certimix</span>

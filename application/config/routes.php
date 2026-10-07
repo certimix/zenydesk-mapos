@@ -45,6 +45,16 @@ if (! defined('BASEPATH')) {
 $route['default_controller'] = 'mapos';
 $route['404_override'] = '';
 
+// Rotas canônicas e amigáveis ZenyDesk.OS
+$route['Zenydesk.OS'] = 'mapos';
+$route['Zenydesk.OS/(.*)'] = 'mapos/$1';
+$route['ZenydeskOS'] = 'mapos';
+$route['ZenydeskOS/(.*)'] = 'mapos/$1';
+$route['zenydesk.os'] = 'mapos';
+$route['zenydesk.os/(.*)'] = 'mapos/$1';
+$route['zenydesk-os'] = 'mapos';
+$route['zenydesk-os/(.*)'] = 'mapos/$1';
+
 // Rotas da API
 if (filter_var($_ENV['API_ENABLED'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
     require APPPATH . 'config/routes_api.php';
