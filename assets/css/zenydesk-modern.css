@@ -134,7 +134,7 @@ h1, h2, h3, h4, h5, h6, .font-heading, .widget-title h5, .brand {
 }
 
 /* ==========================================================================
-   FORMULÁRIOS & INPUTS (Foco Suave Luminoso)
+   FORMULÁRIOS & INPUTS (Balõezinhos / Selects & Campos de Texto Formatados)
    ========================================================================== */
 input[type="text"],
 input[type="password"],
@@ -143,13 +143,55 @@ input[type="number"],
 input[type="search"],
 select,
 textarea {
+  box-sizing: border-box !important;
   font-family: var(--zd-font-body) !important;
   border-radius: var(--zd-radius-md) !important;
   border: 1px solid #cbd5e1 !important;
-  padding: 8px 12px !important;
+  height: auto !important;
+  min-height: 38px !important;
+  padding: 6px 12px !important;
+  font-size: 13px !important;
+  line-height: 1.42857 !important;
   transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
   outline: none !important;
   background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+select,
+.form-horizontal .controls select {
+  box-sizing: border-box !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  line-height: 24px !important;
+  padding: 6px 36px 6px 14px !important;
+  min-width: 180px !important;
+  max-width: 100% !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: #0f172a !important;
+  background-color: #ffffff !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 12px center !important;
+  background-size: 16px 16px !important;
+  cursor: pointer !important;
+}
+
+.form-horizontal .controls input[type="text"],
+.form-horizontal .controls input[type="password"],
+.form-horizontal .controls input[type="email"],
+.form-horizontal .controls input[type="number"],
+.form-horizontal .controls input[type="search"] {
+  box-sizing: border-box !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  line-height: 24px !important;
+  min-width: 220px !important;
+  max-width: 100% !important;
 }
 
 input[type="text"]:focus,
