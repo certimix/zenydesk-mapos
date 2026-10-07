@@ -141,6 +141,16 @@
                         </a>
                     </li>
                 <?php } ?>
+                <?php if ($this->permission->checkPermission($this->session->userdata('permissao'), 'cBackup') || $this->permission->checkPermission($this->session->userdata('permissao'), 'cSistema')) { ?>
+                    <li class="<?php if (isset($menuBackup)) {
+                        echo 'active';
+                    }; ?>">
+                        <a class="tip-bottom" title="Backup & Migração" href="<?= site_url('backup') ?>"><i class='bx bx-data iconX'></i>
+                            <span class="title">Banco de Dados</span>
+                            <span class="title-tooltip">Backup & Migração</span>
+                        </a>
+                    </li>
+                <?php } ?>
             </ul>
         </div>
 
