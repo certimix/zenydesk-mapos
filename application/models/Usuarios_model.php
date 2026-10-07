@@ -5,6 +5,17 @@ class Usuarios_model extends CI_Model
     public function __construct()
     {
         parent::__construct();
+        $this->load->dbforge();
+        if (!$this->db->field_exists('permissoes_id_2', 'usuarios')) {
+            $this->dbforge->add_column('usuarios', [
+                'permissoes_id_2' => [
+                    'type' => 'INT',
+                    'constraint' => 11,
+                    'null' => true,
+                    'default' => null,
+                ],
+            ]);
+        }
     }
 
     /**
@@ -17,14 +28,15 @@ class Usuarios_model extends CI_Model
     private const CAMPOS_PUBLICOS = 'usuarios.idUsuarios, usuarios.nome, usuarios.rg, usuarios.cpf, usuarios.cep,
         usuarios.rua, usuarios.numero, usuarios.bairro, usuarios.cidade, usuarios.estado, usuarios.email,
         usuarios.telefone, usuarios.celular, usuarios.dataCadastro, usuarios.dataExpiracao, usuarios.situacao,
-        usuarios.permissoes_id, usuarios.url_image_user';
+        usuarios.permissoes_id, usuarios.permissoes_id_2, usuarios.url_image_user';
 
     public function get($perpage = 0, $start = 0, $one = false)
     {
         $this->db->from('usuarios');
-        $this->db->select(self::CAMPOS_PUBLICOS . ', permissoes.nome as permissao');
+        $this->db->select(self::CAMPOS_PUBLICOS . ', permissoes.nome as permissao, permissoes_sec.nome as permissao_secundaria');
         $this->db->limit($perpage, $start);
         $this->db->join('permissoes', 'usuarios.permissoes_id = permissoes.idPermissao', 'left');
+        $this->db->join('permissoes as permissoes_sec', 'usuarios.permissoes_id_2 = permissoes_sec.idPermissao', 'left');
 
         $query = $this->db->get();
 

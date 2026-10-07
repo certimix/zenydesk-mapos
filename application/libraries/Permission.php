@@ -20,7 +20,7 @@ if (! defined('BASEPATH')) {
  */
 class Permission
 {
-    private $permissions = [];
+    private $permissionsCache = [];
 
     private $table = 'permissoes'; //Nome tabela onde ficam armazenadas as permissões
 
@@ -40,39 +40,54 @@ class Permission
         if ($idPermissao == null || $atividade == null) {
             return false;
         }
-        // Se as permissões não estiverem carregadas, requisita o carregamento
-        if ($this->permissions == null) {
-            // Se não carregar retorna falso
-            if (! $this->loadPermission($idPermissao)) {
-                return false;
+
+        $idsToCheck = [];
+        if (is_array($idPermissao)) {
+            $idsToCheck = $idPermissao;
+        } else {
+            $idsToCheck[] = $idPermissao;
+        }
+
+        // Se o usuário possuir permissão secundária na sessão, adiciona para checagem combinada de autonomia
+        if (isset($this->CI->session) && $this->CI->session->userdata('permissao_secundaria')) {
+            $secId = $this->CI->session->userdata('permissao_secundaria');
+            if ($secId && !in_array($secId, $idsToCheck)) {
+                $idsToCheck[] = $secId;
             }
         }
 
-        if (is_array($this->permissions[0])) {
-            if (array_key_exists($atividade, $this->permissions[0])) {
-                // compara a atividade requisitada com a permissão.
-                if ($this->permissions[0][$atividade] == 1) {
-                    return true;
-                }
+        foreach ($idsToCheck as $id) {
+            if ($this->hasPermissionForId($id, $atividade)) {
+                return true;
             }
         }
 
         return false;
     }
 
-    private function loadPermission($id = null)
+    private function hasPermissionForId($id = null, $atividade = null)
     {
-        if ($id != null) {
+        if ($id == null || $atividade == null) {
+            return false;
+        }
+
+        if (!isset($this->permissionsCache[$id])) {
             $this->CI->db->select($this->table . '.' . $this->select);
             $this->CI->db->where($this->pk, $id);
             $this->CI->db->limit(1);
             $array = $this->CI->db->get($this->table)->row_array();
 
-            if (count($array) > 0) {
+            if ($array && !empty($array[$this->select])) {
                 $raw = $array[$this->select];
-                $array = json_decode_legacy($raw);
-                $this->permissions = [$array];
+                $this->permissionsCache[$id] = json_decode_legacy($raw);
+            } else {
+                $this->permissionsCache[$id] = [];
+            }
+        }
 
+        $perms = $this->permissionsCache[$id];
+        if (is_array($perms) && array_key_exists($atividade, $perms)) {
+            if ($perms[$atividade] == 1) {
                 return true;
             }
         }

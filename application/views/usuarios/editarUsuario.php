@@ -137,7 +137,7 @@
 
 
                     <div class="control-group">
-                        <label class="control-label">Permissões<span class="required">*</span></label>
+                        <label class="control-label">Nível / Categoria Principal<span class="required">*</span></label>
                         <div class="controls">
                             <select name="permissoes_id" id="permissoes_id">
                                 <?php foreach ($permissoes as $p) {
@@ -147,6 +147,19 @@
                                         $selected = '';
                                     }
                                     echo '<option value="' . $p->idPermissao . '"' . $selected . '>' . $p->nome . '</option>';
+                                } ?>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label">Nível / Categoria Secundária (Opcional)</label>
+                        <div class="controls">
+                            <select name="permissoes_id_2" id="permissoes_id_2">
+                                <option value="" <?= empty($result->permissoes_id_2) ? 'selected' : '' ?>>Nenhum (Apenas Nível Principal)</option>
+                                <?php foreach ($permissoes as $p) {
+                                    $selected = ($p->idPermissao == $result->permissoes_id_2) ? 'selected' : '';
+                                    echo '<option value="' . $p->idPermissao . '" ' . $selected . '>' . $p->nome . '</option>';
                                 } ?>
                             </select>
                         </div>

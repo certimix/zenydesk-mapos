@@ -133,9 +133,21 @@ $permissoes = $permissoes ?? [];
                     </div>
 
                     <div class="control-group">
-                        <label class="control-label">Permissões<span class="required">*</span></label>
+                        <label class="control-label">Nível / Categoria Principal<span class="required">*</span></label>
                         <div class="controls">
                             <select name="permissoes_id" id="permissoes_id">
+                                <?php foreach ($permissoes as $p) {
+                                    echo '<option value="' . $p->idPermissao . '">' . $p->nome . '</option>';
+                                } ?>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label">Nível / Categoria Secundária (Opcional)</label>
+                        <div class="controls">
+                            <select name="permissoes_id_2" id="permissoes_id_2">
+                                <option value="">Nenhum (Apenas Nível Principal)</option>
                                 <?php foreach ($permissoes as $p) {
                                     echo '<option value="' . $p->idPermissao . '">' . $p->nome . '</option>';
                                 } ?>

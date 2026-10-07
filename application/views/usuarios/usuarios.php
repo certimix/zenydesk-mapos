@@ -53,7 +53,12 @@
                                 <td><?= $r->nome ?></td>
                                 <td><?= $r->cpf ?></td>
                                 <td><?= $r->telefone ?></td>
-                                <td><?= $r->permissao ?></td>
+                                <td>
+                                    <span class="badge" style="background-color: #0f7ade; color: white; border-radius: 6px; padding: 4px 8px; font-weight: 500; font-size: 11px;"><?= $r->permissao ?></span>
+                                    <?php if (!empty($r->permissao_secundaria)): ?>
+                                        <span class="badge" style="background-color: #475569; color: white; border-radius: 6px; padding: 4px 8px; font-weight: 500; font-size: 11px; margin-left: 4px;"><?= $r->permissao_secundaria ?></span>
+                                    <?php endif; ?>
+                                </td>
                                 <?php
                                 $situacao = ($r->situacao == 1) ? 'Ativo' : 'Inativo';
                             $situacaoClasse = ($r->situacao == 1) ? 'situacao-ativo' : 'situacao-inativo';
