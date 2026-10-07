@@ -1,0 +1,274 @@
+/*
+ * ZenyDesk O.S — Modern Theme Stylesheet (Shadcn/ui New-York Style)
+ * Copyright (c) 2026 ZenyDesk
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,600;0,700;0,800;1,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  --zd-primary: #0f7ade;
+  --zd-primary-hover: #0d6ac3;
+  --zd-primary-light: rgba(15, 122, 222, 0.12);
+  --zd-signal: #f59e0b;
+  --zd-success: #10b981;
+  --zd-danger: #ef4444;
+  --zd-font-heading: 'Archivo', system-ui, -apple-system, sans-serif;
+  --zd-font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --zd-font-mono: 'JetBrains Mono', monospace;
+  --zd-radius-lg: 16px;
+  --zd-radius-md: 10px;
+  --zd-radius-sm: 8px;
+}
+
+body {
+  font-family: var(--zd-font-body) !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6, .font-heading, .widget-title h5, .brand {
+  font-family: var(--zd-font-heading) !important;
+  letter-spacing: -0.02em;
+}
+
+/* ==========================================================================
+   WIDGET CARDS (Estilo Bento / Shadcn/ui)
+   ========================================================================== */
+.widget-box {
+  border-radius: var(--zd-radius-lg) !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03) !important;
+  overflow: hidden !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+  background: #ffffff !important;
+  margin-bottom: 24px !important;
+}
+
+.widget-title {
+  background: #f8fafc !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  height: 48px !important;
+  line-height: 48px !important;
+  padding: 0 16px !important;
+}
+
+.widget-title h5 {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: #1e293b !important;
+  float: left !important;
+  margin: 0 !important;
+  line-height: 48px !important;
+}
+
+.widget-title .icon {
+  border-right: none !important;
+  padding: 0 10px 0 0 !important;
+  float: left !important;
+  opacity: 0.8;
+  color: var(--zd-primary) !important;
+}
+
+.widget-content {
+  padding: 20px !important;
+}
+
+/* ==========================================================================
+   BOTÕES MODERNOS (Shadcn Button System)
+   ========================================================================== */
+.btn {
+  font-family: var(--zd-font-body) !important;
+  font-weight: 600 !important;
+  border-radius: var(--zd-radius-md) !important;
+  padding: 8px 16px !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+  border: 1px solid transparent !important;
+  text-shadow: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+}
+
+.btn:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+.btn:active {
+  transform: translateY(0) !important;
+}
+
+.btn-primary {
+  background: var(--zd-primary) !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  border-color: var(--zd-primary) !important;
+}
+
+.btn-primary:hover {
+  background: var(--zd-primary-hover) !important;
+}
+
+.btn-success {
+  background: var(--zd-success) !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  border-color: var(--zd-success) !important;
+}
+
+.btn-danger {
+  background: var(--zd-danger) !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  border-color: var(--zd-danger) !important;
+}
+
+.btn-warning {
+  background: var(--zd-signal) !important;
+  background-image: none !important;
+  color: #0f172a !important;
+  border-color: var(--zd-signal) !important;
+  font-weight: 700 !important;
+}
+
+/* ==========================================================================
+   FORMULÁRIOS & INPUTS (Foco Suave Luminoso)
+   ========================================================================== */
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+input[type="search"],
+select,
+textarea {
+  font-family: var(--zd-font-body) !important;
+  border-radius: var(--zd-radius-md) !important;
+  border: 1px solid #cbd5e1 !important;
+  padding: 8px 12px !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+  outline: none !important;
+  background-color: #ffffff !important;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus,
+input[type="number"]:focus,
+input[type="search"]:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--zd-primary) !important;
+  box-shadow: 0 0 0 3px var(--zd-primary-light) !important;
+}
+
+/* ==========================================================================
+   ATALHOS RÁPIDOS DA DASHBOARD (Quick Actions Bento Grid)
+   ========================================================================== */
+.quick-actions {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 12px !important;
+  margin: 0 0 20px 0 !important;
+  padding: 0 !important;
+}
+
+.quick-actions li {
+  flex: 1 1 140px !important;
+  min-width: 130px !important;
+  margin: 0 !important;
+  list-style: none !important;
+}
+
+.quick-actions li a {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 16px 12px !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: var(--zd-radius-lg) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02) !important;
+  text-decoration: none !important;
+  color: #334155 !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+}
+
+.quick-actions li a:hover {
+  transform: translateY(-2px) !important;
+  border-color: var(--zd-primary) !important;
+  box-shadow: 0 12px 20px -8px rgba(15, 122, 222, 0.2) !important;
+  color: var(--zd-primary) !important;
+}
+
+/* ==========================================================================
+   TABELAS MODERNIZADAS
+   ========================================================================== */
+.table-bordered {
+  border-radius: var(--zd-radius-md) !important;
+  overflow: hidden !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+.table-bordered th {
+  background-color: #f8fafc !important;
+  color: #475569 !important;
+  font-family: var(--zd-font-heading) !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  font-size: 11px !important;
+  letter-spacing: 0.05em !important;
+  padding: 12px 14px !important;
+  border-bottom: 2px solid #e2e8f0 !important;
+}
+
+.table-bordered td {
+  padding: 12px 14px !important;
+  font-size: 13px !important;
+  color: #334155 !important;
+  border-top: 1px solid #f1f5f9 !important;
+}
+
+.table-striped tbody tr:nth-child(odd) td {
+  background-color: #f8fafc !important;
+}
+
+/* ==========================================================================
+   BADGES DE STATUS (Esmeralda, Âmbar, Azul e Vermelho)
+   ========================================================================== */
+.badge, .label {
+  border-radius: 6px !important;
+  padding: 4px 8px !important;
+  font-weight: 700 !important;
+  font-size: 10px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.03em !important;
+}
+
+.label-success, .badge-success {
+  background-color: #d1fae5 !important;
+  color: #065f46 !important;
+  border: 1px solid #a7f3d0 !important;
+}
+
+.label-important, .badge-important, .label-danger {
+  background-color: #fee2e2 !important;
+  color: #991b1b !important;
+  border: 1px solid #fca5a5 !important;
+}
+
+.label-warning, .badge-warning {
+  background-color: #fef3c7 !important;
+  color: #92400e !important;
+  border: 1px solid #fde68a !important;
+}
+
+.label-info, .badge-info {
+  background-color: #e0f2fe !important;
+  color: #075985 !important;
+  border: 1px solid #bae6fd !important;
+}

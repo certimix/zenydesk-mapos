@@ -39,6 +39,8 @@
   <?php if ($appTheme === 'whiteblack') { ?>
     <link rel="stylesheet" href="<?= base_url(); ?>assets/css/tema-white-black.css" />
   <?php } ?>
+  <!-- Tema Visual Moderno ZenyDesk (Shadcn/ui) -->
+  <link rel="stylesheet" href="<?= base_url(); ?>assets/css/zenydesk-modern.css" />
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;500;700&display=swap' rel='stylesheet' type='text/css'>
   <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
