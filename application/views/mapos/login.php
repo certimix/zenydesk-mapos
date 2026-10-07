@@ -212,13 +212,24 @@
   <script src="<?= base_url() ?>assets/js/validate.js"></script>
   <script type="text/javascript">
     $(document).ready(function() {
-      $('#email').focus();
-
       // Alternar Visões na Interface de Login
       function mostrarVisao(visao) {
         $('#view-login, #view-cadastrar, #view-recuperar').hide();
         $('#' + visao).fadeIn(200);
         $('#btn-modal-cadastrar').hide();
+      }
+
+      var urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('action') === 'cadastrar' || window.location.hash === '#cadastrar') {
+        mostrarVisao('view-cadastrar');
+        $('#cad_nome').focus();
+      } else if (urlParams.get('action') === 'recuperar' || window.location.hash === '#recuperar') {
+        mostrarVisao('view-recuperar');
+        $('#rec-etapa-1').show();
+        $('#rec-etapa-2').hide();
+        $('#rec_email').focus();
+      } else {
+        $('#email').focus();
       }
 
       $('#link-cadastrar').on('click', function() {

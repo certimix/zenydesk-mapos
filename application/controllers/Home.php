@@ -26,6 +26,7 @@ class Home extends CI_Controller
             'page_title' => 'Zenydesk OS — Ordens de serviço & atendimento',
             'page_description' => 'Cadastro de clientes, laudo com foto, orçamento automático via WhatsApp e termo de garantia — parte da plataforma Zenydesk.',
             'login_url' => site_url('login'),
+            'signup_url' => site_url('login?action=cadastrar'),
             'whatsapp_url' => 'https://wa.me/5575998626311',
         ];
 
