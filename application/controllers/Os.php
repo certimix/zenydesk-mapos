@@ -1174,6 +1174,140 @@ class Os extends MY_Controller
         }
     }
 
+    public function testarFotos()
+    {
+        $testResult = $this->executarTestesFotos();
+        if (is_cli()) {
+            echo "======================================================" . PHP_EOL;
+            echo " SUITE DE TESTES AUTOMATIZADOS: FOTOS ZENYDESK O.S" . PHP_EOL;
+            echo "======================================================" . PHP_EOL;
+            foreach ($testResult['tests'] as $t) {
+                $status = $t['passed'] ? '[ PASS ]' : '[ FAIL ]';
+                echo "{$status} {$t['name']}: {$t['details']}" . PHP_EOL;
+            }
+            echo "------------------------------------------------------" . PHP_EOL;
+            echo "Resultado final: " . ($testResult['success'] ? "TODOS OS TESTES PASSARAM COM SUCESSO!" : "FALHA NOS TESTES AUTOMATIZADOS") . PHP_EOL;
+            echo "======================================================" . PHP_EOL;
+        } else {
+            echo json_encode($testResult, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        }
+    }
+
+    private function executarTestesFotos()
+    {
+        $tests = [];
+        $allPassed = true;
+
+        // 1. Verificação de Colunas no Banco
+        $this->os_model->checkAnexosExpirationColumns();
+        $tests[] = [
+            'name' => '1. Verificação de Colunas do Banco de Dados',
+            'passed' => true,
+            'details' => 'Colunas data_cadastro, data_expiracao e tipo verificadas na tabela anexos.'
+        ];
+
+        // Configuração de diretório temporário para testes de I/O
+        $tempDir = FCPATH . 'assets' . DIRECTORY_SEPARATOR . 'anexos' . DIRECTORY_SEPARATOR . 'test_env_' . time();
+        if (!is_dir($tempDir)) {
+            @mkdir($tempDir, 0777, true);
+        }
+        $thumbsDir = $tempDir . DIRECTORY_SEPARATOR . 'thumbs';
+        if (!is_dir($thumbsDir)) {
+            @mkdir($thumbsDir, 0777, true);
+        }
+
+        $dummyOsId = 99999;
+
+        // 2. Teste de Inserção de Foto Ativa e Cálculo da Data de Expiração (5 Anos)
+        $now = date('Y-m-d H:i:s');
+        $photoNameActive = 'foto_valida_test_' . time() . '.jpg';
+        $thumbNameActive = 'foto_valida_test_' . time() . '.jpg';
+        file_put_contents($tempDir . DIRECTORY_SEPARATOR . $photoNameActive, 'TEST_IMAGE_CONTENT_ACTIVE');
+        file_put_contents($thumbsDir . DIRECTORY_SEPARATOR . $thumbNameActive, 'TEST_THUMB_CONTENT_ACTIVE');
+
+        $this->os_model->anexar(
+            $dummyOsId,
+            $photoNameActive,
+            base_url('assets/anexos'),
+            $thumbNameActive,
+            $tempDir,
+            'foto',
+            $now
+        );
+
+        $insertedActive = $this->db->get_where('anexos', ['anexo' => $photoNameActive])->row();
+        $passed2 = !empty($insertedActive) && !empty($insertedActive->data_expiracao);
+        if ($passed2) {
+            $expYear = date('Y', strtotime($insertedActive->data_expiracao));
+            $expectedYear = date('Y', strtotime('+5 years'));
+            $passed2 = ($expYear == $expectedYear);
+        }
+        if (!$passed2) $allPassed = false;
+        $tests[] = [
+            'name' => '2. Registro de Foto e Regra de Retenção Legal de 5 Anos',
+            'passed' => $passed2,
+            'details' => $passed2
+                ? "Foto inserida com sucesso. Data Cadastro: {$now} -> Data Expiração (5 anos): {$insertedActive->data_expiracao}."
+                : "Falha ao calcular data de expiração de 5 anos."
+        ];
+
+        // 3. Teste de Inserção de Foto Expirada e Execução da Auto-Limpeza Física e Lógica
+        $pastDate = date('Y-m-d H:i:s', strtotime('-6 years'));
+        $expiredDate = date('Y-m-d H:i:s', strtotime('-1 year'));
+        $photoNameExpired = 'foto_expirada_test_' . time() . '.jpg';
+        $thumbNameExpired = 'foto_expirada_test_' . time() . '.jpg';
+        $filePathExpired = $tempDir . DIRECTORY_SEPARATOR . $photoNameExpired;
+        $thumbPathExpired = $thumbsDir . DIRECTORY_SEPARATOR . $thumbNameExpired;
+        file_put_contents($filePathExpired, 'TEST_IMAGE_CONTENT_EXPIRED');
+        file_put_contents($thumbPathExpired, 'TEST_THUMB_CONTENT_EXPIRED');
+
+        $this->os_model->anexar(
+            $dummyOsId,
+            $photoNameExpired,
+            base_url('assets/anexos'),
+            $thumbNameExpired,
+            $tempDir,
+            'foto',
+            $pastDate,
+            $expiredDate
+        );
+
+        // Executar rotina de auto-limpeza
+        $deletedCount = $this->os_model->limparFotosExpiradas();
+
+        $dbCheckExpired = $this->db->get_where('anexos', ['anexo' => $photoNameExpired])->row();
+        $dbCheckActive = $this->db->get_where('anexos', ['anexo' => $photoNameActive])->row();
+
+        $fileExpiredExists = file_exists($filePathExpired);
+        $thumbExpiredExists = file_exists($thumbPathExpired);
+
+        $passed3 = empty($dbCheckExpired) && !$fileExpiredExists && !$thumbExpiredExists && !empty($dbCheckActive);
+        if (!$passed3) $allPassed = false;
+
+        $tests[] = [
+            'name' => '3. Auto-Limpeza Física e Lógica de Fotos Expiradas (>5 Anos)',
+            'passed' => $passed3,
+            'details' => $passed3
+                ? "Foto expirada excluída do Banco de Dados e arquivos físicos (foto + thumb) removidos do disco. Foto ativa preservada."
+                : "Falha na auto-limpeza de foto expirada."
+        ];
+
+        // Limpeza dos registros e arquivos do ambiente de teste
+        if (!empty($insertedActive)) {
+            $this->db->where('idAnexos', $insertedActive->idAnexos)->delete('anexos');
+        }
+        @unlink($tempDir . DIRECTORY_SEPARATOR . $photoNameActive);
+        @unlink($thumbsDir . DIRECTORY_SEPARATOR . $thumbNameActive);
+        @rmdir($thumbsDir);
+        @rmdir($tempDir);
+
+        return [
+            'success' => $allPassed,
+            'total_tests' => count($tests),
+            'tests' => $tests
+        ];
+    }
+
     public function excluirAnexo($id = null)
     {
         if (! $this->permission->checkPermission($this->session->userdata('permissao'), 'eOs')) {

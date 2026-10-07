@@ -7,7 +7,7 @@
         $formatBreadcrumb = function ($seg) {
             if (!$seg) return '';
             $s = strtolower($seg);
-            if ($s === 'mapos') return 'ZenyDesk OS';
+            if ($s === 'mapos') return 'ZenyDesk O.S';
             if ($s === 'os') return 'Ordens de Serviço';
             return ucfirst($seg);
         };
