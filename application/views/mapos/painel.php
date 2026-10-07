@@ -1249,8 +1249,8 @@ if ($this->permission->checkPermission($this->session->userdata('permissao'), 'd
                         status: $("#statusOsGet").val(),
                     };
                 },
-                failure: function() {
-                    alert('Falha ao buscar OS de calendário!');
+                failure: function(err) {
+                    console.warn('Falha ao buscar OS de calendário:', err);
                 },
             },
             eventClick: function(info) {

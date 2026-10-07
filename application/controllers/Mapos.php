@@ -8,11 +8,11 @@ class Mapos extends MY_Controller
         parent::__construct();
         $this->load->model('mapos_model');
 
-        // Redireciona URLs legadas com /mapos para a URL oficial Zenydesk.OS na barra do navegador
+        // Redireciona URLs legadas com /mapos para a URL oficial Inicio na barra do navegador
         if ($this->uri->segment(1) === 'mapos') {
             $segments = $this->uri->segment_array();
             $remaining = implode('/', array_slice($segments, 1));
-            redirect('Zenydesk.OS' . ($remaining ? '/' . $remaining : ''), 'location', 301);
+            redirect('Inicio' . ($remaining ? '/' . $remaining : ''), 'location', 301);
         }
     }
 
@@ -621,20 +621,35 @@ class Mapos extends MY_Controller
 
     public function calendario()
     {
+        header('Content-Type: application/json');
+
         if (!$this->permission->checkPermission($this->session->userdata('permissao'), 'vOs')) {
-            $this->session->set_flashdata('error', 'Você não tem permissão para visualizar O.S.');
-            redirect(base_url());
+            echo json_encode([]);
+            exit();
         }
+
         $this->load->model('os_model');
         $status = $this->input->get('status') ?: null;
-        $start = $this->input->get('start') ?: null;
-        $end = $this->input->get('end') ?: null;
+        $rawStart = $this->input->get('start');
+        $rawEnd = $this->input->get('end');
 
-        $allOs = $this->mapos_model->calendario(
-            $start,
-            $end,
-            $status
-        );
+        $start = ($rawStart && strtotime($rawStart)) ? date('Y-m-d', strtotime($rawStart)) : null;
+        $end = ($rawEnd && strtotime($rawEnd)) ? date('Y-m-d', strtotime($rawEnd)) : null;
+
+        try {
+            $allOs = $this->mapos_model->calendario(
+                $start,
+                $end,
+                $status
+            );
+            if (empty($allOs)) {
+                echo json_encode([]);
+                exit();
+            }
+        } catch (\Throwable $e) {
+            echo json_encode([]);
+            exit();
+        }
         $events = array_map(function ($os) {
             switch ($os->status) {
                 case 'Aberto':

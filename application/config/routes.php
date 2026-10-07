@@ -45,7 +45,11 @@ if (! defined('BASEPATH')) {
 $route['default_controller'] = 'home';
 $route['404_override'] = '';
 
-// Rotas canônicas e amigáveis ZenyDesk.OS
+// Rotas canônicas e amigáveis ZenyDesk.OS (Inicio / Home)
+$route['Inicio'] = 'mapos';
+$route['Inicio/(.*)'] = 'mapos/$1';
+$route['Home'] = 'mapos';
+$route['Home/(.*)'] = 'mapos/$1';
 $route['Zenydesk.OS'] = 'mapos';
 $route['Zenydesk.OS/(.*)'] = 'mapos/$1';
 $route['ZenydeskOS'] = 'mapos';

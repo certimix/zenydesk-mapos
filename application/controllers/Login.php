@@ -198,7 +198,7 @@ class Login extends CI_Controller
         echo json_encode([
             'result' => true,
             'message' => 'Autenticação com o Google realizada com sucesso!',
-            'redirect' => site_url('mapos'),
+            'redirect' => site_url('Inicio'),
         ]);
         exit();
     }

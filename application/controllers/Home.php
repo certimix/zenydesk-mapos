@@ -19,7 +19,7 @@ class Home extends CI_Controller
     public function index()
     {
         if ($this->session->userdata('logado')) {
-            redirect('mapos');
+            redirect('Inicio');
         }
 
         $data = [
