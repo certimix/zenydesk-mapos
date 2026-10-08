@@ -3,7 +3,7 @@
 
 <?php $configuration = (isset($configuration) && is_array($configuration)) ? $configuration : []; ?>
 <head>
-  <title><?= (!empty($configuration['app_name']) && $configuration['app_name'] !== 'Certimix OS') ? $configuration['app_name'] : 'Zenydesk OS' ?></title>
+  <title><?= (!empty($configuration['app_name']) && !in_array($configuration['app_name'], ['Certimix OS', 'Zenydesk OS', 'Map-OS', 'Map-Os'])) ? $configuration['app_name'] : 'Zenydesk O.S' ?></title>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="csrf-token-name" content="<?= $this->config->item("csrf_token_name") ?>">
@@ -47,10 +47,11 @@
   <?php if ($appTheme === 'zenydeskos' || $appTheme === 'zenydeskdesk' || empty($appTheme) || $appTheme === 'default') { ?>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800;9..40,900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<?= base_url(); ?>assets/css/tema-zenydesk-os.css?v=20261008v2" />
+    <link rel="stylesheet" href="<?= base_url(); ?>assets/css/tema-zenydesk-os.css?v=20261008v3" />
   <?php } ?>
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;500;700&display=swap' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="<?= base_url(); ?>assets/boxicons/css/boxicons.min.css" />
   <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
   <script type="text/javascript" src="<?= base_url(); ?>assets/js/jquery-1.12.4.min.js"></script>
   <script type="text/javascript" src="<?= base_url(); ?>assets/js/shortcut.js"></script>

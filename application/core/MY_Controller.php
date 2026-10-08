@@ -55,8 +55,8 @@ class MY_Controller extends CI_Controller
             $this->data['configuration'][$c->config] = $c->valor;
         }
 
-        if (empty($this->data['configuration']['app_name']) || in_array($this->data['configuration']['app_name'], ['Certimix OS', 'Map-OS', 'Map-Os', 'Map OS', 'Zenydesk OS'])) {
-            $this->data['configuration']['app_name'] = 'ZenyDesk O.S';
+        if (empty($this->data['configuration']['app_name']) || in_array($this->data['configuration']['app_name'], ['Certimix OS', 'Map-OS', 'Map-Os', 'Map OS', 'Zenydesk OS', 'ZenyDesk OS'])) {
+            $this->data['configuration']['app_name'] = 'Zenydesk O.S';
         }
     }
 

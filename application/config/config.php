@@ -10,7 +10,7 @@ $config['app_version'] = '4.55.0';
 /**
  * Nome do sistema
  */
-$config['app_name'] = $_ENV['APP_NAME'] ?? 'ZenyDesk OS';
+$config['app_name'] = (!empty($_ENV['APP_NAME']) && $_ENV['APP_NAME'] !== 'Certimix OS') ? $_ENV['APP_NAME'] : 'Zenydesk O.S';
 
 /**
  * Descrição do sistema
