@@ -1242,15 +1242,15 @@ if ($this->permission->checkPermission($this->session->userdata('permissao'), 'd
             dayMaxEvents: true, // allow "more" link when too many events
             displayEventTime: false,
             events: {
-                url: "<?= base_url() . "index.php/mapos/calendario"; ?>",
+                url: "<?= site_url('Zenydesk.OS/calendario'); ?>",
                 method: 'GET',
                 extraParams: function() { // a function that returns an object
                     return {
                         status: $("#statusOsGet").val(),
                     };
                 },
-                failure: function(err) {
-                    console.warn('Falha ao buscar OS de calendário:', err);
+                failure: function() {
+                    alert('Falha ao buscar OS de calendário!');
                 },
             },
             eventClick: function(info) {

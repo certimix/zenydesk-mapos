@@ -202,11 +202,20 @@ class Mine extends CI_Controller
                 exit();
             }
 
+            $portalUsuario = null;
             $cliente = $this->check_credentials($email);
+
+            // Usuários do Portal (Cadastros > Usuário Portal): vários logins por cliente.
+            if (! $cliente || ! password_verify($password, (string) $cliente->senha)) {
+                $portalUsuario = $this->check_portal_usuario($email, $password);
+                if ($portalUsuario) {
+                    $cliente = $portalUsuario;
+                }
+            }
 
             if ($cliente) {
                 // Verificar credenciais do usuário
-                if (password_verify($password, $cliente->senha)) {
+                if ($portalUsuario || password_verify($password, $cliente->senha)) {
                     $this->login_throttle->record_attempt($email, true, 'portal');
 
                     // Novo ID de sessão a cada autenticação, para que um ID
@@ -214,17 +223,21 @@ class Mine extends CI_Controller
                     $this->session->sess_regenerate(true);
 
                     $session_mine_data = [
-                        'nome' => $cliente->nomeCliente,
+                        'nome' => $portalUsuario ? $portalUsuario->nomeUsuarioPortal : $cliente->nomeCliente,
                         'cliente_id' => $cliente->idClientes,
-                        'email' => $cliente->email,
+                        'email' => $portalUsuario ? $portalUsuario->emailUsuarioPortal : $cliente->email,
                         'conectado' => true,
-                        'isCliente' => true
+                        'isCliente' => true,
+                        'portal_usuario_id' => $portalUsuario ? (int) $portalUsuario->idUsuarioPortal : null,
                     ];
                     $this->session->set_userdata($session_mine_data);
+                    if ($portalUsuario) {
+                        $this->db->where('id', (int) $portalUsuario->idUsuarioPortal)->update('cad_usuarios_portal', ['ultimo_acesso' => date('Y-m-d H:i:s')]);
+                    }
                     $this->load->model('Audit_model');
                     $log_data = [
                         'usuario' => $cliente->nomeCliente,
-                        'tarefa' => 'Cliente ' . $cliente->nomeCliente . ' efetuou login',
+                        'tarefa' => ($portalUsuario ? 'Usuário do portal ' . $portalUsuario->nomeUsuarioPortal . ' (cliente ' . $cliente->nomeCliente . ')' : 'Cliente ' . $cliente->nomeCliente) . ' efetuou login',
                         'data' => date('Y-m-d'),
                         'hora' => date('H:i:s'),
                         'ip' => $_SERVER['REMOTE_ADDR']
@@ -763,27 +776,24 @@ class Mine extends CI_Controller
         if ($this->form_validation->run() == false) {
             $this->data['custom_error'] = (validation_errors() ? true : false);
         } else {
-            $id = null;
-            $usuario = $this->db->query('SELECT usuarios_id, count(*) as down FROM os GROUP BY usuarios_id ORDER BY down LIMIT 1')->row();
-            if ($usuario == null) {
-                $this->db->where('situacao', 1);
-                $this->db->limit(1);
-                $usuario = $this->db->get('usuarios')->row();
-
-                if ($usuario->idUsuarios == null) {
-                    $this->session->set_flashdata('error', 'Ocorreu um erro ao cadastrar a ordem de serviço, por favor contate o administrador do sistema.');
-                    redirect('mine/os');
-                } else {
-                    $id = $usuario->idUsuarios;
-                }
-            } else {
-                $id = $usuario->usuarios_id;
+            // Chamado aberto pelo cliente entra como PRÉ-CHAMADO, sem técnico:
+            // a equipe aprova (e atribui técnico/SLA) em Menu rápido > Pré-Chamados.
+            $portalUsuarioId = (int) $this->session->userdata('portal_usuario_id') ?: null;
+            $slaId = null;
+            if ($portalUsuarioId) {
+                $pu = $this->db->select('sla_id')->where('id', $portalUsuarioId)->get('cad_usuarios_portal')->row();
+                $slaId = $pu ? ($pu->sla_id ?: null) : null;
             }
 
             $data = [
                 'dataInicial' => date('Y-m-d'),
                 'clientes_id' => $this->session->userdata('cliente_id'),
-                'usuarios_id' => $id,
+                'usuarios_id' => null,
+                'pre_chamado' => 1,
+                'origem' => 'portal',
+                'portal_usuario_id' => $portalUsuarioId,
+                'sla_id' => $slaId,
+                'aberto_em' => date('Y-m-d H:i:s'),
                 'dataFinal' => date('Y-m-d'),
                 'descricaoProduto' => $this->security->xss_clean($this->input->post('descricaoProduto')),
                 'defeito' => $this->security->xss_clean($this->input->post('defeito')),
@@ -844,6 +854,13 @@ class Mine extends CI_Controller
         $this->data['produtos'] = $this->os_model->getProdutos((int) $id);
         $this->data['servicos'] = $this->os_model->getServicos((int) $id);
         $this->data['anexos'] = $this->os_model->getAnexos((int) $id);
+
+        // Link de avaliação do atendimento (OS concluída)
+        $this->data['avaliacao'] = null;
+        if (in_array($this->data['result']->status, ['Finalizado', 'Faturado'], true) && $this->db->table_exists('os_avaliacoes')) {
+            $this->load->model('avaliacoes_model');
+            $this->data['avaliacao'] = $this->avaliacoes_model->garantirLink((int) $id);
+        }
 
         $this->data['output'] = 'conecte/detalhes_os';
         $this->load->view('conecte/template', $this->data);
@@ -1161,6 +1178,30 @@ class Mine extends CI_Controller
         $this->session->set_userdata('captchaWord', $codigoCaptcha);
     }
 
+    /**
+     * Usuário do Portal ativo com e-mail e senha corretos → dados do cliente
+     * dele (mais id/nome/e-mail do usuário), ou null.
+     */
+    private function check_portal_usuario($email, $senha)
+    {
+        if (! $this->db->table_exists('cad_usuarios_portal')) {
+            return null;
+        }
+        $u = $this->db->where('email', $email)->where('ativo', 1)->limit(1)->get('cad_usuarios_portal')->row();
+        if (! $u || ! password_verify((string) $senha, $u->senha)) {
+            return null;
+        }
+        $cliente = $this->db->where('idClientes', $u->cliente_id)->limit(1)->get('clientes')->row();
+        if (! $cliente) {
+            return null;
+        }
+        $cliente->idUsuarioPortal = $u->id;
+        $cliente->nomeUsuarioPortal = $u->nome;
+        $cliente->emailUsuarioPortal = $u->email;
+        $cliente->slaUsuarioPortal = $u->sla_id;
+
+        return $cliente;
+    }
 }
 
 /* End of file conecte.php */

@@ -110,7 +110,7 @@ if (!empty($result->cidade) || !empty($result->estado) || !empty($result->cep)) 
                                                     <h5><b>RESPONSÁVEL</b></h5>
                                                 </span>
                                                 <span><b><i class="fas fa-user"></i>
-                                                        <?php echo html_escape($result->nome) ?></b></span><br />
+                                                        <?php echo $result->nome ? html_escape($result->nome) : '<span class="os-sem-tecnico">Sem técnico</span>' ?></b></span><br />
                                                 <span><i class="fas fa-phone"></i>
                                                     <?php echo html_escape($result->telefone_usuario) ?></span><br />
                                                 <span><i class="fas fa-envelope"></i>
@@ -206,6 +206,74 @@ if (!empty($result->cidade) || !empty($result->estado) || !empty($result->cep)) 
                             </tbody>
                         </table>
 
+                        <?php
+                        $this->load->helper('sla');
+                        $temAtendimento = $result->departamento_nome || $result->equipe_nome || $result->categoria_nome || $result->subcategoria_nome || $result->sla_nome;
+                        if ($temAtendimento || ! empty($result->pre_chamado) || $result->origem === 'portal') { ?>
+                            <h5><b>ATENDIMENTO</b></h5>
+                            <table class="table table-condensed table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <td><b>DEPARTAMENTO</b><br><?= $result->departamento_nome ? html_escape($result->departamento_nome) : '—' ?></td>
+                                        <td><b>EQUIPE</b><br><?= $result->equipe_nome ? html_escape($result->equipe_nome) : '—' ?></td>
+                                        <td><b>CATEGORIA</b><br><?= $result->categoria_nome ? html_escape($result->categoria_nome) : '—' ?><?= $result->subcategoria_nome ? ' › ' . html_escape($result->subcategoria_nome) : '' ?></td>
+                                        <td><b>SLA</b><br><?= $result->sla_nome ? html_escape($result->sla_nome) . ' (' . (int) $result->sla_horas . 'h)' : '—' ?></td>
+                                        <td><b>PRAZO DO SLA</b><br><?= $result->sla_prazo ? date('d/m/Y H:i', strtotime($result->sla_prazo)) . ' ' . sla_selo($result) : '—' ?></td>
+                                    </tr>
+                                    <?php if ($result->origem === 'portal' || ! empty($result->pre_chamado) || $result->pre_chamado_motivo) { ?>
+                                        <tr>
+                                            <td colspan="5">
+                                                <b>ORIGEM:</b> <?= $result->origem === 'portal' ? 'Aberto pelo cliente no portal' : 'Interno' ?>
+                                                <?php if (! empty($result->pre_chamado)) { ?> · <span class="sla-selo sla-alerta">Pré-chamado aguardando aprovação</span><?php } ?>
+                                                <?php if ($result->pre_chamado_motivo) { ?> · <b>Recusado:</b> <?= html_escape($result->pre_chamado_motivo) ?><?php } ?>
+                                            </td>
+                                        </tr>
+                                    <?php } ?>
+                                </tbody>
+                            </table>
+                        <?php } ?>
+
+                        <?php if (in_array($result->status, ['Finalizado', 'Faturado'], true) || ! empty($avaliacao)) { ?>
+                            <h5><b>AVALIAÇÃO DO CLIENTE</b></h5>
+                            <div class="os-avaliacao-box">
+                                <?php if (! empty($avaliacao) && $avaliacao->respondido_em) { ?>
+                                    <span class="badge" style="background:#0284c7;color:#fff;font-weight:700;padding:4px 8px;border-radius:6px;font-size:12px;margin-right:6px;"><i class="bx bx-check-circle"></i> Nota <?= (int) $avaliacao->nota ?> / 5</span>
+                                    <span>Respondida em <?= date('d/m/Y H:i', strtotime($avaliacao->respondido_em)) ?></span>
+                                    <?php if ($avaliacao->comentario) { ?><div class="av-coment">“<?= html_escape($avaliacao->comentario) ?>”</div><?php } ?>
+                                <?php } else { ?>
+                                    <span><?= ! empty($avaliacao) ? 'Aguardando a resposta do cliente.' : 'Gere o link e envie ao cliente para ele avaliar o atendimento.' ?></span>
+                                    <button type="button" class="os-btn-assumir" id="btn-link-avaliacao" data-os="<?= (int) $result->idOs ?>"><i class="bx bx-link"></i> <?= ! empty($avaliacao) ? 'Ver link de avaliação' : 'Gerar link de avaliação' ?></button>
+                                    <div id="av-link-area" style="display:none; margin-top:8px; width:100%">
+                                        <input type="text" id="av-link" readonly style="width:100%;max-width:520px" onclick="this.select()">
+                                        <div style="margin-top:6px; display:flex; gap:8px; flex-wrap:wrap">
+                                            <button type="button" class="os-btn-assumir" id="av-copiar"><i class="bx bx-copy"></i> Copiar</button>
+                                            <a href="#" target="_blank" rel="noopener" class="os-btn-assumir" id="av-whats" style="background:#25d366;text-decoration:none;display:none"><i class="bx bxl-whatsapp"></i> Enviar no WhatsApp</a>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                            </div>
+                            <script>
+                                $(function () {
+                                    $('#btn-link-avaliacao').on('click', function () {
+                                        var dados = {};
+                                        if (typeof getCsrfTokenName === 'function') { dados[getCsrfTokenName()] = getCsrfToken(); }
+                                        $.post('<?= site_url('avaliacoes/link') ?>/' + $(this).data('os'), dados, null, 'json').done(function (r) {
+                                            if (!r || !r.result) { swal('Atenção', (r && r.mensagem) || 'Não foi possível gerar o link.', 'error'); return; }
+                                            $('#av-link').val(r.url);
+                                            if (r.whatsapp) { $('#av-whats').attr('href', r.whatsapp).show(); }
+                                            $('#av-link-area').show();
+                                        }).fail(function () { swal('Atenção', 'Erro de conexão.', 'error'); });
+                                    });
+                                    $('#av-copiar').on('click', function () {
+                                        var campo = document.getElementById('av-link');
+                                        campo.select();
+                                        if (navigator.clipboard) { navigator.clipboard.writeText(campo.value); } else { document.execCommand('copy'); }
+                                        $(this).html('<i class="bx bx-check"></i> Copiado');
+                                    });
+                                });
+                            </script>
+                        <?php } ?>
+
                         <?php if ($anotacoes != null) { ?>
                             <table class="table table-bordered">
                                 <thead>
@@ -224,6 +292,29 @@ if (!empty($result->cidade) || !empty($result->estado) || !empty($result->cep)) 
                             if (!$anotacoes) {
                                 echo '<tr><td colspan="2">Nenhuma anotação cadastrada</td></tr>';
                             } ?>
+                                </tbody>
+                            </table>
+                        <?php } ?>
+
+                        <?php if ($checklist != null) { ?>
+                            <h5><b>CHECKLIST</b></h5>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40px">Feito</th>
+                                        <th>Item</th>
+                                        <th>Concluído por / em</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($checklist as $i) {
+                                        $riscado = $i->concluido ? 'text-decoration: line-through; color: #999;' : '';
+                                        echo '<tr>';
+                                        echo '<td style="text-align:center">' . ($i->concluido ? '<i class="bx bx-check-square"></i>' : '<i class="bx bx-square"></i>') . '</td>';
+                                        echo '<td style="' . $riscado . '">' . html_escape($i->descricao) . '</td>';
+                                        echo '<td>' . ($i->concluido ? html_escape($i->concluido_por) . ' em ' . date('d/m/Y H:i', strtotime($i->concluido_em)) : '-') . '</td>';
+                                        echo '</tr>';
+                                    } ?>
                                 </tbody>
                             </table>
                         <?php } ?>

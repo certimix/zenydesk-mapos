@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="<?php echo base_url() ?>assets/trumbowyg/ui/trumbowyg.css">
+﻿<link rel="stylesheet" href="<?php echo base_url() ?>assets/trumbowyg/ui/trumbowyg.css">
 <script type="text/javascript" src="<?php echo base_url() ?>assets/trumbowyg/trumbowyg.js"></script>
 <script type="text/javascript" src="<?php echo base_url() ?>assets/trumbowyg/langs/pt_br.js"></script>
 
@@ -41,6 +41,21 @@
                                 <div class="span12" style="padding: 1%; margin-left: 0">
 
 
+                                    <?php if (! empty($result->pre_chamado)) { ?>
+                                        <div class="alert alert-info" style="margin: 0 0 10px">
+                                            <i class="bx bx-time-five"></i> Recebemos seu chamado. Ele está <strong>aguardando aprovação</strong> da nossa equipe.
+                                        </div>
+                                    <?php } ?>
+                                    <?php if (! empty($avaliacao)) { ?>
+                                        <div class="alert alert-success" style="margin: 0 0 10px; display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap">
+                                            <?php if ($avaliacao->respondido_em) { ?>
+                                                <span><i class="bx bx-badge-check"></i> Obrigado! Você avaliou este atendimento com <?= (int) $avaliacao->nota ?> de 5 (nota máxima).</span>
+                                            <?php } else { ?>
+                                                <span><i class="bx bx-badge-check"></i> Este atendimento foi concluído. Como foi para você?</span>
+                                                <a class="btn btn-success" href="<?= site_url('avaliacao/' . $avaliacao->token) ?>" target="_blank" rel="noopener">Avaliar atendimento</a>
+                                            <?php } ?>
+                                        </div>
+                                    <?php } ?>
                                     <div class="span6" style="margin-left: 0">
                                         <h3>#Protocolo:
                                             <?php echo $result->idOs ?>
@@ -49,7 +64,7 @@
                                     </div>
                                     <div class="span6">
                                         <label for="tecnico">Técnico / Responsável</label>
-                                        <input disabled="disabled" id="tecnico" class="span12" type="text" name="tecnico" value="<?php echo $result->nome ?>" />
+                                        <input disabled="disabled" id="tecnico" class="span12" type="text" name="tecnico" value="<?php echo $result->nome ? html_escape($result->nome) : 'A definir' ?>" />
 
                                     </div>
                                 </div>

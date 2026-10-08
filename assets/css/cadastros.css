@@ -1,0 +1,109 @@
+/* ============================================================
+   Telas de Cadastros (lista + formulário) — layout no padrão SNDesk.
+   Neutro de tema: cores de texto/fundo herdadas do tema ativo;
+   o tema "Zenydesk Desk" refina as cores.
+   ============================================================ */
+
+.cad-pagina { padding: 18px 22px 20px; }
+
+.cad-cabecalho {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding-bottom: 14px; margin-bottom: 16px;
+  border-bottom: 3px solid rgba(128, 150, 180, 0.14);
+}
+.cad-titulo { margin: 0; font-size: 26px; line-height: 1.2; font-weight: 800; }
+.cad-voltar {
+  display: inline-flex; align-items: center; gap: 6px; text-transform: uppercase;
+  font-weight: 600; letter-spacing: .03em; font-size: 13px; opacity: .75; text-decoration: none !important;
+}
+.cad-voltar:hover { opacity: 1; }
+
+.cad-barra { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
+.cad-busca { display: flex; align-items: center; margin: 0; position: relative; }
+.cad-busca input[type="text"] { margin: 0 !important; width: 260px; height: 34px !important; padding: 0 64px 0 12px !important; box-sizing: border-box; }
+.cad-busca button { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: none; border: 0; font-size: 18px; opacity: .6; cursor: pointer; }
+.cad-busca .cad-limpar { position: absolute; right: 32px; top: 50%; transform: translateY(-50%); font-size: 18px; opacity: .6; }
+
+.cad-btn-novo, .cad-btn-salvar {
+  display: inline-flex; align-items: center; gap: 6px; border: 0; border-radius: 6px;
+  padding: 8px 14px; font-weight: 600; font-size: 13px; color: #fff !important; cursor: pointer;
+  background: #3c94e6; text-decoration: none !important;
+}
+.cad-btn-novo:hover, .cad-btn-salvar:hover { filter: brightness(.94); }
+.cad-btn-novo i, .cad-btn-salvar i { font-size: 17px; }
+.cad-btn-salvar { background: #8ec541; padding: 9px 22px; }
+.cad-btn-cancelar { padding: 9px 16px; border-radius: 6px; font-weight: 600; font-size: 13px; opacity: .75; text-decoration: none !important; }
+
+.cad-tabela-wrap { border: 1px solid rgba(60, 148, 230, 0.35); border-radius: 10px; overflow-x: auto; }
+.cad-tabela { margin: 0 !important; border: 0 !important; width: 100%; }
+.cad-tabela th, .cad-tabela td { vertical-align: middle !important; }
+.cad-tabela th { white-space: nowrap; }
+.cad-col-acao { width: 64px; text-align: center !important; }
+.cad-col-id { width: 50px; }
+.cad-sem-registro { text-align: center !important; padding: 26px !important; opacity: .7; }
+.cad-vazio { opacity: .4; }
+.cad-cor { display: inline-block; width: 36px; height: 22px; border-radius: 4px; vertical-align: middle; }
+.cad-sim { color: #2f9e5b; font-weight: 600; }
+.cad-nao { opacity: .55; }
+.cad-icone { font-size: 18px; color: #3c94e6; }
+.cad-icone-perigo { color: #e5484d; }
+
+.cad-rodape { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; font-size: 12px; opacity: .9; }
+.cad-rodape .pagination { margin: 0; }
+
+/* Chave liga/desliga */
+.cad-switch { position: relative; display: inline-block; width: 34px; height: 18px; vertical-align: middle; margin: 0; }
+.cad-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+.cad-switch span { position: absolute; inset: 0; background: #c3cad4; border-radius: 18px; transition: .2s; cursor: pointer; }
+.cad-switch span::before { content: ''; position: absolute; width: 14px; height: 14px; left: 2px; top: 2px; background: #fff; border-radius: 50%; transition: .2s; }
+.cad-switch input:checked + span { background: #2b7de9; }
+.cad-switch input:checked + span::before { transform: translateX(16px); }
+.cad-switch input:disabled + span { cursor: default; opacity: .7; }
+.cad-switch input:focus-visible + span { outline: 2px solid #3c94e6; outline-offset: 2px; }
+
+/* Formulário em grade */
+.cad-erros { background: #fdecef; border: 1px solid #f5c2cb; color: #a3243b; border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; }
+.cad-erros ul { margin: 4px 0 0 18px; }
+.cad-grade-form { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px 18px; }
+.cad-campo { display: flex; flex-direction: column; min-width: 0; }
+.cad-campo.cad-largo { grid-column: 1 / -1; }
+.cad-campo label { font-size: 13px; font-weight: 600; margin-bottom: 5px; }
+.cad-obrig { color: #e5484d; }
+.cad-campo input[type="text"], .cad-campo input[type="email"], .cad-campo input[type="tel"], .cad-campo input[type="number"], .cad-campo input[type="password"],
+.cad-campo input[type="date"], .cad-campo input[type="datetime-local"], .cad-campo select, .cad-campo textarea {
+  width: 100% !important; max-width: none; box-sizing: border-box; height: 36px; margin: 0 !important; padding: 6px 10px;
+}
+.cad-campo textarea { height: auto; min-height: 96px; }
+.cad-ajuda { font-size: 11.5px; opacity: .65; margin-top: 4px; }
+.cad-cor-campo { display: flex; align-items: center; gap: 10px; }
+.cad-cor-campo input[type="color"] { width: 54px; height: 34px; padding: 2px; border-radius: 6px; cursor: pointer; }
+.cad-cor-hex { font-family: monospace; opacity: .7; }
+.cad-opcoes-bool { display: flex; flex-wrap: wrap; gap: 12px 26px; margin-top: 18px; padding-top: 14px; border-top: 1px dashed rgba(128, 150, 180, 0.3); }
+.cad-switch-rotulo { display: inline-flex; align-items: center; gap: 9px; margin: 0; font-size: 13px; cursor: pointer; }
+.cad-acoes { display: flex; justify-content: flex-end; align-items: center; gap: 10px; margin-top: 22px; }
+
+@media (max-width: 640px) {
+  .cad-pagina { padding: 14px; }
+  .cad-titulo { font-size: 21px; }
+  .cad-busca, .cad-busca input[type="text"] { width: 100%; }
+  .cad-barra > * { flex: 1 1 100%; }
+  .cad-btn-novo { justify-content: center; }
+}
+
+/* Cinza médio legível tanto em temas claros quanto escuros */
+.cad-voltar, .cad-rodape, .cad-btn-cancelar, .cad-ajuda { color: #8a94a0; }
+.cad-voltar, .cad-rodape, .cad-ajuda { opacity: 1; }
+
+/* ===== Selo de SLA e chamados sem técnico (todas as telas de OS) ===== */
+.sla-selo { display: inline-flex; align-items: center; gap: 3px; padding: 2px 8px; border-radius: 12px; font-size: 11.5px; font-weight: 600; white-space: nowrap; line-height: 1.6; }
+.sla-selo i { font-size: 13px; }
+.sla-ok { background: #e7f6ec; color: #23824a; }
+.sla-alerta { background: #fff4e0; color: #b26a00; }
+.sla-estourado, .sla-atrasado { background: #fdecef; color: #c22b47; }
+.sla-neutro, .sla-sem { background: #eef1f5; color: #7c8696; font-weight: 500; }
+.os-sem-tecnico { display: inline-block; padding: 1px 7px; border-radius: 10px; background: #fff4e0; color: #b26a00; font-size: 11.5px; font-weight: 600; }
+.os-btn-assumir { border: 0; border-radius: 6px; background: #3c94e6; color: #fff; padding: 3px 9px; font-size: 12px; font-weight: 600; cursor: pointer; }
+.os-btn-assumir:hover { filter: brightness(.94); }
+.os-avaliacao-box { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid rgba(128, 150, 180, .25); border-radius: 8px; margin-bottom: 14px; }
+.os-avaliacao-box .av-nota { color: #f5b301; font-size: 20px; letter-spacing: 1px; }
+.os-avaliacao-box .av-coment { width: 100%; font-style: italic; opacity: .85; }

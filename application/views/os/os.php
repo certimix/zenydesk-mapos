@@ -66,10 +66,16 @@
             <span class="icon">
                 <i class="fas fa-diagnoses"></i>
             </span>
-            <h5>Ordens de Serviço</h5>
+            <h5><?= ! empty($semTecnico) ? 'Chamados Sem Técnico' : ((! empty($minhas)) ? 'Central de Chamados — Minha Fila' : 'Ordens de Serviço') ?></h5>
         </div>
     <div class="span12" style="margin-left: 0">
         <form method="get" action="<?php echo base_url(); ?>index.php/os/gerenciar">
+            <?php if (! empty($minhas)) { ?>
+                <input type="hidden" name="minhas" value="1">
+            <?php } ?>
+            <?php if (! empty($semTecnico)) { ?>
+                <input type="hidden" name="semtecnico" value="1">
+            <?php } ?>
             <?php if ($this->permission->checkPermission($this->session->userdata('permissao'), 'aOs')) { ?>
                 <div class="span3">
                     <a href="<?php echo base_url(); ?>index.php/os/adicionar" class="button btn btn-mini btn-success" style="max-width: 160px">
@@ -125,17 +131,20 @@
                             <th>Valor com Desconto</th>
                             <th class="ph4">V.T (Faturado)</th>
                             <th>Status</th>
+                            <th>SLA</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php if (!$results) {
                             echo '<tr>
-                            <td colspan="10">Nenhuma OS Cadastrada</td>
+                            <td colspan="13">' . (! empty($semTecnico) ? 'Nenhum chamado sem técnico. 🎉' : 'Nenhuma OS Cadastrada') . '</td>
                             </tr>';
                         }
 
 $this->load->model('os_model');
+$this->load->helper('sla');
+$podeAssumir = ! empty($semTecnico) && $this->permission->checkPermission($this->session->userdata('permissao'), 'eOs');
 foreach ($results as $r) {
     $dataInicial = date(('d/m/Y'), strtotime($r->dataInicial));
     if ($r->dataFinal != null) {
@@ -206,7 +215,7 @@ foreach ($results as $r) {
     echo '<tr>';
     echo '<td>' . $r->idOs . '</td>';
     echo '<td class="cli1"><a href="' . base_url() . 'index.php/clientes/visualizar/' . $r->idClientes . '" style="margin-right: 1%">' . $r->nomeCliente . '</a></td>';
-    echo '<td class="ph1">' . $r->nome . '</td>';
+    echo '<td class="ph1">' . ($r->nome ? html_escape($r->nome) : '<span class="os-sem-tecnico">Sem técnico</span>') . '</td>';
     echo '<td>' . $dataInicial . '</td>';
     echo '<td class="ph2">' . $dataFinal . '</td>';
     echo '<td class="ph3"><span class="badge" style="background-color: ' . $corGarantia . '; border-color: ' . $corGarantia . '">' . $vencGarantia . '</span> </td>';
@@ -215,7 +224,14 @@ foreach ($results as $r) {
     echo '<td>R$ ' . number_format(floatval($r->valor_desconto), 2, ',', '.') . '</td>';
     echo '<td class="ph4">R$ ' . number_format($r->faturado ? floatval($r->valor_desconto) : 0.00, 2, ',', '.') . '</td>';
     echo '<td><span class="badge" style="background-color: ' . $cor . '; border-color: ' . $cor . '">' . $r->status . '</span> </td>';
+    echo '<td>' . sla_selo($r) . '</td>';
     echo '<td>';
+    if ($podeAssumir && ! $r->usuarios_id) {
+        echo '<form method="post" action="' . site_url('os/assumir') . '" style="display:inline;margin:0 4px 0 0">'
+            . '<input type="hidden" name="' . $this->security->get_csrf_token_name() . '" value="' . $this->security->get_csrf_hash() . '">'
+            . '<input type="hidden" name="idOs" value="' . (int) $r->idOs . '">'
+            . '<button type="submit" class="os-btn-assumir" title="Assumir este chamado"><i class="bx bx-user-check"></i> Assumir</button></form>';
+    }
 
     $editavel = $this->os_model->isEditable($r->idOs);
 

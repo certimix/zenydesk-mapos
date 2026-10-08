@@ -41,6 +41,8 @@
                                     <option value="darkviolet" <?= $configuration['app_theme'] == 'darkviolet' ? 'selected' : ''; ?>>Dark violet</option>
                                     <option value="whitegreen" <?= $configuration['app_theme'] == 'whitegreen' ? 'selected' : ''; ?>>White green</option>
                                     <option value="whiteblack" <?= $configuration['app_theme'] == 'whiteblack' ? 'selected' : ''; ?>>White black</option>
+                                    <option value="zenydeskgms" <?= $configuration['app_theme'] == 'zenydeskgms' ? 'selected' : ''; ?>>Zenydesk (moderno escuro)</option>
+                                    <option value="zenydeskos" <?= in_array($configuration['app_theme'], ['zenydeskos', 'zenydeskdesk']) ? 'selected' : ''; ?>>Zenydesk O.S</option>
                                 </select>
                                 <span class="help-inline">Selecione o tema que que deseja usar no sistema</span>
                             </div>
@@ -114,9 +116,11 @@
                                 <input type="text" name="pix_key" value="<?= $configuration['pix_key'] ?>">
                                 <span class="help-inline">Chave Pix para Recebimento de Pagamentos</span>
                             </div>
-                                     <!-- Configurações do EFI -->
+                        </div>
+
+                        <!-- Configrações do EFI -->
                         <hr>
-                        <h5 style="margin-left:10px;">Configurações do EFI (antiga Gerencianet)</h5>
+                        <h5 style="margin-left:10px;">Configrações do EFI (antiga GerenciaNet)</h5>
                         <div class="control-group">
                             <label for="EFI_PRODUCTION" class="control-label">Ambiente</label>
                             <div class="controls">
@@ -151,13 +155,13 @@
                                         <option value="<?= $diasEFI ?>" <?= $diasEFI == $_ENV['PAYMENT_GATEWAYS_EFI_BOLETO_EXPIRATION'] ? 'selected' : '' ?>><?= $i ?> dia<?= $i > 1 ? 's' : '' ?></option>
                                     <?php endfor; ?>
                                 </select>
-                                <span class="help-inline">A quantidade de dias selecionados será somada à data em que a cobrança for gerada.</span>
+                                <span class="help-inline">A quantidade de dias selecionado será somado a data que a cobrança for gerada.</span>
                             </div>
                         </div>
 
-                        <!-- Configurações do Mercado Pago -->
+                        <!-- Configrações do Mercado Pago -->
                         <hr>
-                        <h5 style="margin-left:10px;">Configurações do Mercado Pago</h5>
+                        <h5 style="margin-left:10px;">Configrações do Mercado Pago</h5>
                         <div class="control-group">
                             <label for="MERCADO_PAGO_CREDENTIALS_PUBLIC_KEY" class="control-label">PUBLIC_KEY</label>
                             <div class="controls">
@@ -196,13 +200,13 @@
                                         <option value="<?= $diasMP ?>" <?= $diasMP == $_ENV['PAYMENT_GATEWAYS_MERCADO_PAGO_BOLETO_EXPIRATION'] ? 'selected' : '' ?>><?= $i ?> dia<?= $i > 1 ? 's' : '' ?></option>
                                     <?php endfor; ?>
                                 </select>
-                                <span class="help-inline">A quantidade de dias selecionados será somada à data em que a cobrança for gerada.</span>
+                                <span class="help-inline">A quantidade de dias selecionado será somado a data que a cobrança for gerada.</span>
                             </div>
                         </div>
 
-                        <!-- Configurações do ASAAS -->
+                        <!-- Configrações do ASAAS -->
                         <hr>
-                        <h5 style="margin-left:10px;">Configurações do ASAAS</h5>
+                        <h5 style="margin-left:10px;">Configrações do ASAAS</h5>
                         <div class="control-group">
                             <label for="ASAAS_PRODUCTION" class="control-label">Ambiente</label>
                             <div class="controls">
@@ -218,7 +222,7 @@
                             <div class="controls">
                                 <select name="PAYMENT_GATEWAYS_ASAAS_NOTIFY" id="ASAAS_NOTIFY">
                                     <option value="false" <?= !filter_var($_ENV['PAYMENT_GATEWAYS_ASAAS_NOTIFY'] ?? false, FILTER_VALIDATE_BOOLEAN) ? 'selected' : ''; ?>>Desativado</option>
-                                    <option value="true" <?= !filter_var($_ENV['PAYMENT_GATEWAYS_ASAAS_NOTIFY'] ?? false, FILTER_VALIDATE_BOOLEAN) ? 'selected' : ''; ?>>Ativado</option>
+                                    <option value="true" <?= filter_var($_ENV['PAYMENT_GATEWAYS_ASAAS_NOTIFY'] ?? false, FILTER_VALIDATE_BOOLEAN) ? 'selected' : ''; ?>>Ativado</option>
                                 </select>
                                 <span class="help-inline">Ativar ou desativar o Notify do Asaas.</span>
                             </div>
@@ -240,7 +244,7 @@
                                         <option value="<?= $diasASAAS ?>" <?= $diasASAAS == $_ENV['PAYMENT_GATEWAYS_ASAAS_BOLETO_EXPIRATION'] ? 'selected' : '' ?>><?= $i ?> dia<?= $i > 1 ? 's' : '' ?></option>
                                     <?php endfor; ?>
                                 </select>
-                                <span class="help-inline">A quantidade de dias selecionados será somada à data em que a cobrança for gerada.</span>
+                                <span class="help-inline">A quantidade de dias selecionado será somado a data que a cobrança for gerada.</span>
                             </div>
                         </div>
 
@@ -366,7 +370,7 @@
                                 </div>
                             </div>
                             <div class="span8">
-                                <span6 class="span10" style="margin-left: 2em;"> Defina a visualização padrão, onde o que ficar checado será exibida na listagem de OS por padrão. </span6>
+                                <span6 class="span10" style="margin-left: 2em;"> Defina a vizualização padrão, onde o que ficar checado será exibida na listagem de OS por padrão. </span6>
                                 <div class="span10" style="margin-left: 3em;">
                                     <label> <input <?= @in_array("Aberto", json_decode($configuration['os_status_list'])) == 'true' ? 'checked' : ''; ?> name="os_status_list[]" class="marcar" type="checkbox" value="Aberto"> <span class="lbl"> Aberto</span> </label>
                                     <label> <input <?= @in_array("Orçamento", json_decode($configuration['os_status_list'])) == 'true' ? 'checked' : ''; ?> name="os_status_list[]" class="marcar" type="checkbox" value="Orçamento"> <span class="lbl"> Orçamento</span> </label>
@@ -486,7 +490,7 @@
                             <label for="EMAIL_SMTP_USER" class="control-label">Usuário</label>
                             <div class="controls">
                                 <input type="text" name="EMAIL_SMTP_USER" value="<?= $_ENV['EMAIL_SMTP_USER'] ?>" id="EMAIL_SMTP_USER">
-                                <span class="help-inline">Informe o nome de usuário do e-mail.</span>
+                                <span class="help-inline">Informe nome de usuáriodo e-mail.</span>
                             </div>
                         </div>
                         <div class="control-group">
@@ -557,6 +561,10 @@
         window.location = "<?= site_url('mapos/atualizarMapos') ?>"
     });
     $(document).ready(function() {
+        // Abre direto a aba pedida no link (ex.: menu Cadastros > Status abre #menu5 = OS)
+        if (window.location.hash && $('a[data-toggle="tab"][href="' + window.location.hash + '"]').length) {
+            $('a[data-toggle="tab"][href="' + window.location.hash + '"]').tab('show');
+        }
         $('#notifica_whats_select').change(function() {
             if ($(this).val() != "0")
                 document.getElementById("notifica_whats").value += $(this).val();

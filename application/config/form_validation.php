@@ -228,8 +228,9 @@ $config = [
         ],
         [
             'field' => 'usuarios_id',
-            'label' => 'usuarios_id',
-            'rules' => 'trim|required',
+            // opcional: OS sem técnico entra na fila "Chamados Sem Técnico"
+            'label' => 'Técnico',
+            'rules' => 'trim|is_natural_no_zero',
         ],
         [
             'field' => 'laudoTecnico',
@@ -429,6 +430,18 @@ $config = [
             'field' => 'idOsServico',
             'label' => 'idOsServico',
             'rules' => 'trim|required|numeric',
+        ],
+    ],
+    'checklist_os' => [
+        [
+            'field' => 'descricao',
+            'label' => 'Descrição',
+            'rules' => 'required|trim|max_length[255]',
+        ],
+        [
+            'field' => 'os_id',
+            'label' => 'ID Os',
+            'rules' => 'trim|required|integer',
         ],
     ],
     'cobrancas' => [

@@ -47,9 +47,21 @@ class Os_model extends CI_Model
         $this->db->select($fields . ',clientes.idClientes, clientes.nomeCliente, clientes.celular as celular_cliente, usuarios.nome, garantias.*');
         $this->db->from($table);
         $this->db->join('clientes', 'clientes.idClientes = os.clientes_id');
-        $this->db->join('usuarios', 'usuarios.idUsuarios = os.usuarios_id');
+        // LEFT: a OS pode estar sem técnico (fila "Chamados Sem Técnico")
+        $this->db->join('usuarios', 'usuarios.idUsuarios = os.usuarios_id', 'left');
         $this->db->join('garantias', 'garantias.idGarantias = os.garantias_id', 'left');
         $this->db->join('produtos_os', 'produtos_os.os_id = os.idOs', 'left');
+
+        // Pré-chamados (abertos pelo cliente e ainda não aprovados) só aparecem na fila própria
+        $this->db->where('os.pre_chamado', array_key_exists('pre_chamado', $where) ? (int) $where['pre_chamado'] : 0);
+
+        if (! empty($where['sem_tecnico'])) {
+            // fila de trabalho: só chamados em aberto, sem responsável
+            $this->db->where('os.usuarios_id IS NULL', null, false);
+            if (! array_key_exists('status', $where)) {
+                $this->db->where_not_in('os.status', ['Finalizado', 'Faturado', 'Cancelado']);
+            }
+        }
         $this->db->join('servicos_os', 'servicos_os.os_id = os.idOs', 'left');
 
         // condicionais da pesquisa
@@ -75,6 +87,11 @@ class Os_model extends CI_Model
             $this->db->where('dataFinal <=', $where['ate']);
         }
 
+        // condicional "minha fila": restringe às OS atribuídas a um técnico/usuário específico
+        if (array_key_exists('usuarios_id', $where)) {
+            $this->db->where('os.usuarios_id', $where['usuarios_id']);
+        }
+
         $this->db->limit($perpage, $start);
         $this->db->order_by('os.idOs', 'desc');
         $this->db->group_by('os.idOs');
@@ -86,13 +103,107 @@ class Os_model extends CI_Model
         return $result;
     }
 
+    /**
+     * Lista de OS para o quadro Kanban: mesma base de dados de getOs(), mas
+     * sem paginação (o Kanban mostra todas as OS em aberto de uma vez,
+     * agrupadas por status) e com um teto de segurança para não sobrecarregar
+     * a tela em bases muito grandes.
+     */
+    public function getOsKanban($where = [])
+    {
+        $this->db->select('os.*, clientes.nomeCliente, usuarios.nome as nomeUsuario');
+        $this->db->from('os');
+        $this->db->join('clientes', 'clientes.idClientes = os.clientes_id');
+        $this->db->join('usuarios', 'usuarios.idUsuarios = os.usuarios_id', 'left');
+        $this->db->where('os.pre_chamado', 0);
+
+        if (array_key_exists('usuarios_id', $where)) {
+            $this->db->where('os.usuarios_id', $where['usuarios_id']);
+        }
+
+        if (array_key_exists('status', $where)) {
+            $this->db->where_in('os.status', $where['status']);
+        }
+
+        $this->db->order_by('os.idOs', 'desc');
+        $this->db->limit(500);
+
+        return $this->db->get()->result();
+    }
+
+    /**
+     * Listas para os campos de atendimento da OS (Departamento, Equipe,
+     * Categoria, Sub Categoria e SLA). Só itens ativos, mais os que a OS
+     * já usa (para não "sumir" um item desativado depois).
+     */
+    public function opcoesAtendimento($os = null): array
+    {
+        $usados = [
+            'cad_departamentos' => $os->departamento_id ?? null,
+            'cad_equipes' => $os->equipe_id ?? null,
+            'cad_categorias' => $os->categoria_id ?? null,
+            'cad_subcategorias' => $os->subcategoria_id ?? null,
+            'cad_slas' => $os->sla_id ?? null,
+        ];
+        $buscar = function ($tabela, $campos, $ordem = 'nome') use ($usados) {
+            $this->db->select($campos)->from($tabela);
+            $this->db->group_start()->where('ativo', 1);
+            if ($usados[$tabela]) {
+                $this->db->or_where('id', (int) $usados[$tabela]);
+            }
+            $this->db->group_end()->order_by($ordem, 'ASC');
+
+            return $this->db->get()->result();
+        };
+
+        return [
+            'departamentos' => $buscar('cad_departamentos', 'id, nome, sla_id'),
+            'equipes' => $buscar('cad_equipes', 'id, nome, departamento_id'),
+            'categorias' => $buscar('cad_categorias', 'id, nome, sla_id, departamento_id'),
+            'subcategorias' => $buscar('cad_subcategorias', 'id, nome, categoria_id, sla_id'),
+            'slas' => $buscar('cad_slas', 'id, nome, cor, prioridade, tempo_solucao, horario_comercial', 'prioridade'),
+        ];
+    }
+
+    /**
+     * Lê e valida (contra as opções existentes) os campos de atendimento do POST.
+     */
+    public function dadosAtendimentoDoPost($os = null): array
+    {
+        $op = $this->opcoesAtendimento($os);
+        $valido = function ($campo, $lista) {
+            $v = (int) $this->input->post($campo);
+            foreach ($lista as $item) {
+                if ((int) $item->id === $v) {
+                    return $v;
+                }
+            }
+
+            return null;
+        };
+
+        return [
+            'departamento_id' => $valido('departamento_id', $op['departamentos']),
+            'equipe_id' => $valido('equipe_id', $op['equipes']),
+            'categoria_id' => $valido('categoria_id', $op['categorias']),
+            'subcategoria_id' => $valido('subcategoria_id', $op['subcategorias']),
+            'sla_id' => $valido('sla_id', $op['slas']),
+        ];
+    }
+
     public function getById($id)
     {
         $this->db->select('os.*, clientes.*, clientes.celular as celular_cliente, clientes.telefone as telefone_cliente, clientes.contato as contato_cliente, garantias.refGarantia, garantias.textoGarantia, usuarios.telefone as telefone_usuario, usuarios.email as email_usuario, usuarios.nome');
+        $this->db->select('cdep.nome as departamento_nome, ceq.nome as equipe_nome, ccat.nome as categoria_nome, csub.nome as subcategoria_nome, csla.nome as sla_nome, csla.cor as sla_cor, csla.tempo_solucao as sla_horas');
         $this->db->from('os');
         $this->db->join('clientes', 'clientes.idClientes = os.clientes_id');
-        $this->db->join('usuarios', 'usuarios.idUsuarios = os.usuarios_id');
+        $this->db->join('usuarios', 'usuarios.idUsuarios = os.usuarios_id', 'left');
         $this->db->join('garantias', 'garantias.idGarantias = os.garantias_id', 'left');
+        $this->db->join('cad_departamentos cdep', 'cdep.id = os.departamento_id', 'left');
+        $this->db->join('cad_equipes ceq', 'ceq.id = os.equipe_id', 'left');
+        $this->db->join('cad_categorias ccat', 'ccat.id = os.categoria_id', 'left');
+        $this->db->join('cad_subcategorias csub', 'csub.id = os.subcategoria_id', 'left');
+        $this->db->join('cad_slas csla', 'csla.id = os.sla_id', 'left');
         $this->db->where('os.idOs', $id);
         $this->db->limit(1);
 
@@ -104,7 +215,7 @@ class Os_model extends CI_Model
         $this->db->select('os.*, clientes.*, clientes.celular as celular_cliente, garantias.refGarantia, garantias.textoGarantia, usuarios.telefone as telefone_usuario, usuarios.email as email_usuario, usuarios.nome,cobrancas.os_id,cobrancas.idCobranca,cobrancas.status');
         $this->db->from('os');
         $this->db->join('clientes', 'clientes.idClientes = os.clientes_id');
-        $this->db->join('usuarios', 'usuarios.idUsuarios = os.usuarios_id');
+        $this->db->join('usuarios', 'usuarios.idUsuarios = os.usuarios_id', 'left');
         $this->db->join('cobrancas', 'cobrancas.os_id = os.idOs');
         $this->db->join('garantias', 'garantias.idGarantias = os.garantias_id', 'left');
         $this->db->where('os.idOs', $id);
@@ -372,6 +483,17 @@ class Os_model extends CI_Model
         $this->db->order_by('idAnotacoes', 'desc');
 
         return $this->db->get('anotacoes_os')->result();
+    }
+
+    /**
+     * Itens de checklist de uma OS, mais antigos primeiro (ordem de criação).
+     */
+    public function getChecklist($os)
+    {
+        $this->db->where('os_id', $os);
+        $this->db->order_by('idChecklist', 'asc');
+
+        return $this->db->get('checklist_os')->result();
     }
 
     public function getCobrancas($id = null)

@@ -47,7 +47,7 @@ class Garantias_model extends CI_Model
         $this->db->from('garantias');
         $this->db->join('os', 'os.garantias_id = garantias.idGarantias');
         $this->db->join('clientes', 'os.clientes_id = clientes.idClientes');
-        $this->db->join('usuarios', 'os.usuarios_id = usuarios.idUsuarios');
+        $this->db->join('usuarios', 'os.usuarios_id = usuarios.idUsuarios', 'left');
         $this->db->where('os.idOs', $id);
         $this->db->limit(1);
 

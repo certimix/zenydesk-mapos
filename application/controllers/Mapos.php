@@ -12,7 +12,9 @@ class Mapos extends MY_Controller
         if ($this->uri->segment(1) === 'mapos') {
             $segments = $this->uri->segment_array();
             $remaining = implode('/', array_slice($segments, 1));
-            redirect('Inicio' . ($remaining ? '/' . $remaining : ''), 'location', 301);
+            // Mantém os parâmetros (?start=...&end=...): sem isso o calendário do painel quebrava.
+            $query = isset($_SERVER['QUERY_STRING']) && $_SERVER['QUERY_STRING'] !== '' ? '?' . $_SERVER['QUERY_STRING'] : '';
+            redirect('Inicio' . ($remaining ? '/' . $remaining : '') . $query, 'location', 301);
         }
     }
 

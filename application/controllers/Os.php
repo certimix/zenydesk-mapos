@@ -52,6 +52,12 @@ class Os extends MY_Controller
         $status = $this->input->get('status');
         $inputDe = $this->input->get('data');
         $inputAte = $this->input->get('data2');
+        // "Minha fila": restringe a listagem às OS cujo técnico responsável
+        // (usuarios_id) é o próprio usuário logado. Usado pelo item de menu
+        // "Minha Fila", pensado para o perfil de funcionário de suporte.
+        $minhas = $this->input->get('minhas') ? '1' : '';
+        // "Chamados Sem Técnico": OS ainda sem responsável atribuído
+        $semTecnico = $this->input->get('semtecnico') ? '1' : '';
 
         if ($pesquisa) {
             $where_array['pesquisa'] = $pesquisa;
@@ -71,6 +77,12 @@ class Os extends MY_Controller
 
             $where_array['ate'] = $ate;
         }
+        if ($minhas) {
+            $where_array['usuarios_id'] = $this->session->userdata('id_admin');
+        }
+        if ($semTecnico) {
+            $where_array['sem_tecnico'] = 1;
+        }
 
         $this->data['configuration']['base_url'] = site_url('os/gerenciar/');
         $this->data['configuration']['total_rows'] = $this->os_model->count('os');
@@ -81,6 +93,8 @@ class Os extends MY_Controller
                 'status' => $status,
                 'data' => $inputDe,
                 'data2' => $inputAte,
+                'minhas' => $minhas,
+                'semtecnico' => $semTecnico,
             ]);
 
             $this->data['configuration']['suffix'] = '?' . $query;
@@ -101,6 +115,8 @@ class Os extends MY_Controller
 
         $this->data['texto_de_notificacao'] = $this->data['configuration']['notifica_whats'];
         $this->data['emitente'] = $this->mapos_model->getEmitente();
+        $this->data['minhas'] = $minhas;
+        $this->data['semTecnico'] = $semTecnico;
         $this->data['view'] = 'os/os';
 
         return $this->layout();
@@ -145,7 +161,7 @@ class Os extends MY_Controller
             $data = [
                 'dataInicial' => $dataInicial,
                 'clientes_id' => $this->input->post('clientes_id'), //set_value('idCliente'),
-                'usuarios_id' => $this->input->post('usuarios_id'), //set_value('idUsuario'),
+                'usuarios_id' => $this->input->post('usuarios_id') ?: null, // vazio = sem técnico
                 'dataFinal' => $dataFinal,
                 'garantia' => set_value('garantia'),
                 'garantias_id' => $termoGarantiaId,
@@ -157,6 +173,14 @@ class Os extends MY_Controller
                 'faturado' => 0,
             ];
 
+            // Atendimento (Departamento, Equipe, Categoria, Sub Categoria, SLA) e prazo do SLA
+            $this->load->library('sla');
+            $this->load->helper('sla');
+            $data = array_merge($data, $this->os_model->dadosAtendimentoDoPost());
+            $data['aberto_em'] = date('Y-m-d H:i:s');
+            $data['sla_prazo'] = $this->sla->prazoDaOs($data['aberto_em'], $data['sla_id']);
+            $data['encerrado_em'] = os_status_encerrado($data['status']) ? $data['aberto_em'] : null;
+
             if (is_numeric($id = $this->os_model->add('os', $data, true))) {
                 $this->load->model('mapos_model');
                 $this->load->model('usuarios_model');
@@ -165,7 +189,7 @@ class Os extends MY_Controller
                 $os = $this->os_model->getById($idOs);
                 $emitente = $this->mapos_model->getEmitente();
 
-                $tecnico = $this->usuarios_model->getById($os->usuarios_id);
+                $tecnico = $os->usuarios_id ? $this->usuarios_model->getById($os->usuarios_id) : null;
 
                 // Verificar configuração de notificação
                 if ($this->data['configuration']['os_notification'] != 'nenhum' && $this->data['configuration']['email_automatico'] == 1) {
@@ -173,14 +197,18 @@ class Os extends MY_Controller
                     switch ($this->data['configuration']['os_notification']) {
                         case 'todos':
                             array_push($remetentes, $os->email);
-                            array_push($remetentes, $tecnico->email);
+                            if ($tecnico) {
+                                array_push($remetentes, $tecnico->email);
+                            }
                             array_push($remetentes, $emitente->email);
                             break;
                         case 'cliente':
                             array_push($remetentes, $os->email);
                             break;
                         case 'tecnico':
-                            array_push($remetentes, $tecnico->email);
+                            if ($tecnico) {
+                                array_push($remetentes, $tecnico->email);
+                            }
                             break;
                         case 'emitente':
                             array_push($remetentes, $emitente->email);
@@ -200,6 +228,7 @@ class Os extends MY_Controller
             }
         }
 
+        $this->data['atendimento'] = $this->os_model->opcoesAtendimento();
         $this->data['view'] = 'os/adicionarOs';
 
         return $this->layout();
@@ -255,10 +284,27 @@ class Os extends MY_Controller
                 'status' => $this->input->post('status'),
                 'observacoes' => $this->input->post('observacoes'),
                 'laudoTecnico' => $this->input->post('laudoTecnico'),
-                'usuarios_id' => $this->input->post('usuarios_id'),
+                'usuarios_id' => $this->input->post('usuarios_id') ?: null, // vazio = sem técnico
                 'clientes_id' => $this->input->post('clientes_id'),
             ];
             $os = $this->os_model->getById($this->input->post('idOs'));
+
+            // Atendimento e SLA: recalcula o prazo quando o SLA muda
+            $this->load->library('sla');
+            $this->load->helper('sla');
+            $data = array_merge($data, $this->os_model->dadosAtendimentoDoPost($os));
+            $abertura = $os->aberto_em ?: ($os->dataInicial . ' 08:00:00');
+            if ((int) $data['sla_id'] !== (int) $os->sla_id || ($data['sla_id'] && ! $os->sla_prazo)) {
+                $data['sla_prazo'] = $this->sla->prazoDaOs($abertura, $data['sla_id']);
+            }
+            if (! $os->aberto_em) {
+                $data['aberto_em'] = $abertura;
+            }
+            if (os_status_encerrado($data['status']) && ! os_status_encerrado($os->status)) {
+                $data['encerrado_em'] = date('Y-m-d H:i:s');
+            } elseif (! os_status_encerrado($data['status'])) {
+                $data['encerrado_em'] = null;
+            }
 
             //Verifica para poder fazer a devolução do produto para o estoque caso OS seja cancelada.
 
@@ -278,7 +324,7 @@ class Os extends MY_Controller
 
                 $os = $this->os_model->getById($idOs);
                 $emitente = $this->mapos_model->getEmitente();
-                $tecnico = $this->usuarios_model->getById($os->usuarios_id);
+                $tecnico = $os->usuarios_id ? $this->usuarios_model->getById($os->usuarios_id) : null;
 
                 // Verificar configuração de notificação
                 if ($this->data['configuration']['os_notification'] != 'nenhum' && $this->data['configuration']['email_automatico'] == 1) {
@@ -286,14 +332,18 @@ class Os extends MY_Controller
                     switch ($this->data['configuration']['os_notification']) {
                         case 'todos':
                             array_push($remetentes, $os->email);
-                            array_push($remetentes, $tecnico->email);
+                            if ($tecnico) {
+                                array_push($remetentes, $tecnico->email);
+                            }
                             array_push($remetentes, $emitente->email);
                             break;
                         case 'cliente':
                             array_push($remetentes, $os->email);
                             break;
                         case 'tecnico':
-                            array_push($remetentes, $tecnico->email);
+                            if ($tecnico) {
+                                array_push($remetentes, $tecnico->email);
+                            }
                             break;
                         case 'emitente':
                             array_push($remetentes, $emitente->email);
@@ -303,6 +353,12 @@ class Os extends MY_Controller
                             break;
                     }
                     $this->enviarOsPorEmail($idOs, $remetentes, 'Ordem de Serviço - Editada');
+                }
+
+                // OS finalizada: já deixa pronto o link de avaliação do cliente
+                if (in_array($data['status'], ['Finalizado', 'Faturado'], true)) {
+                    $this->load->model('avaliacoes_model');
+                    $this->avaliacoes_model->garantirLink((int) $idOs);
                 }
 
                 $this->session->set_flashdata('success', 'Os editada com sucesso!');
@@ -319,6 +375,7 @@ class Os extends MY_Controller
         $this->data['servicos'] = $this->os_model->getServicos($this->uri->segment(3));
         $this->data['anexos'] = $this->os_model->getAnexos($this->uri->segment(3));
         $this->data['anotacoes'] = $this->os_model->getAnotacoes($this->uri->segment(3));
+        $this->data['checklist'] = $this->os_model->getChecklist($this->uri->segment(3));
 
         if ($return = $this->os_model->valorTotalOS($this->uri->segment(3))) {
             $this->data['totalServico'] = $return['totalServico'];
@@ -327,6 +384,7 @@ class Os extends MY_Controller
 
         $this->load->model('mapos_model');
         $this->data['emitente'] = $this->mapos_model->getEmitente();
+        $this->data['atendimento'] = $this->os_model->opcoesAtendimento($this->data['result']);
 
         $this->data['view'] = 'os/editarOs';
 
@@ -355,6 +413,7 @@ class Os extends MY_Controller
         $this->data['emitente'] = $this->mapos_model->getEmitente();
         $this->data['anexos'] = $this->os_model->getAnexos($this->uri->segment(3));
         $this->data['anotacoes'] = $this->os_model->getAnotacoes($this->uri->segment(3));
+        $this->data['checklist'] = $this->os_model->getChecklist($this->uri->segment(3));
         $this->data['editavel'] = $this->os_model->isEditable($this->uri->segment(3));
         $this->data['qrCode'] = $this->os_model->getQrCode(
             $this->uri->segment(3),
@@ -369,6 +428,8 @@ class Os extends MY_Controller
             ],
             true
         );
+        $this->load->model('avaliacoes_model');
+        $this->data['avaliacao'] = $this->avaliacoes_model->porOs((int) $this->uri->segment(3));
         $this->data['view'] = 'os/visualizarOs';
         $this->data['chaveFormatada'] = $this->formatarChave($this->data['configuration']['pix_key']);
 
@@ -378,6 +439,32 @@ class Os extends MY_Controller
         }
 
         return $this->layout();
+    }
+
+    /**
+     * "Assumir" um chamado sem técnico: o usuário logado vira o responsável.
+     */
+    public function assumir()
+    {
+        if (! $this->permission->checkPermission($this->session->userdata('permissao'), 'eOs')) {
+            $this->session->set_flashdata('error', 'Você não tem permissão para editar O.S.');
+            redirect(site_url('os?semtecnico=1'));
+        }
+        $idOs = (int) $this->input->post('idOs');
+        $os = $idOs ? $this->os_model->getById($idOs) : null;
+        if (! $os || $this->input->method() !== 'post') {
+            $this->session->set_flashdata('error', 'OS não encontrada.');
+            redirect(site_url('os?semtecnico=1'));
+        }
+        if ($os->usuarios_id) {
+            $this->session->set_flashdata('error', 'Esta OS já tem técnico responsável.');
+            redirect(site_url('os?semtecnico=1'));
+        }
+
+        $this->os_model->edit('os', ['usuarios_id' => $this->session->userdata('id_admin')], 'idOs', $idOs);
+        log_info('Assumiu a OS sem técnico. ID: ' . $idOs);
+        $this->session->set_flashdata('success', "Você assumiu a OS #{$idOs}.");
+        redirect(site_url('os/editar/' . $idOs));
     }
 
     public function validarCPF($cpf)
@@ -536,7 +623,7 @@ class Os extends MY_Controller
         $idOs = $this->uri->segment(3);
 
         $emitente = $this->data['emitente'];
-        $tecnico = $this->usuarios_model->getById($this->data['result']->usuarios_id);
+        $tecnico = $this->data['result']->usuarios_id ? $this->usuarios_model->getById($this->data['result']->usuarios_id) : null;
 
         // Verificar configuração de notificação
         $ValidarEmail = false;
@@ -545,7 +632,9 @@ class Os extends MY_Controller
             switch ($this->data['configuration']['os_notification']) {
                 case 'todos':
                     array_push($remetentes, $this->data['result']->email);
-                    array_push($remetentes, $tecnico->email);
+                    if ($tecnico) {
+                        array_push($remetentes, $tecnico->email);
+                    }
                     array_push($remetentes, $emitente->email);
                     $ValidarEmail = true;
                     break;
@@ -554,7 +643,9 @@ class Os extends MY_Controller
                     $ValidarEmail = true;
                     break;
                 case 'tecnico':
-                    array_push($remetentes, $tecnico->email);
+                    if ($tecnico) {
+                        array_push($remetentes, $tecnico->email);
+                    }
                     break;
                 case 'emitente':
                     array_push($remetentes, $emitente->email);
@@ -1174,7 +1265,6 @@ class Os extends MY_Controller
         }
     }
 
-
     public function excluirAnexo($id = null)
     {
         if (! $this->permission->checkPermission($this->session->userdata('permissao'), 'eOs')) {
@@ -1462,6 +1552,85 @@ class Os extends MY_Controller
 
         if ($this->os_model->delete('anotacoes_os', 'idAnotacoes', $id) == true) {
             log_info('Removeu anotação de uma OS. ID (OS): ' . $idOs);
+            echo json_encode(['result' => true]);
+        } else {
+            echo json_encode(['result' => false]);
+        }
+    }
+
+    public function adicionarChecklistItem()
+    {
+        if (! $this->permission->checkPermission($this->session->userdata('permissao'), 'eOs')) {
+            $this->session->set_flashdata('error', 'Você não tem permissão para editar O.S.');
+            redirect(base_url());
+        }
+
+        $this->load->library('form_validation');
+        if ($this->form_validation->run('checklist_os') == false) {
+            echo json_encode(['result' => false, 'mensagem' => validation_errors()]);
+
+            return;
+        }
+
+        $osId = $this->input->post('os_id');
+        if (! $osId || ! $this->os_model->getById($osId)) {
+            echo json_encode(['result' => false, 'mensagem' => 'Ordem de serviço inválida.']);
+
+            return;
+        }
+
+        $data = [
+            'descricao' => $this->input->post('descricao'),
+            'concluido' => 0,
+            'os_id' => $osId,
+            'criado_em' => date('Y-m-d H:i:s'),
+        ];
+
+        if ($this->os_model->add('checklist_os', $data) == true) {
+            log_info('Adicionou item de checklist a uma OS. ID (OS): ' . $osId);
+            echo json_encode(['result' => true]);
+        } else {
+            echo json_encode(['result' => false]);
+        }
+    }
+
+    public function marcarChecklistItem()
+    {
+        if (! $this->permission->checkPermission($this->session->userdata('permissao'), 'eOs')) {
+            $this->session->set_flashdata('error', 'Você não tem permissão para editar O.S.');
+            redirect(base_url());
+        }
+
+        $id = (int) $this->input->post('idChecklist');
+        $idOs = $this->input->post('idOs');
+        $concluido = $this->input->post('concluido') ? 1 : 0;
+
+        $data = [
+            'concluido' => $concluido,
+            'concluido_por' => $concluido ? $this->session->userdata('nome_admin') : null,
+            'concluido_em' => $concluido ? date('Y-m-d H:i:s') : null,
+        ];
+
+        if ($this->os_model->edit('checklist_os', $data, 'idChecklist', $id) == true) {
+            log_info('Atualizou item de checklist de uma OS. ID (OS): ' . $idOs . '. Concluído: ' . $concluido);
+            echo json_encode(['result' => true]);
+        } else {
+            echo json_encode(['result' => false]);
+        }
+    }
+
+    public function excluirChecklistItem()
+    {
+        if (! $this->permission->checkPermission($this->session->userdata('permissao'), 'eOs')) {
+            $this->session->set_flashdata('error', 'Você não tem permissão para editar O.S.');
+            redirect(base_url());
+        }
+
+        $id = $this->input->post('idChecklist');
+        $idOs = $this->input->post('idOs');
+
+        if ($this->os_model->delete('checklist_os', 'idChecklist', $id) == true) {
+            log_info('Removeu item de checklist de uma OS. ID (OS): ' . $idOs);
             echo json_encode(['result' => true]);
         } else {
             echo json_encode(['result' => false]);

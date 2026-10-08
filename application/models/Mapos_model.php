@@ -121,6 +121,7 @@ class Mapos_model extends CI_Model
         $this->db->select('os.*, clientes.nomeCliente');
         $this->db->from('os');
         $this->db->join('clientes', 'clientes.idClientes = os.clientes_id');
+        $this->db->where('os.pre_chamado', 0); // pré-chamado ainda não aprovado não entra no painel/agenda
         $this->db->where('os.status', 'Orçamento');
         $this->db->limit(10);
 
@@ -132,6 +133,7 @@ class Mapos_model extends CI_Model
         $this->db->select('os.*, clientes.nomeCliente');
         $this->db->from('os');
         $this->db->join('clientes', 'clientes.idClientes = os.clientes_id');
+        $this->db->where('os.pre_chamado', 0); // pré-chamado ainda não aprovado não entra no painel/agenda
         $this->db->where('os.status', 'Aberto');
         $this->db->limit(10);
 
@@ -143,6 +145,7 @@ class Mapos_model extends CI_Model
         $this->db->select('os.*, clientes.nomeCliente');
         $this->db->from('os');
         $this->db->join('clientes', 'clientes.idClientes = os.clientes_id');
+        $this->db->where('os.pre_chamado', 0); // pré-chamado ainda não aprovado não entra no painel/agenda
         $this->db->where('os.status', 'Finalizado');
         $this->db->order_by('os.idOs', 'DESC');
         $this->db->limit(10);
@@ -155,6 +158,7 @@ class Mapos_model extends CI_Model
         $this->db->select('os.*, clientes.nomeCliente');
         $this->db->from('os');
         $this->db->join('clientes', 'clientes.idClientes = os.clientes_id');
+        $this->db->where('os.pre_chamado', 0); // pré-chamado ainda não aprovado não entra no painel/agenda
         $this->db->where('os.status', 'Aprovado');
         $this->db->limit(10);
 
@@ -166,6 +170,7 @@ class Mapos_model extends CI_Model
         $this->db->select('os.*, clientes.nomeCliente');
         $this->db->from('os');
         $this->db->join('clientes', 'clientes.idClientes = os.clientes_id');
+        $this->db->where('os.pre_chamado', 0); // pré-chamado ainda não aprovado não entra no painel/agenda
         $this->db->where('os.status', 'Aguardando Peças');
         $this->db->limit(10);
 
@@ -177,6 +182,7 @@ class Mapos_model extends CI_Model
         $this->db->select('os.*, clientes.nomeCliente');
         $this->db->from('os');
         $this->db->join('clientes', 'clientes.idClientes = os.clientes_id');
+        $this->db->where('os.pre_chamado', 0); // pré-chamado ainda não aprovado não entra no painel/agenda
         $this->db->where('os.status', 'Em Andamento');
         $this->db->limit(10);
 
@@ -188,6 +194,7 @@ class Mapos_model extends CI_Model
         $this->db->select('os.*, clientes.nomeCliente');
         $this->db->from('os');
         $this->db->join('clientes', 'clientes.idClientes = os.clientes_id');
+        $this->db->where('os.pre_chamado', 0); // pré-chamado ainda não aprovado não entra no painel/agenda
         $this->db->where_in('os.status', $status);
         $this->db->order_by('os.idOs', 'DESC');
         $this->db->limit(10);
@@ -219,7 +226,7 @@ class Mapos_model extends CI_Model
         return $query->result();
     }
 
-    public function calendario($start = null, $end = null, $status = null)
+    public function calendario($start, $end, $status = null)
     {
         $this->db->select(
             'os.*,
@@ -228,22 +235,19 @@ class Mapos_model extends CI_Model
             COALESCE((SELECT SUM(servicos_os.preco * servicos_os.quantidade ) FROM servicos_os WHERE servicos_os.os_id = os.idOs), 0) totalServicos'
         );
         $this->db->from('os');
-        $this->db->join('clientes', 'clientes.idClientes = os.clientes_id', 'left');
+        $this->db->join('clientes', 'clientes.idClientes = os.clientes_id');
+        $this->db->where('os.pre_chamado', 0); // pré-chamado ainda não aprovado não entra no painel/agenda
+        $this->db->join('produtos_os', 'produtos_os.os_id = os.idOs', 'left');
+        $this->db->join('servicos_os', 'servicos_os.os_id = os.idOs', 'left');
+        $this->db->where('os.dataFinal >=', $start);
+        $this->db->where('os.dataFinal <=', $end);
+        $this->db->group_by('os.idOs');
 
-        if (!empty($start)) {
-            $this->db->where('os.dataFinal >=', $start);
-        }
-        if (!empty($end)) {
-            $this->db->where('os.dataFinal <=', $end);
-        }
-        if (!empty($status)) {
+        if (! empty($status)) {
             $this->db->where('os.status', $status);
         }
 
-        $this->db->group_by('os.idOs');
-
-        $query = $this->db->get();
-        return $query ? $query->result() : [];
+        return $this->db->get()->result();
     }
 
     public function getProdutosMinimo()

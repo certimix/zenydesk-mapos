@@ -9,17 +9,19 @@
   <meta name="csrf-token-name" content="<?= $this->config->item("csrf_token_name") ?>">
   <meta name="csrf-cookie-name" content="<?= $this->config->item("csrf_cookie_name") ?>">
   <meta name="csrf-token-hash" content="<?= $this->security->get_csrf_hash() ?>">
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20261008">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=20261008">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=20261008">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="manifest" href="/site.webmanifest">
-  <link rel="shortcut icon" type="image/png" href="<?= base_url(); ?>assets/img/favicon.png?v=20261008" />
+  <link rel="shortcut icon" type="image/png" href="<?= base_url(); ?>assets/img/favicon.png" />
   <link rel="stylesheet" href="<?= base_url(); ?>assets/css/bootstrap.min.css" />
   <link rel="stylesheet" href="<?= base_url(); ?>assets/css/bootstrap-responsive.min.css" />
   <link rel="stylesheet" href="<?= base_url(); ?>assets/css/matrix-style.css" />
   <link rel="stylesheet" href="<?= base_url(); ?>assets/css/matrix-media.css" />
   <link href="<?= base_url(); ?>assets/font-awesome/css/font-awesome.css" rel="stylesheet" />
   <link rel="stylesheet" href="<?= base_url(); ?>assets/css/fullcalendar.css" />
+  <link rel="stylesheet" href="<?= base_url(); ?>assets/css/menu-grupos.css" />
+  <link rel="stylesheet" href="<?= base_url(); ?>assets/css/cadastros.css" />
   <?php $appTheme = $configuration['app_theme'] ?? ''; ?>
   <?php if ($appTheme === 'white') { ?>
     <link rel="stylesheet" href="<?= base_url(); ?>assets/css/tema-white.css" />
@@ -39,8 +41,14 @@
   <?php if ($appTheme === 'whiteblack') { ?>
     <link rel="stylesheet" href="<?= base_url(); ?>assets/css/tema-white-black.css" />
   <?php } ?>
-  <!-- Tema Visual Moderno ZenyDesk (Shadcn/ui) -->
-  <link rel="stylesheet" href="<?= base_url(); ?>assets/css/zenydesk-modern.css" />
+  <?php if ($appTheme === 'zenydeskgms') { ?>
+    <link rel="stylesheet" href="<?= base_url(); ?>assets/css/tema-zenydesk-gms.css" />
+  <?php } ?>
+  <?php if ($appTheme === 'zenydeskos' || $appTheme === 'zenydeskdesk') { ?>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800;9..40,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?= base_url(); ?>assets/css/tema-zenydesk-os.css" />
+  <?php } ?>
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;500;700&display=swap' rel='stylesheet' type='text/css'>
   <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>

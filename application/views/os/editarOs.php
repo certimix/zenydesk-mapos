@@ -66,6 +66,7 @@
                         <li id="tabServicos"><a href="#tab4" data-toggle="tab">Serviços</a></li>
                         <li id="tabAnexos"><a href="#tab5" data-toggle="tab">Anexos</a></li>
                         <li id="tabAnotacoes"><a href="#tab6" data-toggle="tab">Anotações</a></li>
+                        <li id="tabChecklist"><a href="#tab7" data-toggle="tab">Checklist</a></li>
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="tab1">
@@ -81,8 +82,8 @@
                                             <input id="valor" type="hidden" name="valor" value="" />
                                         </div>
                                         <div class="span6">
-                                            <label for="tecnico">Técnico / Responsável<span class="required">*</span></label>
-                                            <input id="tecnico" class="span12" type="text" name="tecnico" value="<?php echo $result->nome ?>" />
+                                            <label for="tecnico">Técnico / Responsável <small style="font-weight:normal;color:#8a94a0">(em branco = sem técnico)</small></label>
+                                            <input id="tecnico" class="span12" type="text" name="tecnico" value="<?php echo html_escape((string) $result->nome) ?>" />
                                             <input id="usuarios_id" class="span12" type="hidden" name="usuarios_id" value="<?php echo $result->usuarios_id ?>" />
                                         </div>
                                     </div>
@@ -136,6 +137,7 @@
                                             <input id="garantias_id" class="span12" type="hidden" name="garantias_id" value="<?php echo $result->garantias_id ?>" />
                                         </div>
                                     </div>
+                                    <?php $this->load->view('os/_atendimento', ['atendimento' => $atendimento, 'atual' => $result]); ?>
                                     <div class="span6" style="padding: 1%; margin-left: 0">
                                         <label for="descricaoProduto"><h4>Descrição Produto/Serviço</h4></label>
                                         <textarea class="span12 editor" name="descricaoProduto" id="descricaoProduto" cols="30" rows="5"><?php echo $result->descricaoProduto ?></textarea>
@@ -454,6 +456,66 @@ if (!$anotacoes) {
                             </div>
                         </div>
                         <!-- Fim tab anotações -->
+
+                        <div class="tab-pane" id="tab7">
+                            <div class="span12" style="padding: 1%; margin-left: 0">
+
+                                <div class="span12" id="divChecklist" style="margin-left: 0">
+
+                                    <a href="#modal-checklist" id="btn-checklist" role="button" data-toggle="modal"
+                                        class="button btn btn-success" style="max-width: 160px">
+                                        <span class="button__icon"><i class='bx bx-plus-circle'></i></span><span
+                                            class="button__text2">Adicionar item</span></a>
+                                    <hr>
+                                    <!--
+                                        A lista fica isolada num id próprio (checklistLista), diferente do
+                                        wrapper externo (divChecklist): o .load("url #seletor") do jQuery insere
+                                        o PRÓPRIO elemento casado, não só o conteúdo dele. Se o seletor recarregado
+                                        fosse o mesmo id do elemento que recebe o .load(), cada atualização
+                                        aninharia uma cópia nova dentro da anterior, duplicando os itens na tela.
+                                    -->
+                                    <div id="checklistLista">
+                                        <?php
+        $totalItens = count($checklist);
+        $itensConcluidos = count(array_filter($checklist, function ($i) {
+            return (int) $i->concluido === 1;
+        }));
+        if ($totalItens > 0) {
+            echo '<p><strong>' . $itensConcluidos . ' de ' . $totalItens . ' itens concluídos</strong></p>';
+        }
+?>
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 40px">Feito</th>
+                                                    <th>Item</th>
+                                                    <th>Concluído por / em</th>
+                                                    <th>Ações</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+        foreach ($checklist as $i) {
+            $riscado = $i->concluido ? 'text-decoration: line-through; color: #999;' : '';
+            echo '<tr>';
+            echo '<td style="text-align:center"><input type="checkbox" class="checklist-toggle" idAcao="' . $i->idChecklist . '" ' . ($i->concluido ? 'checked' : '') . '></td>';
+            echo '<td style="' . $riscado . '">' . html_escape($i->descricao) . '</td>';
+            echo '<td>' . ($i->concluido ? html_escape($i->concluido_por) . '<br>' . date('d/m/Y H:i', strtotime($i->concluido_em)) : '-') . '</td>';
+            echo '<td><span idAcao="' . $i->idChecklist . '" title="Excluir Item" class="btn-nwe4 checklist-excluir"><i class="bx bx-trash-alt"></i></span></td>';
+            echo '</tr>';
+        }
+        if (! $checklist) {
+            echo '<tr><td colspan="4">Nenhum item de checklist cadastrado</td></tr>';
+        }
+?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <!-- Fim tab checklist -->
                     </div>
                 </div>
                 &nbsp
@@ -502,6 +564,30 @@ if (!$anotacoes) {
         </div>
         <div class="modal-footer" style="display:flex;justify-content: center">
             <button class="btn" data-dismiss="modal" aria-hidden="true" id="btn-close-anotacao">Fechar</button>
+            <button class="btn btn-primary">Adicionar</button>
+        </div>
+    </form>
+</div>
+
+<!-- Modal cadastro item de checklist -->
+<div id="modal-checklist" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true">
+    <form action="#" method="POST" id="formChecklist">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">Adicionar Item ao Checklist</h3>
+        </div>
+        <div class="modal-body">
+            <div class="span12" id="divFormChecklist" style="margin-left: 0"></div>
+            <div class="span12" style="margin-left: 0">
+                <label for="descricao">Descrição do item</label>
+                <input type="text" class="span12" name="descricao" id="descricao" maxlength="255"
+                    placeholder="Ex: Testar bateria, Limpar conectores...">
+                <input type="hidden" name="os_id" value="<?php echo $result->idOs; ?>">
+            </div>
+        </div>
+        <div class="modal-footer" style="display:flex;justify-content: center">
+            <button class="btn" data-dismiss="modal" aria-hidden="true" id="btn-close-checklist">Fechar</button>
             <button class="btn btn-primary">Adicionar</button>
         </div>
     </form>
@@ -916,12 +1002,13 @@ if (!$anotacoes) {
             }
         });
 
+        $("#tecnico").on('input', function() {
+            if (!this.value.trim()) { $("#usuarios_id").val(''); }
+        });
+
         $("#formOs").validate({
             rules: {
                 cliente: {
-                    required: true
-                },
-                tecnico: {
                     required: true
                 },
                 dataInicial: {
@@ -930,9 +1017,6 @@ if (!$anotacoes) {
             },
             messages: {
                 cliente: {
-                    required: 'Campo Requerido.'
-                },
-                tecnico: {
                     required: 'Campo Requerido.'
                 },
                 dataInicial: {
@@ -1098,6 +1182,95 @@ if (!$anotacoes) {
                                 type: "error",
                                 title: "Atenção",
                                 text: "Ocorreu um erro ao tentar adicionar anotação."
+                            });
+                        }
+                    }
+                });
+                return false;
+            }
+        });
+
+        $("#formChecklist").validate({
+            rules: {
+                descricao: {
+                    required: true
+                }
+            },
+            messages: {
+                descricao: {
+                    required: 'Insira a descrição do item'
+                }
+            },
+            submitHandler: function (form) {
+                var dados = $(form).serialize();
+                $("#divFormChecklist").html("<div class='progress progress-info progress-striped active'><div class='bar' style='width: 100%'></div></div>");
+
+                $.ajax({
+                    type: "POST",
+                    url: "<?php echo base_url(); ?>index.php/os/adicionarChecklistItem",
+                    data: dados,
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.result == true) {
+                            $("#checklistLista").load("<?php echo current_url(); ?> #checklistLista");
+                            $("#descricao").val('');
+                            $('#btn-close-checklist').trigger('click');
+                            $("#divFormChecklist").html('');
+                        } else {
+                            Swal.fire({
+                                type: "error",
+                                title: "Atenção",
+                                text: "Ocorreu um erro ao tentar adicionar o item de checklist."
+                            });
+                        }
+                    }
+                });
+                return false;
+            }
+        });
+
+        $(document).on('change', '.checklist-toggle', function (event) {
+            var idChecklist = $(this).attr('idAcao');
+            var concluido = $(this).is(':checked') ? 1 : 0;
+            var idOS = "<?php echo $result->idOs ?>"
+
+            $.ajax({
+                type: "POST",
+                url: "<?php echo base_url(); ?>index.php/os/marcarChecklistItem",
+                data: "idChecklist=" + idChecklist + "&idOs=" + idOS + "&concluido=" + concluido,
+                dataType: 'json',
+                success: function (data) {
+                    if (data.result == true) {
+                        $("#checklistLista").load("<?php echo current_url(); ?> #checklistLista");
+                    } else {
+                        Swal.fire({
+                            type: "error",
+                            title: "Atenção",
+                            text: "Ocorreu um erro ao tentar atualizar o item de checklist."
+                        });
+                    }
+                }
+            });
+        });
+
+        $(document).on('click', '.checklist-excluir', function (event) {
+            var idChecklist = $(this).attr('idAcao');
+            var idOS = "<?php echo $result->idOs ?>"
+            if ((idChecklist % 1) == 0) {
+                $("#checklistLista").html("<div class='progress progress-info progress-striped active'><div class='bar' style='width: 100%'></div></div>");
+                $.ajax({
+                    type: "POST",
+                    url: "<?php echo base_url(); ?>index.php/os/excluirChecklistItem",
+                    data: "idChecklist=" + idChecklist + "&idOs=" + idOS,
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.result == true) {
+                            $("#checklistLista").load("<?php echo current_url(); ?> #checklistLista");
+                        } else {
+                            Swal.fire({
+                                type: "error",
+                                title: "Atenção",
+                                text: "Ocorreu um erro ao tentar excluir item de checklist."
                             });
                         }
                     }

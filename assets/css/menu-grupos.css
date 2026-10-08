@@ -1,0 +1,150 @@
+/* ============================================================
+   Menu lateral com grupos (Cadastros, Relatórios) e seções
+   (Menu rápido, Outros módulos) — estilo SNDesk.
+   Neutro de tema: usa as cores já definidas pelo tema ativo
+   (herda cor dos itens), então funciona em todos os 8 temas.
+   ============================================================ */
+
+/* Área do menu rola quando há muitos itens */
+#sidebar .menu-bar {
+  min-height: 0;
+}
+
+#sidebar .zd-menu-rolagem {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+
+#sidebar .zd-menu-rolagem::-webkit-scrollbar { width: 6px; }
+#sidebar .zd-menu-rolagem::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.18); border-radius: 3px; }
+
+#sidebar .zd-menu-rolagem > ul.menu-links {
+  padding-bottom: 12px;
+}
+
+#sidebar .botton-content {
+  flex: 0 0 auto;
+}
+
+/* ---- Seções (títulos pequenos) ---- */
+#sidebar li.zd-secao {
+  height: auto;
+  margin-top: 14px;
+  padding: 0 6px 4px;
+  pointer-events: none;
+}
+
+#sidebar li.zd-secao .title {
+  font-size: 0.72em;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+#sidebar.open li.zd-secao {
+  margin-top: 8px;
+  padding: 0;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.12;
+}
+
+#sidebar.open li.zd-secao .title {
+  display: none;
+}
+
+/* ---- Grupos recolhíveis ---- */
+#sidebar li.zd-grupo {
+  height: auto;
+  display: block;
+}
+
+#sidebar li.zd-grupo > a.zd-grupo-toggle {
+  height: 40px;
+  cursor: pointer;
+}
+
+#sidebar li.zd-grupo .zd-seta {
+  margin-left: auto;
+  margin-right: 10px;
+  font-size: 1.2em;
+  transition: transform 0.2s ease;
+  opacity: 0.7;
+}
+
+#sidebar li.zd-grupo.zd-aberto .zd-seta {
+  transform: rotate(180deg);
+}
+
+#sidebar.open li.zd-grupo .zd-seta {
+  display: none;
+}
+
+#sidebar li.zd-grupo > ul.zd-sub {
+  display: none;
+  padding: 2px 0 4px 14px;
+  margin: 0;
+}
+
+#sidebar li.zd-grupo.zd-aberto > ul.zd-sub {
+  display: block;
+}
+
+#sidebar li.zd-grupo > ul.zd-sub > li {
+  height: 34px;
+  margin-top: 2px;
+}
+
+#sidebar li.zd-grupo > ul.zd-sub > li .iconX {
+  font-size: 1.25em;
+  min-width: 38px;
+}
+
+#sidebar li.zd-grupo > ul.zd-sub > li .title {
+  font-size: 0.95em;
+}
+
+/* Sidebar recolhido (só ícones): subitens sem recuo */
+#sidebar.open li.zd-grupo > ul.zd-sub {
+  padding-left: 0;
+}
+
+/* Entre 1024 e 1366px o sistema inverte o significado de .open
+   (sem .open = recolhido só com ícones; com .open = aberto). */
+@media (min-width: 1024px) and (max-width: 1366px) {
+  #sidebar:not(.open) li.zd-secao { margin-top: 8px; padding: 0; height: 1px; background: currentColor; opacity: 0.12; }
+  #sidebar:not(.open) li.zd-secao .title { display: none; }
+  #sidebar:not(.open) li.zd-grupo .zd-seta { display: none; }
+  #sidebar:not(.open) li.zd-grupo > ul.zd-sub { padding-left: 0; }
+
+  #sidebar.open li.zd-secao { margin-top: 14px; padding: 0 6px 4px; height: auto; background: none; opacity: 1; }
+  #sidebar.open li.zd-secao .title { display: inline; opacity: 0.55; }
+  #sidebar.open li.zd-grupo .zd-seta { display: inline-block; }
+  #sidebar.open li.zd-grupo > ul.zd-sub { padding-left: 14px; }
+}
+
+/* O grupo com item ativo não fica todo destacado, só o subitem */
+#sidebar li.zd-grupo.active {
+  background: transparent !important;
+}
+
+/* Contador de pendências (Pré-Chamados, Sem Técnico) */
+#sidebar .zd-contador {
+  display: inline-block;
+  min-width: 18px;
+  padding: 0 5px;
+  margin-left: 6px;
+  border-radius: 9px;
+  background: #dd4b6b;
+  color: #fff !important;
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+  vertical-align: middle;
+}

@@ -782,6 +782,37 @@
                 <div class="accordion-group widget-box">
                     <div class="accordion-heading">
                         <div class="widget-title">
+                            <a data-parent="#collapse-group" href="#collapseGCadastros" data-toggle="collapse">
+                                <span><i class='bx bx-folder-open icon-cli' ></i></span>
+                                <h5 style="padding-left: 28px">Cadastros (Departamentos, Equipes, SLAs...)</h5>
+                                <span><i class='bx bx-chevron-right icon-clic'></i></span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="collapse accordion-body" id="collapseGCadastros">
+                        <div class="widget-content">
+                        <table class="table table-bordered">
+                            <tr>
+                                <td colspan="4"></td>
+                            </tr>
+                            <tr>
+                                <?php foreach (['vCadastro' => 'Visualizar Cadastros', 'aCadastro' => 'Adicionar Cadastros', 'eCadastro' => 'Editar Cadastros', 'dCadastro' => 'Excluir Cadastros'] as $flag => $rotulo) { ?>
+                                    <td>
+                                        <label>
+                                            <input <?php echo (isset($permissoes[$flag]) && $permissoes[$flag] == 1) ? 'checked' : ''; ?> name="<?php echo $flag; ?>" class="marcar" type="checkbox" value="1" />
+                                            <span class="lbl"> <?php echo $rotulo; ?></span>
+                                        </label>
+                                    </td>
+                                <?php } ?>
+                            </tr>
+                        </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-group widget-box">
+                    <div class="accordion-heading">
+                        <div class="widget-title">
                             <a data-parent="#collapse-group" href="#collapseGEleven" data-toggle="collapse">
                                 <span><i class='bx bx-cog icon-cli' ></i></span>
                                 <h5 style="padding-left: 28px">Configurações e Sistema</h5>

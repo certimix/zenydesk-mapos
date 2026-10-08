@@ -1,0 +1,475 @@
+/* ============================================================
+   Tema "Zenydesk GMS" — inspirado no visual do Gestão Mais Simples
+   (sidebar escuro azul-marinho, acento teal, cards de indicadores
+   em gradiente colorido, telas de lista mais limpas).
+
+   Autocontido de propósito: não depende das variáveis definidas em
+   matrix-style.css (--funSider, --wid-dark etc.), então pode ser
+   adicionado/removido sem qualquer risco de quebrar os outros 6
+   temas que já existem no sistema. Segue o mesmo padrão de arquivo
+   que eles (carregado DEPOIS de matrix-style.css, via app_theme).
+   ============================================================ */
+
+:root {
+  --zd-navy: #13263f;
+  --zd-navy-deep: #0d1c30;
+  --zd-navy-soft: #1b3252;
+  --zd-teal: #17b8a6;
+  --zd-teal-dark: #0f9c8c;
+  --zd-content-bg: #f1f3f8;
+  --zd-card-bg: #ffffff;
+  --zd-border: #e4e8f0;
+  --zd-text: #2c3344;
+  --zd-text-soft: #7c8696;
+  --zd-text-invert: #ffffff;
+  --zd-shadow: 0 2px 10px rgba(19, 38, 63, 0.07);
+  --zd-shadow-lg: 0 10px 25px rgba(19, 38, 63, 0.12);
+  --zd-radius: 10px;
+  --zd-radius-sm: 6px;
+}
+
+/* ===== BASE / CONTEÚDO ===== */
+body {
+  background: var(--zd-content-bg);
+  color: var(--zd-text);
+}
+
+#content {
+  background: var(--zd-content-bg);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--zd-text);
+}
+
+a {
+  color: var(--zd-teal-dark);
+}
+
+hr {
+  border-top: 1px solid var(--zd-border);
+  border-bottom: none;
+}
+
+label {
+  color: var(--zd-text-soft);
+}
+
+/* ===== TOPBAR ===== */
+.navebarn,
+#user-nav {
+  background-color: var(--zd-navy) !important;
+}
+
+#user-nav > ul > li > a {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+#user-nav > ul > li > a:hover,
+#user-nav > ul > li.open > a {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+#breadcrumb a {
+  background: var(--zd-card-bg);
+  color: var(--zd-text-soft);
+  border: 1px solid var(--zd-border);
+  box-shadow: none;
+  border-radius: var(--zd-radius-sm);
+}
+
+#breadcrumb a:hover {
+  color: #ffffff;
+  background: var(--zd-teal);
+  border-color: var(--zd-teal);
+}
+
+#breadcrumb a.current {
+  color: #ffffff;
+  background: var(--zd-navy);
+  border: 1px solid var(--zd-navy);
+}
+
+/* ===== SIDEBAR ===== */
+#sidebar {
+  background: var(--zd-navy);
+  border-right: none;
+}
+
+#sidebar.open {
+  box-shadow: 15px 0 25px rgba(13, 28, 48, 0.25) !important;
+}
+
+#sidebar .search-box {
+  background: var(--zd-navy-deep);
+  border-radius: var(--zd-radius-sm);
+}
+
+#sidebar li .iconX,
+#sidebar li .title {
+  color: rgba(255, 255, 255, 0.72);
+  transition: all 0.2s ease;
+}
+
+#sidebar li a:hover {
+  background-color: var(--zd-navy-soft);
+  border-radius: var(--zd-radius-sm);
+}
+
+#sidebar li a:hover .iconX,
+#sidebar li a:hover .title {
+  color: #ffffff;
+}
+
+#sidebar li.active {
+  background-color: var(--zd-teal) !important;
+  border-radius: var(--zd-radius-sm);
+}
+
+#sidebar li.active .iconX,
+#sidebar li.active .title {
+  color: #ffffff !important;
+}
+
+#sidebar li.active a:hover {
+  background: transparent;
+}
+
+#sidebar li .title-tooltip {
+  background: var(--zd-navy-deep);
+  color: #ffffff;
+}
+
+#sidebar .mode {
+  background: var(--zd-navy-deep);
+  border: 2px solid var(--zd-navy-soft);
+  color: #ffffff;
+}
+
+/* ===== BOTÕES ===== */
+.btn,
+.button {
+  border-radius: var(--zd-radius-sm) !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  border: none;
+}
+
+.btn-primary,
+.button.btn-primary {
+  background: var(--zd-teal) !important;
+  background-image: none !important;
+  color: #ffffff !important;
+}
+
+.btn-primary:hover {
+  background: var(--zd-teal-dark) !important;
+}
+
+.btn-success {
+  background: #2fbf71 !important;
+  background-image: none !important;
+  color: #ffffff !important;
+}
+
+.btn-danger {
+  background: #f1556c !important;
+  background-image: none !important;
+  color: #ffffff !important;
+}
+
+.btn-warning {
+  background: #ff9f43 !important;
+  background-image: none !important;
+  color: #ffffff !important;
+}
+
+.btn-inverse {
+  background: var(--zd-navy) !important;
+  background-image: none !important;
+  color: #ffffff !important;
+}
+
+/* ===== CARDS DE INDICADORES (painel) ===== */
+.cardBox .card {
+  border-radius: var(--zd-radius);
+  border: none !important;
+  box-shadow: var(--zd-shadow);
+  overflow: hidden;
+}
+
+.cardBox .card .numbers,
+.cardBox .card .cardName {
+  color: #ffffff;
+}
+
+.cardBox .card:nth-child(6n+1) {
+  background: linear-gradient(135deg, #1ad1be, #0f9c8c) !important;
+}
+
+.cardBox .card:nth-child(6n+2) {
+  background: linear-gradient(135deg, #3ddc84, #1fb866) !important;
+}
+
+.cardBox .card:nth-child(6n+3) {
+  background: linear-gradient(135deg, #ffb648, #ff8a3d) !important;
+}
+
+.cardBox .card:nth-child(6n+4) {
+  background: linear-gradient(135deg, #ff6b81, #ef4060) !important;
+}
+
+.cardBox .card:nth-child(6n+5) {
+  background: linear-gradient(135deg, #4f8ef7, #2563eb) !important;
+}
+
+.cardBox .card:nth-child(6n+6) {
+  background: linear-gradient(135deg, #a78bfa, #7c5cf0) !important;
+}
+
+.cardBox .card .lord-icon01, .cardBox .card .lord-icon02, .cardBox .card .lord-icon03,
+.cardBox .card .lord-icon04, .cardBox .card .lord-icon05, .cardBox .card .lord-icon06, .cardBox .card .lord-icon07,
+.cardBox .card .iconBx01, .cardBox .card .iconBx02, .cardBox .card .iconBx03,
+.cardBox .card .iconBx04, .cardBox .card .iconBx05, .cardBox .card .iconBx06, .cardBox .card .iconBx07 {
+  background: rgba(255, 255, 255, 0.18) !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+/* Atalhos rápidos / "new-bottons" (grade de ícones do painel) */
+.new-bottons .card {
+  background: var(--zd-card-bg);
+  border: 1px solid var(--zd-border);
+  border-radius: var(--zd-radius-sm);
+}
+
+.new-bottons .card:hover {
+  background: var(--zd-content-bg);
+  border-color: var(--zd-teal);
+}
+
+.new-bottons .card .cardName,
+.new-bottons .card .cardName2 {
+  color: var(--zd-text);
+}
+
+/* ===== WIDGETS / CARDS DE CONTEÚDO ===== */
+.widget-box,
+.widget-box0,
+.widget-box1,
+.widget-box2,
+.widget-box-new,
+.widget-box-statist,
+.new122 {
+  background: var(--zd-card-bg);
+  border: 1px solid var(--zd-border);
+  border-radius: var(--zd-radius);
+  box-shadow: var(--zd-shadow);
+}
+
+.widget-title {
+  background: transparent;
+  border-bottom: 1px solid var(--zd-border);
+}
+
+.widget-title h5 {
+  color: var(--zd-text);
+  font-weight: 600;
+}
+
+.widget-title .nav-tabs li.active a {
+  color: var(--zd-teal-dark);
+  border-bottom: 2px solid var(--zd-teal);
+}
+
+/* ===== ABAS (nav-tabs — usadas em Editar OS, Checklist, etc.) ===== */
+.nav-tabs {
+  border-bottom: 1px solid var(--zd-border);
+}
+
+.nav-tabs > li > a {
+  color: var(--zd-text-soft);
+  border: none;
+  background: transparent;
+}
+
+.nav-tabs > li > a:hover {
+  color: var(--zd-teal-dark);
+  background: var(--zd-content-bg);
+  border: none;
+}
+
+.nav-tabs > .active > a,
+.nav-tabs > .active > a:hover,
+.nav-tabs > .active > a:focus {
+  color: var(--zd-teal-dark);
+  background: var(--zd-card-bg);
+  border: none;
+  border-bottom: 2px solid var(--zd-teal);
+  font-weight: 600;
+}
+
+/* ===== TABELAS ===== */
+.table th {
+  background: var(--zd-content-bg) !important;
+  color: var(--zd-text-soft);
+  font-weight: 600;
+  border-bottom: 1px solid var(--zd-border);
+}
+
+.table td {
+  border-top: 1px solid var(--zd-border);
+  color: var(--zd-text);
+}
+
+table tbody tr:hover {
+  background: #f6f9fc;
+}
+
+.table-bordered {
+  border: 1px solid var(--zd-border);
+  border-radius: var(--zd-radius-sm);
+}
+
+/* ===== PAGINAÇÃO ===== */
+.pagination.alternate li a {
+  border-radius: var(--zd-radius-sm);
+  color: var(--zd-text-soft);
+  border: 1px solid var(--zd-border);
+}
+
+.pagination.alternate li a:hover {
+  background: var(--zd-teal);
+  color: #ffffff;
+  border-color: var(--zd-teal);
+}
+
+.pagination.alternate li.active a {
+  background: var(--zd-navy);
+  color: #ffffff;
+  border-color: var(--zd-navy);
+}
+
+/* ===== FORMULÁRIOS ===== */
+input[type="search"],
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+input[type="tel"],
+select,
+select[class*="span"],
+.row-fluid input[class*="span"],
+.row-fluid select[class*="span"],
+.row-fluid textarea[class*="span"],
+.row-fluid .uneditable-input[class*="span"],
+textarea,
+.uneditable-input {
+  background: #ffffff;
+  border: 1px solid var(--zd-border);
+  color: var(--zd-text);
+  border-radius: var(--zd-radius-sm);
+  box-shadow: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--zd-teal);
+  box-shadow: 0 0 0 3px rgba(23, 184, 166, 0.15);
+}
+
+/* ===== MODAIS ===== */
+.modal-header {
+  background: var(--zd-navy);
+  color: #ffffff;
+  border-radius: var(--zd-radius) var(--zd-radius) 0 0;
+}
+
+.modal-body {
+  background: var(--zd-card-bg);
+  color: var(--zd-text);
+}
+
+.modal-footer {
+  background: var(--zd-content-bg);
+  border-top: 1px solid var(--zd-border);
+}
+
+/* ===== DROPDOWNS ===== */
+.dropdown-menu {
+  background-color: #ffffff;
+  border: 1px solid var(--zd-border);
+  border-radius: var(--zd-radius-sm);
+  box-shadow: var(--zd-shadow-lg);
+}
+
+.dropdown-menu > li > a {
+  color: var(--zd-text);
+}
+
+.dropdown-menu li a:hover {
+  background: var(--zd-content-bg);
+  color: var(--zd-teal-dark);
+}
+
+/* ===== KANBAN (alinhamento com o tema novo) ===== */
+.kanban-coluna {
+  background: var(--zd-content-bg);
+  border-radius: var(--zd-radius);
+}
+
+.kanban-card {
+  border-radius: var(--zd-radius-sm);
+  box-shadow: var(--zd-shadow);
+  border-color: var(--zd-border) !important;
+}
+
+/* ===== AGENDA (FullCalendar no painel) ===== */
+.fc a,
+.fc-daygrid-day-number,
+.fc-col-header-cell-cushion {
+  color: var(--zd-text) !important;
+}
+
+.fc-col-header-cell-cushion {
+  color: var(--zd-text-soft) !important;
+  font-weight: 600;
+}
+
+.fc .fc-day-today {
+  background: rgba(23, 184, 166, 0.10) !important;
+}
+
+.fc .fc-button,
+.fc .fc-button-primary {
+  background: #ffffff !important;
+  color: var(--zd-text) !important;
+  border: 1px solid var(--zd-border) !important;
+  border-radius: var(--zd-radius-sm) !important;
+}
+
+.fc .fc-button:hover {
+  background: var(--zd-teal) !important;
+  color: #ffffff !important;
+}
+
+/* ===== RODAPÉ ===== */
+#footer {
+  background: var(--zd-navy);
+  color: rgba(255, 255, 255, 0.6);
+  border-top: none;
+}
+
+/* ===== EDITOR DE TEXTO (Trumbowyg) ===== */
+.trumbowyg-box,
+.trumbowyg-editor {
+  border: 1px solid var(--zd-border) !important;
+  border-radius: var(--zd-radius-sm);
+}
+
+.trumbowyg-button-pane {
+  background: var(--zd-content-bg) !important;
+}

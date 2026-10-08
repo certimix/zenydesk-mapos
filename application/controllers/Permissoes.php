@@ -120,6 +120,11 @@ class Permissoes extends MY_Controller
                 'eCobranca' => $this->input->post('eCobranca'),
                 'dCobranca' => $this->input->post('dCobranca'),
                 'vCobranca' => $this->input->post('vCobranca'),
+
+                'vCadastro' => $this->input->post('vCadastro'),
+                'aCadastro' => $this->input->post('aCadastro'),
+                'eCadastro' => $this->input->post('eCadastro'),
+                'dCadastro' => $this->input->post('dCadastro'),
             ];
             $permissoes = json_encode($permissoes);
 
@@ -222,6 +227,10 @@ class Permissoes extends MY_Controller
                 'dCobranca' => $this->input->post('dCobranca'),
                 'vCobranca' => $this->input->post('vCobranca'),
 
+                'vCadastro' => $this->input->post('vCadastro'),
+                'aCadastro' => $this->input->post('aCadastro'),
+                'eCadastro' => $this->input->post('eCadastro'),
+                'dCadastro' => $this->input->post('dCadastro'),
             ];
             $permissoes = json_encode($permissoes);
 

@@ -59,6 +59,9 @@ $route['zenydesk.os/(.*)'] = 'mapos/$1';
 $route['zenydesk-os'] = 'mapos';
 $route['zenydesk-os/(.*)'] = 'mapos/$1';
 
+// Avaliação pública do atendimento (link enviado ao cliente)
+$route['avaliacao/([a-f0-9]{40})'] = 'avaliacao/index/$1';
+
 // Rotas da API
 if (filter_var($_ENV['API_ENABLED'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
     require APPPATH . 'config/routes_api.php';
