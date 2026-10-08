@@ -9,11 +9,11 @@
   <meta name="csrf-token-name" content="<?= $this->config->item("csrf_token_name") ?>">
   <meta name="csrf-cookie-name" content="<?= $this->config->item("csrf_cookie_name") ?>">
   <meta name="csrf-token-hash" content="<?= $this->security->get_csrf_hash() ?>">
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20261008">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=20261008">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=20261008">
   <link rel="manifest" href="/site.webmanifest">
-  <link rel="shortcut icon" type="image/png" href="<?= base_url(); ?>assets/img/favicon.png" />
+  <link rel="shortcut icon" type="image/png" href="<?= base_url(); ?>assets/img/favicon.png?v=20261008" />
   <link rel="stylesheet" href="<?= base_url(); ?>assets/css/bootstrap.min.css" />
   <link rel="stylesheet" href="<?= base_url(); ?>assets/css/bootstrap-responsive.min.css" />
   <link rel="stylesheet" href="<?= base_url(); ?>assets/css/matrix-style.css" />
