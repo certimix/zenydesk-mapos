@@ -12,12 +12,16 @@ class Avaliacoes_model extends CI_Model
 {
     public function porOs(int $osId)
     {
+        if (! $this->db->table_exists('os_avaliacoes')) {
+            return null;
+        }
+
         return $this->db->where('os_id', $osId)->get('os_avaliacoes')->row();
     }
 
     public function porToken(string $token)
     {
-        if (! preg_match('/^[a-f0-9]{40}$/', $token)) {
+        if (! $this->db->table_exists('os_avaliacoes') || ! preg_match('/^[a-f0-9]{40}$/', $token)) {
             return null;
         }
         $this->db->select('a.*, os.idOs, os.status, os.dataFinal, os.descricaoProduto, c.nomeCliente, u.nome AS tecnico');
@@ -33,6 +37,10 @@ class Avaliacoes_model extends CI_Model
     /** Cria o link de avaliação da OS (se ainda não existir) e devolve o registro. */
     public function garantirLink(int $osId)
     {
+        if (! $this->db->table_exists('os_avaliacoes')) {
+            return null;
+        }
+
         $existente = $this->porOs($osId);
         if ($existente) {
             return $existente;
@@ -48,6 +56,10 @@ class Avaliacoes_model extends CI_Model
 
     public function responder(int $id, int $nota, string $comentario, string $ip): bool
     {
+        if (! $this->db->table_exists('os_avaliacoes')) {
+            return false;
+        }
+
         $this->db->where('id', $id)->where('respondido_em IS NULL', null, false)->update('os_avaliacoes', [
             'nota' => $nota,
             'comentario' => $comentario !== '' ? $comentario : null,
@@ -76,6 +88,10 @@ class Avaliacoes_model extends CI_Model
 
     public function listar(array $f, int $limite, int $offset): array
     {
+        if (! $this->db->table_exists('os_avaliacoes')) {
+            return [];
+        }
+
         $this->db->select('a.*, os.idOs, os.status, c.nomeCliente, u.nome AS tecnico');
         $this->db->from('os_avaliacoes a');
         $this->db->join('os', 'os.idOs = a.os_id');
@@ -91,6 +107,10 @@ class Avaliacoes_model extends CI_Model
 
     public function contar(array $f): int
     {
+        if (! $this->db->table_exists('os_avaliacoes')) {
+            return 0;
+        }
+
         $this->db->from('os_avaliacoes a');
         $this->db->join('os', 'os.idOs = a.os_id');
         $this->db->where('a.respondido_em IS NOT NULL', null, false);
@@ -102,6 +122,18 @@ class Avaliacoes_model extends CI_Model
     /** Média, total, distribuição 1..5 e pendentes, respeitando os filtros. */
     public function resumo(array $f): array
     {
+        $dist = [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0];
+
+        if (! $this->db->table_exists('os_avaliacoes')) {
+            return [
+                'total' => 0,
+                'media' => null,
+                'satisfeitos' => null,
+                'distribuicao' => $dist,
+                'pendentes' => 0,
+            ];
+        }
+
         $this->db->select('a.nota, COUNT(*) AS qtd');
         $this->db->from('os_avaliacoes a');
         $this->db->join('os', 'os.idOs = a.os_id');
@@ -109,7 +141,6 @@ class Avaliacoes_model extends CI_Model
         $this->filtros($f);
         $this->db->group_by('a.nota');
 
-        $dist = [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0];
         $total = 0;
         $soma = 0;
         foreach ($this->db->get()->result() as $r) {

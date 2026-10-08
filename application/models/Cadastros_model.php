@@ -50,6 +50,10 @@ class Cadastros_model extends CI_Model
 
     public function listar(array $ent, string $busca, int $porPagina, int $offset)
     {
+        if (! $this->db->table_exists($ent['tabela'])) {
+            return [];
+        }
+
         $this->montarConsulta($ent, $busca);
         $ordem = $ent['ordem'] ?? null;
         if ($ordem) {
@@ -67,6 +71,10 @@ class Cadastros_model extends CI_Model
 
     public function contar(array $ent, string $busca): int
     {
+        if (! $this->db->table_exists($ent['tabela'])) {
+            return 0;
+        }
+
         $this->montarConsulta($ent, $busca);
 
         return (int) $this->db->count_all_results();
@@ -74,6 +82,10 @@ class Cadastros_model extends CI_Model
 
     public function obter(array $ent, int $id)
     {
+        if (! $this->db->table_exists($ent['tabela'])) {
+            return null;
+        }
+
         return $this->db->where('id', $id)->limit(1)->get($ent['tabela'])->row();
     }
 
@@ -129,6 +141,10 @@ class Cadastros_model extends CI_Model
      */
     public function opcoesRelacao(array $campo): array
     {
+        if (! $this->db->table_exists($campo['tabela'])) {
+            return [];
+        }
+
         $this->db->select("{$campo['chave']} AS k, {$campo['exibir']} AS v");
         foreach ($campo['filtro'] ?? [] as $col => $valor) {
             $this->db->where($col, $valor);
@@ -149,6 +165,10 @@ class Cadastros_model extends CI_Model
      */
     public function eventosAgenda(?string $inicio, ?string $fim): array
     {
+        if (! $this->db->table_exists('cad_eventos')) {
+            return [];
+        }
+
         $this->db->select('e.*, u.nome AS responsavel, c.nomeCliente AS cliente');
         $this->db->from('cad_eventos e');
         $this->db->join('usuarios u', 'u.idUsuarios = e.usuario_id', 'left');
@@ -166,11 +186,19 @@ class Cadastros_model extends CI_Model
 
     public function feriadosAtivos(): array
     {
+        if (! $this->db->table_exists('cad_feriados')) {
+            return [];
+        }
+
         return $this->db->where('ativo', 1)->get('cad_feriados')->result();
     }
 
     public function afastamentosPeriodo(?string $inicio, ?string $fim): array
     {
+        if (! $this->db->table_exists('cad_afastamentos')) {
+            return [];
+        }
+
         $this->db->select('a.*, u.nome AS usuario');
         $this->db->from('cad_afastamentos a');
         $this->db->join('usuarios u', 'u.idUsuarios = a.usuario_id', 'left');
@@ -180,6 +208,7 @@ class Cadastros_model extends CI_Model
         if ($fim) {
             $this->db->where('a.data_inicio <=', substr($fim, 0, 10));
         }
+        $this->db->limit(2000);
 
         return $this->db->get()->result();
     }
