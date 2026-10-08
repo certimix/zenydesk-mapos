@@ -130,13 +130,6 @@
                             </div>
                         </div>
                         <div class="control-group">
-                            <label for="senha" class="control-label">Senha</label>
-                            <div class="controls">
-                                <input class="form-control" id="senha" type="password" name="senha" autocomplete="new-password" value="<?php echo set_value('senha'); ?>" />
-                                <img id="imgSenha" src="<?php echo base_url() ?>assets/img/eye.svg" alt="">
-                            </div>
-                        </div>
-                        <div class="control-group">
                             <label class="control-label">Tipo de Cliente</label>
                             <div class="controls">
                                 <label for="fornecedor" class="btn btn-default">Fornecedor
@@ -209,21 +202,6 @@
 <script src="<?php echo base_url() ?>assets/js/jquery.validate.js"></script>
 <script type="text/javascript">
     $(document).ready(function() {
-        let container = document.querySelector('div');
-        let input = document.querySelector('#senha');
-        let icon = document.querySelector('#imgSenha');
-
-        icon.addEventListener('click', function() {
-            container.classList.toggle('visible');
-            if (container.classList.contains('visible')) {
-                icon.src = '<?php echo base_url() ?>assets/img/eye-off.svg';
-                input.type = 'text';
-            } else {
-                icon.src = '<?php echo base_url() ?>assets/img/eye.svg'
-                input.type = 'password';
-            }
-        });
-
         $.getJSON('<?php echo base_url() ?>assets/json/estados.json', function(data) {
             for (i in data.estados) {
                 $('#estado').append(new Option(data.estados[i].nome, data.estados[i].sigla));
