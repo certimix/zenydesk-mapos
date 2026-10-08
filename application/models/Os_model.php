@@ -53,7 +53,9 @@ class Os_model extends CI_Model
         $this->db->join('produtos_os', 'produtos_os.os_id = os.idOs', 'left');
 
         // Pré-chamados (abertos pelo cliente e ainda não aprovados) só aparecem na fila própria
-        $this->db->where('os.pre_chamado', array_key_exists('pre_chamado', $where) ? (int) $where['pre_chamado'] : 0);
+        if ($this->db->field_exists('pre_chamado', 'os')) {
+            $this->db->where('os.pre_chamado', array_key_exists('pre_chamado', $where) ? (int) $where['pre_chamado'] : 0);
+        }
 
         if (! empty($where['sem_tecnico'])) {
             // fila de trabalho: só chamados em aberto, sem responsável
@@ -115,7 +117,9 @@ class Os_model extends CI_Model
         $this->db->from('os');
         $this->db->join('clientes', 'clientes.idClientes = os.clientes_id');
         $this->db->join('usuarios', 'usuarios.idUsuarios = os.usuarios_id', 'left');
-        $this->db->where('os.pre_chamado', 0);
+        if ($this->db->field_exists('pre_chamado', 'os')) {
+            $this->db->where('os.pre_chamado', 0);
+        }
 
         if (array_key_exists('usuarios_id', $where)) {
             $this->db->where('os.usuarios_id', $where['usuarios_id']);
@@ -138,6 +142,16 @@ class Os_model extends CI_Model
      */
     public function opcoesAtendimento($os = null): array
     {
+        if (! $this->db->table_exists('cad_departamentos')) {
+            return [
+                'departamentos' => [],
+                'equipes' => [],
+                'categorias' => [],
+                'subcategorias' => [],
+                'slas' => [],
+            ];
+        }
+
         $usados = [
             'cad_departamentos' => $os->departamento_id ?? null,
             'cad_equipes' => $os->equipe_id ?? null,
@@ -194,16 +208,20 @@ class Os_model extends CI_Model
     public function getById($id)
     {
         $this->db->select('os.*, clientes.*, clientes.celular as celular_cliente, clientes.telefone as telefone_cliente, clientes.contato as contato_cliente, garantias.refGarantia, garantias.textoGarantia, usuarios.telefone as telefone_usuario, usuarios.email as email_usuario, usuarios.nome');
-        $this->db->select('cdep.nome as departamento_nome, ceq.nome as equipe_nome, ccat.nome as categoria_nome, csub.nome as subcategoria_nome, csla.nome as sla_nome, csla.cor as sla_cor, csla.tempo_solucao as sla_horas');
+        if ($this->db->table_exists('cad_departamentos')) {
+            $this->db->select('cdep.nome as departamento_nome, ceq.nome as equipe_nome, ccat.nome as categoria_nome, csub.nome as subcategoria_nome, csla.nome as sla_nome, csla.cor as sla_cor, csla.tempo_solucao as sla_horas');
+        }
         $this->db->from('os');
         $this->db->join('clientes', 'clientes.idClientes = os.clientes_id');
         $this->db->join('usuarios', 'usuarios.idUsuarios = os.usuarios_id', 'left');
         $this->db->join('garantias', 'garantias.idGarantias = os.garantias_id', 'left');
-        $this->db->join('cad_departamentos cdep', 'cdep.id = os.departamento_id', 'left');
-        $this->db->join('cad_equipes ceq', 'ceq.id = os.equipe_id', 'left');
-        $this->db->join('cad_categorias ccat', 'ccat.id = os.categoria_id', 'left');
-        $this->db->join('cad_subcategorias csub', 'csub.id = os.subcategoria_id', 'left');
-        $this->db->join('cad_slas csla', 'csla.id = os.sla_id', 'left');
+        if ($this->db->table_exists('cad_departamentos')) {
+            $this->db->join('cad_departamentos cdep', 'cdep.id = os.departamento_id', 'left');
+            $this->db->join('cad_equipes ceq', 'ceq.id = os.equipe_id', 'left');
+            $this->db->join('cad_categorias ccat', 'ccat.id = os.categoria_id', 'left');
+            $this->db->join('cad_subcategorias csub', 'csub.id = os.subcategoria_id', 'left');
+            $this->db->join('cad_slas csla', 'csla.id = os.sla_id', 'left');
+        }
         $this->db->where('os.idOs', $id);
         $this->db->limit(1);
 
@@ -490,6 +508,10 @@ class Os_model extends CI_Model
      */
     public function getChecklist($os)
     {
+        if (! $this->db->table_exists('checklist_os')) {
+            return [];
+        }
+
         $this->db->where('os_id', $os);
         $this->db->order_by('idChecklist', 'asc');
 

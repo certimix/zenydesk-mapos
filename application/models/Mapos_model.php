@@ -116,12 +116,19 @@ class Mapos_model extends CI_Model
         return $this->db->count_all($table);
     }
 
+    private function filtrarPreChamado()
+    {
+        if ($this->db->field_exists('pre_chamado', 'os')) {
+            $this->db->where('os.pre_chamado', 0);
+        }
+    }
+
     public function getOsOrcamentos()
     {
         $this->db->select('os.*, clientes.nomeCliente');
         $this->db->from('os');
         $this->db->join('clientes', 'clientes.idClientes = os.clientes_id');
-        $this->db->where('os.pre_chamado', 0); // pré-chamado ainda não aprovado não entra no painel/agenda
+        $this->filtrarPreChamado();
         $this->db->where('os.status', 'Orçamento');
         $this->db->limit(10);
 
@@ -133,7 +140,7 @@ class Mapos_model extends CI_Model
         $this->db->select('os.*, clientes.nomeCliente');
         $this->db->from('os');
         $this->db->join('clientes', 'clientes.idClientes = os.clientes_id');
-        $this->db->where('os.pre_chamado', 0); // pré-chamado ainda não aprovado não entra no painel/agenda
+        $this->filtrarPreChamado();
         $this->db->where('os.status', 'Aberto');
         $this->db->limit(10);
 
@@ -145,7 +152,7 @@ class Mapos_model extends CI_Model
         $this->db->select('os.*, clientes.nomeCliente');
         $this->db->from('os');
         $this->db->join('clientes', 'clientes.idClientes = os.clientes_id');
-        $this->db->where('os.pre_chamado', 0); // pré-chamado ainda não aprovado não entra no painel/agenda
+        $this->filtrarPreChamado();
         $this->db->where('os.status', 'Finalizado');
         $this->db->order_by('os.idOs', 'DESC');
         $this->db->limit(10);
@@ -158,7 +165,7 @@ class Mapos_model extends CI_Model
         $this->db->select('os.*, clientes.nomeCliente');
         $this->db->from('os');
         $this->db->join('clientes', 'clientes.idClientes = os.clientes_id');
-        $this->db->where('os.pre_chamado', 0); // pré-chamado ainda não aprovado não entra no painel/agenda
+        $this->filtrarPreChamado();
         $this->db->where('os.status', 'Aprovado');
         $this->db->limit(10);
 
@@ -170,7 +177,7 @@ class Mapos_model extends CI_Model
         $this->db->select('os.*, clientes.nomeCliente');
         $this->db->from('os');
         $this->db->join('clientes', 'clientes.idClientes = os.clientes_id');
-        $this->db->where('os.pre_chamado', 0); // pré-chamado ainda não aprovado não entra no painel/agenda
+        $this->filtrarPreChamado();
         $this->db->where('os.status', 'Aguardando Peças');
         $this->db->limit(10);
 
@@ -182,7 +189,7 @@ class Mapos_model extends CI_Model
         $this->db->select('os.*, clientes.nomeCliente');
         $this->db->from('os');
         $this->db->join('clientes', 'clientes.idClientes = os.clientes_id');
-        $this->db->where('os.pre_chamado', 0); // pré-chamado ainda não aprovado não entra no painel/agenda
+        $this->filtrarPreChamado();
         $this->db->where('os.status', 'Em Andamento');
         $this->db->limit(10);
 
@@ -194,7 +201,7 @@ class Mapos_model extends CI_Model
         $this->db->select('os.*, clientes.nomeCliente');
         $this->db->from('os');
         $this->db->join('clientes', 'clientes.idClientes = os.clientes_id');
-        $this->db->where('os.pre_chamado', 0); // pré-chamado ainda não aprovado não entra no painel/agenda
+        $this->filtrarPreChamado();
         $this->db->where_in('os.status', $status);
         $this->db->order_by('os.idOs', 'DESC');
         $this->db->limit(10);
@@ -236,7 +243,7 @@ class Mapos_model extends CI_Model
         );
         $this->db->from('os');
         $this->db->join('clientes', 'clientes.idClientes = os.clientes_id');
-        $this->db->where('os.pre_chamado', 0); // pré-chamado ainda não aprovado não entra no painel/agenda
+        $this->filtrarPreChamado();
         $this->db->join('produtos_os', 'produtos_os.os_id = os.idOs', 'left');
         $this->db->join('servicos_os', 'servicos_os.os_id = os.idOs', 'left');
         $this->db->where('os.dataFinal >=', $start);
