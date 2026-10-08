@@ -14,11 +14,29 @@
       </p>
 
       <div class="mt-8 flex flex-wrap items-center gap-4">
-        <a href="<?= htmlspecialchars($login_url) ?>" class="btn btn-signal btn-lg">
-          Acessar Zenydesk OS
+        <a href="<?= htmlspecialchars($signup_url ?? site_url('login?action=cadastrar')) ?>" class="btn btn-signal btn-lg shadow-lg">
+          <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+          Criar Conta Grátis
+        </a>
+        <a href="<?= htmlspecialchars($login_url) ?>" class="btn btn-outline-dark btn-lg">
+          Já tenho conta (Entrar)
           <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
         </a>
-        <a href="#faq" class="btn btn-outline-dark btn-lg">Ver demonstração</a>
+      </div>
+
+      <div class="mt-4 flex flex-wrap items-center gap-4 text-xs text-white/60">
+        <span class="inline-flex items-center gap-1.5">
+          <svg class="size-3.5 text-signal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          Sem cartão de crédito
+        </span>
+        <span class="inline-flex items-center gap-1.5">
+          <svg class="size-3.5 text-signal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          Ativação instantânea
+        </span>
+        <span class="inline-flex items-center gap-1.5">
+          <svg class="size-3.5 text-signal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          100% em Nuvem no Brasil
+        </span>
       </div>
 
       <p class="mt-10 text-sm text-white/50">

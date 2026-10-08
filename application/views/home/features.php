@@ -59,10 +59,15 @@ $features = [
           Aprovação do cliente com um clique, sem ligação
         </li>
       </ul>
-      <a href="<?= htmlspecialchars($login_url) ?>" class="btn btn-primary mt-2 w-fit">
-        Acessar Zenydesk OS
-        <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
-      </a>
+      <div class="mt-2 flex flex-wrap items-center gap-3">
+        <a href="<?= htmlspecialchars($signup_url ?? site_url('login?action=cadastrar')) ?>" class="btn btn-primary w-fit">
+          <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+          Criar Conta Grátis
+        </a>
+        <a href="<?= htmlspecialchars($login_url) ?>" class="text-sm font-medium text-ink/70 hover:text-ink">
+          Já tem conta? Entrar &rarr;
+        </a>
+      </div>
     </div>
     <div class="relative hidden min-h-[320px] lg:flex lg:items-center lg:justify-center" style="background: linear-gradient(160deg, var(--color-paper) 0%, var(--color-tint) 100%);">
       <div class="flex size-44 items-center justify-center rounded-full text-white" style="background-image: var(--gradient-primary); box-shadow: var(--shadow-lg);">
