@@ -30,5 +30,13 @@ $hook['pre_system'][] = [
     'params' => [],
 ];
 
+$hook['post_controller_constructor'][] = [
+    'class' => 'SecurityHeadersHook',
+    'function' => 'setHeaders',
+    'filename' => 'security_headers.php',
+    'filepath' => 'hooks',
+    'params' => [],
+];
+
 /* End of file hooks.php */
 /* Location: ./application/config/hooks.php */

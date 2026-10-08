@@ -12,11 +12,11 @@
       <ul class="flex flex-col gap-3 text-sm text-ink/80">
         <li class="flex items-start gap-3">
           <svg class="mt-0.5 size-4 shrink-0 text-online" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
-          Chamados de WhatsApp e painel numa fila única, por técnico ou região
+          Chamados organizados e painel numa fila única, por técnico ou região
         </li>
         <li class="flex items-start gap-3">
           <svg class="mt-0.5 size-4 shrink-0 text-online" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></svg>
-          Orçamento automático a partir do laudo, enviado no WhatsApp
+          Orçamento detalhado a partir do laudo, com envio facilitado ao cliente
         </li>
         <li class="flex items-start gap-3">
           <svg class="mt-0.5 size-4 shrink-0 text-online" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
@@ -32,7 +32,7 @@
       <ul class="flex flex-col gap-3 text-sm text-ink/80">
         <li class="flex items-start gap-3">
           <svg class="mt-0.5 size-4 shrink-0 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          SLA por tipo de chamado, com alerta antes de vencer o prazo
+          Gestão de prazos e fluxo de atendimento da OS (SLA avançado em breve)
         </li>
         <li class="flex items-start gap-3">
           <svg class="mt-0.5 size-4 shrink-0 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>

@@ -29,23 +29,37 @@ class ClientLoginController extends REST_Controller
         $email = $this->input->post('email', true);
         $password = $this->input->post('password', true);
 
+        $this->load->library('login_throttle');
+        $throttle = $this->login_throttle->check_throttle($email, 'api_portal');
+        if (! $throttle['allowed']) {
+            $this->response([
+                'result' => false,
+                'message' => $throttle['message'],
+            ], REST_Controller::HTTP_UNAUTHORIZED);
+            return;
+        }
+
         $cliente = $this->check_credentials($email);
 
         if (!$cliente) {
+            $this->login_throttle->record_attempt($email, false, 'api_portal');
             $this->response([
                 'result' => false,
-                 'message' => 'Usuário não encontrado.'
-                ], REST_Controller::HTTP_UNAUTHORIZED);
+                'message' => $this->login_throttle->get_generic_error_message()
+            ], REST_Controller::HTTP_UNAUTHORIZED);
             return;
         }
 
         if (!password_verify($password, $cliente->senha)) {
+            $this->login_throttle->record_attempt($email, false, 'api_portal');
             $this->response([
                 'status' => false,
-                'message' => 'Os dados de acesso estão incorretos.'
-                ], REST_Controller::HTTP_UNAUTHORIZED);
+                'message' => $this->login_throttle->get_generic_error_message()
+            ], REST_Controller::HTTP_UNAUTHORIZED);
             return;
         }
+
+        $this->login_throttle->record_attempt($email, true, 'api_portal');
 
         $tokenData = [
             'uid' => $cliente->idClientes,

@@ -9,12 +9,12 @@ $faqs = [
     'a' => 'Sim. A plataforma Zenydesk integra acesso remoto (substituto do AnyDesk/TeamViewer), gestão de OS e módulo fiscal no mesmo ecossistema, com servidor próprio no Brasil.',
   ],
   [
-    'q' => 'Como funciona o orçamento automático?',
-    'a' => 'A partir do laudo preenchido pelo técnico, o sistema monta o orçamento e envia direto no WhatsApp do cliente, que aprova com um clique.',
+    'q' => 'Como funciona o envio do orçamento?',
+    'a' => 'A partir do laudo e serviços preenchidos, o sistema gera o orçamento estruturado para emissão em PDF e acompanhamento transparente pelo cliente.',
   ],
   [
-    'q' => 'Existe alerta de SLA e garantia?',
-    'a' => 'Sim, cada tipo de chamado tem um SLA configurável com alerta antes de vencer, e o prazo de garantia fica vinculado à OS e ao termo emitido.',
+    'q' => 'Como funciona o controle de prazos e garantia?',
+    'a' => 'O prazo de garantia fica vinculado à OS com termo emitido, e a gestão de prazos acompanha o status da OS (módulo de SLA automatizado em homologação).',
   ],
   [
     'q' => 'Os dados ficam em servidor no Brasil?',

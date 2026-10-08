@@ -98,6 +98,7 @@ $config['url_suffix'] = '';
 |
 */
 $config['language'] = 'english';
+$config['enable_hooks'] = true;
 
 /*
 |--------------------------------------------------------------------------
@@ -405,7 +406,7 @@ $config['sess_expiration'] = $_ENV['APP_SESS_EXPIRATION'] ?? 7200;
 $config['sess_save_path'] = $_ENV['APP_SESS_SAVE_PATH'] ?? 'ci_sessions';
 $config['sess_match_ip'] = isset($_ENV['APP_SESS_MATCH_IP']) ? filter_var($_ENV['APP_SESS_MATCH_IP'], FILTER_VALIDATE_BOOLEAN) : false;
 $config['sess_time_to_update'] = $_ENV['APP_SESS_TIME_TO_UPDATE'] ?? 300;
-$config['sess_regenerate_destroy'] = isset($_ENV['APP_SESS_REGENERATE_DESTROY']) ? filter_var($_ENV['APP_SESS_REGENERATE_DESTROY'], FILTER_VALIDATE_BOOLEAN) : false;
+$config['sess_regenerate_destroy'] = isset($_ENV['APP_SESS_REGENERATE_DESTROY']) ? filter_var($_ENV['APP_SESS_REGENERATE_DESTROY'], FILTER_VALIDATE_BOOLEAN) : true;
 
 /*
 |--------------------------------------------------------------------------
@@ -425,8 +426,8 @@ $config['sess_regenerate_destroy'] = isset($_ENV['APP_SESS_REGENERATE_DESTROY'])
 $config['cookie_prefix'] = $_ENV['APP_COOKIE_PREFIX'] ?? '';
 $config['cookie_domain'] = $_ENV['APP_COOKIE_DOMAIN'] ?? '';
 $config['cookie_path'] = $_ENV['APP_COOKIE_PATH'] ?? '/';
-$config['cookie_secure'] = isset($_ENV['APP_COOKIE_SECURE']) ? filter_var($_ENV['APP_COOKIE_SECURE'], FILTER_VALIDATE_BOOLEAN) : false;
-$config['cookie_httponly'] = false;
+$config['cookie_secure'] = isset($_ENV['APP_COOKIE_SECURE']) ? filter_var($_ENV['APP_COOKIE_SECURE'], FILTER_VALIDATE_BOOLEAN) : (ENVIRONMENT === 'production' || (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on'));
+$config['cookie_httponly'] = true;
 
 /*
 |--------------------------------------------------------------------------

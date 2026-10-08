@@ -33,24 +33,41 @@ class Login extends CI_Controller
         $this->form_validation->set_rules('email', 'E-mail', 'valid_email|required|trim');
         $this->form_validation->set_rules('senha', 'Senha', 'required|trim');
         if ($this->form_validation->run() == false) {
-            $json = ['result' => false, 'message' => validation_errors()];
+            $json = ['result' => false, 'message' => validation_errors(), 'MAPOS_TOKEN' => $this->security->get_csrf_hash()];
             echo json_encode($json);
         } else {
             $email = $this->input->post('email');
             $password = $this->input->post('senha');
+
+            $this->load->library('login_throttle');
+            $throttle = $this->login_throttle->check_throttle($email, 'admin');
+            if (! $throttle['allowed']) {
+                $json = [
+                    'result' => false,
+                    'message' => $throttle['message'],
+                    'requires_captcha' => $throttle['requires_captcha'],
+                    'MAPOS_TOKEN' => $this->security->get_csrf_hash()
+                ];
+                echo json_encode($json);
+                exit();
+            }
+
             $this->load->model('Mapos_model');
             $user = $this->Mapos_model->check_credentials($email);
 
             if ($user) {
                 // Verificar se acesso está expirado
                 if ($this->chk_date($user->dataExpiracao)) {
-                    $json = ['result' => false, 'message' => 'A conta do usuário está expirada, por favor entre em contato com o administrador do sistema.'];
+                    $this->login_throttle->record_attempt($email, false, 'admin');
+                    $json = ['result' => false, 'message' => 'A conta do usuário está expirada, por favor entre em contato com o administrador do sistema.', 'MAPOS_TOKEN' => $this->security->get_csrf_hash()];
                     echo json_encode($json);
                     exit();
                 }
 
                 // Verificar credenciais do usuário
                 if (password_verify($password, $user->senha)) {
+                    $this->login_throttle->record_attempt($email, true, 'admin');
+
                     // Novo ID de sessão a cada autenticação, para que um ID
                     // fixado antes do login não continue válido depois dele.
                     $this->session->sess_regenerate(true);
@@ -70,13 +87,13 @@ class Login extends CI_Controller
                     $json = ['result' => true];
                     echo json_encode($json);
                 } else {
-                    $json = ['result' => false, 'message' => 'Os dados de acesso estão incorretos.', 'MAPOS_TOKEN' => $this->security->get_csrf_hash()];
+                    $this->login_throttle->record_attempt($email, false, 'admin');
+                    $json = ['result' => false, 'message' => $this->login_throttle->get_generic_error_message(), 'MAPOS_TOKEN' => $this->security->get_csrf_hash()];
                     echo json_encode($json);
                 }
             } else {
-                // Mesma mensagem do erro de senha: mensagens distintas revelam
-                // quais e-mails possuem conta.
-                $json = ['result' => false, 'message' => 'Os dados de acesso estão incorretos.', 'MAPOS_TOKEN' => $this->security->get_csrf_hash()];
+                $this->login_throttle->record_attempt($email, false, 'admin');
+                $json = ['result' => false, 'message' => $this->login_throttle->get_generic_error_message(), 'MAPOS_TOKEN' => $this->security->get_csrf_hash()];
                 echo json_encode($json);
             }
         }

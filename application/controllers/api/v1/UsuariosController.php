@@ -257,19 +257,32 @@ class UsuariosController extends REST_Controller
         $this->load->model('Mapos_model');
         $email = $this->post('email', true);
         $password = $this->post('password', true);
+        $this->load->library('login_throttle');
+        $throttle = $this->login_throttle->check_throttle($email, 'api_admin');
+        if (! $throttle['allowed']) {
+            $this->response([
+                'status' => false,
+                'message' => $throttle['message'],
+            ], REST_Controller::HTTP_UNAUTHORIZED);
+            return;
+        }
+
         $user = $this->Mapos_model->check_credentials($email);
 
         if ($user) {
             // Verificar se acesso está expirado
             if ($this->chk_date($user->dataExpiracao)) {
+                $this->login_throttle->record_attempt($email, false, 'api_admin');
                 $this->response([
                     'status' => false,
                     'message' => 'Os dados de acesso estão incorretos!',
                 ], REST_Controller::HTTP_UNAUTHORIZED);
+                return;
             }
 
             // Verificar credenciais do usuário
             if (password_verify($password, $user->senha)) {
+                $this->login_throttle->record_attempt($email, true, 'api_admin');
                 $this->log_app('Efetuou login no sistema', $user->nome);
                 $permissoes = json_decode_legacy($this->getInstanceDatabase('permissoes', '*', 'idPermissao = ' . $user->permissoes_id, 1, true)['permissoes']);
 
@@ -290,14 +303,18 @@ class UsuariosController extends REST_Controller
                     'message' => 'Login realizado com sucesso!',
                     'result' => $result,
                 ], REST_Controller::HTTP_OK);
+                return;
             }
 
+            $this->login_throttle->record_attempt($email, false, 'api_admin');
             $this->response([
                 'status' => false,
                 'message' => 'Os dados de acesso estão incorretos!',
             ], REST_Controller::HTTP_UNAUTHORIZED);
+            return;
         }
 
+        $this->login_throttle->record_attempt($email, false, 'api_admin');
         $this->response([
             'status' => false,
             'message' => 'Os dados de acesso estão incorretos!',

@@ -185,15 +185,30 @@ class Mine extends CI_Controller
         $this->form_validation->set_rules('email', 'E-mail', 'valid_email|required|trim');
         $this->form_validation->set_rules('senha', 'Senha', 'required|trim');
         if ($this->form_validation->run() == false) {
-            echo json_encode(['result' => false, 'message' => validation_errors()]);
+            echo json_encode(['result' => false, 'message' => validation_errors(), 'MAPOS_TOKEN' => $this->security->get_csrf_hash()]);
         } else {
             $email = $this->input->post('email');
             $password = $this->input->post('senha');
+
+            $this->load->library('login_throttle');
+            $throttle = $this->login_throttle->check_throttle($email, 'portal');
+            if (! $throttle['allowed']) {
+                echo json_encode([
+                    'result' => false,
+                    'message' => $throttle['message'],
+                    'requires_captcha' => $throttle['requires_captcha'],
+                    'MAPOS_TOKEN' => $this->security->get_csrf_hash()
+                ]);
+                exit();
+            }
+
             $cliente = $this->check_credentials($email);
 
             if ($cliente) {
                 // Verificar credenciais do usuário
                 if (password_verify($password, $cliente->senha)) {
+                    $this->login_throttle->record_attempt($email, true, 'portal');
+
                     // Novo ID de sessão a cada autenticação, para que um ID
                     // fixado antes do login não continue válido depois dele.
                     $this->session->sess_regenerate(true);
@@ -219,12 +234,12 @@ class Mine extends CI_Controller
 
                     echo json_encode(['result' => true]);
                 } else {
-                    echo json_encode(['result' => false, 'message' => 'Os dados de acesso estão incorretos.', 'MAPOS_TOKEN' => $this->security->get_csrf_hash()]);
+                    $this->login_throttle->record_attempt($email, false, 'portal');
+                    echo json_encode(['result' => false, 'message' => $this->login_throttle->get_generic_error_message(), 'MAPOS_TOKEN' => $this->security->get_csrf_hash()]);
                 }
             } else {
-                // Mesma mensagem do erro de senha: mensagens distintas revelam
-                // quais e-mails possuem cadastro.
-                echo json_encode(['result' => false, 'message' => 'Os dados de acesso estão incorretos.', 'MAPOS_TOKEN' => $this->security->get_csrf_hash()]);
+                $this->login_throttle->record_attempt($email, false, 'portal');
+                echo json_encode(['result' => false, 'message' => $this->login_throttle->get_generic_error_message(), 'MAPOS_TOKEN' => $this->security->get_csrf_hash()]);
             }
         }
     }

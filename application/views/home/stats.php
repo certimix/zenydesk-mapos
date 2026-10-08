@@ -10,13 +10,13 @@ $stats = [
     'icon' => '<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>',
     'value' => '7x',
     'title' => 'mais chances de fechar o orçamento',
-    'description' => 'Orçamentos enviados em até uma hora, direto no WhatsApp do cliente, multiplicam a taxa de aprovação da OS.',
+    'description' => 'Orçamentos rápidos e organizados para envio aos clientes multiplicam a taxa de aprovação da OS.',
   ],
   [
     'icon' => '<path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/>',
     'value' => '80%',
     'title' => 'trocam de fornecedor após duas falhas',
-    'description' => 'Histórico completo por cliente e prazos de SLA monitorados evitam que a mesma experiência ruim se repita.',
+    'description' => 'Histórico completo por cliente e acompanhamento de prazos da OS evitam que a mesma experiência ruim se repita.',
   ],
 ];
 ?>
