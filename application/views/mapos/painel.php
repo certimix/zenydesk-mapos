@@ -17,6 +17,23 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
 
+<?php
+$obterCorStatus = function ($status) {
+    switch ($status) {
+        case 'Aberto': return '#0f7ade';
+        case 'Em Andamento': return '#3c94e6';
+        case 'Orçamento': return '#faaf3c';
+        case 'Negociação': return '#8557ce';
+        case 'Cancelado': return '#dd4b6b';
+        case 'Finalizado': return '#23aa58';
+        case 'Faturado': return '#8557ce';
+        case 'Aguardando Peças': return '#f0943a';
+        case 'Aprovado': return '#50cdf9';
+        default: return '#737f9b';
+    }
+};
+?>
+
 <!-- New Bem-vindos -->
 <div id="content-bemv">
     <div class="bemv">Dashboard</div>
@@ -497,40 +514,7 @@
                 <tbody>
                     <?php if ($ordens_orcamentos != null) : ?>
                         <?php foreach ($ordens_orcamentos as $o) : ?>
-                            <?php
-                                    switch ($o->status) {
-                                        case 'Aberto':
-                                            $cor = '#00cd00';
-                                            break;
-                                        case 'Em Andamento':
-                                            $cor = '#436eee';
-                                            break;
-                                        case 'Orçamento':
-                                            $cor = '#CDB380';
-                                            break;
-                                        case 'Negociação':
-                                            $cor = '#AEB404';
-                                            break;
-                                        case 'Cancelado':
-                                            $cor = '#CD0000';
-                                            break;
-                                        case 'Finalizado':
-                                            $cor = '#256';
-                                            break;
-                                        case 'Faturado':
-                                            $cor = '#B266FF';
-                                            break;
-                                        case 'Aguardando Peças':
-                                            $cor = '#FF7F00';
-                                            break;
-                                        case 'Aprovado':
-                                            $cor = '#808080';
-                                            break;
-                                        default:
-                                            $cor = '#E0E4CC';
-                                            break;
-                                    }
-                            ?>
+                            <?php $cor = $obterCorStatus($o->status); ?>
                             <tr>
                                 <td>
                                     <?= $o->idOs ?>
@@ -586,40 +570,7 @@
                 <tbody>
                     <?php if ($ordens_abertas != null) : ?>
                         <?php foreach ($ordens_abertas as $o) : ?>
-                            <?php
-                                    switch ($o->status) {
-                                        case 'Aberto':
-                                            $cor = '#00cd00';
-                                            break;
-                                        case 'Em Andamento':
-                                            $cor = '#436eee';
-                                            break;
-                                        case 'Orçamento':
-                                            $cor = '#CDB380';
-                                            break;
-                                        case 'Negociação':
-                                            $cor = '#AEB404';
-                                            break;
-                                        case 'Cancelado':
-                                            $cor = '#CD0000';
-                                            break;
-                                        case 'Finalizado':
-                                            $cor = '#256';
-                                            break;
-                                        case 'Faturado':
-                                            $cor = '#B266FF';
-                                            break;
-                                        case 'Aguardando Peças':
-                                            $cor = '#FF7F00';
-                                            break;
-                                        case 'Aprovado':
-                                            $cor = '#808080';
-                                            break;
-                                        default:
-                                            $cor = '#E0E4CC';
-                                            break;
-                                    }
-                            ?>
+                            <?php $cor = $obterCorStatus($o->status); ?>
                             <tr>
                                 <td>
                                     <?= $o->idOs ?>
@@ -676,40 +627,7 @@
                 <tbody>
                     <?php if ($ordens_aprovadas != null) : ?>
                         <?php foreach ($ordens_aprovadas as $o) : ?>
-                            <?php
-                                    switch ($o->status) {
-                                        case 'Aberto':
-                                            $cor = '#00cd00';
-                                            break;
-                                        case 'Em Andamento':
-                                            $cor = '#436eee';
-                                            break;
-                                        case 'Orçamento':
-                                            $cor = '#CDB380';
-                                            break;
-                                        case 'Negociação':
-                                            $cor = '#AEB404';
-                                            break;
-                                        case 'Cancelado':
-                                            $cor = '#CD0000';
-                                            break;
-                                        case 'Finalizado':
-                                            $cor = '#256';
-                                            break;
-                                        case 'Faturado':
-                                            $cor = '#B266FF';
-                                            break;
-                                        case 'Aguardando Peças':
-                                            $cor = '#FF7F00';
-                                            break;
-                                        case 'Aprovado':
-                                            $cor = '#808080';
-                                            break;
-                                        default:
-                                            $cor = '#E0E4CC';
-                                            break;
-                                    }
-                            ?>
+                            <?php $cor = $obterCorStatus($o->status); ?>
                             <tr>
                                 <td>
                                     <?= $o->idOs ?>
@@ -765,40 +683,7 @@
                 <tbody>
                     <?php if ($ordens_finalizadas != null) : ?>
                         <?php foreach ($ordens_finalizadas as $o) : ?>
-                            <?php
-                                    switch ($o->status) {
-                                        case 'Aberto':
-                                            $cor = '#00cd00';
-                                            break;
-                                        case 'Em Andamento':
-                                            $cor = '#436eee';
-                                            break;
-                                        case 'Orçamento':
-                                            $cor = '#CDB380';
-                                            break;
-                                        case 'Negociação':
-                                            $cor = '#AEB404';
-                                            break;
-                                        case 'Cancelado':
-                                            $cor = '#CD0000';
-                                            break;
-                                        case 'Finalizado':
-                                            $cor = '#256';
-                                            break;
-                                        case 'Faturado':
-                                            $cor = '#B266FF';
-                                            break;
-                                        case 'Aguardando Peças':
-                                            $cor = '#FF7F00';
-                                            break;
-                                        case 'Aprovado':
-                                            $cor = '#808080';
-                                            break;
-                                        default:
-                                            $cor = '#E0E4CC';
-                                            break;
-                                    }
-                            ?>
+                            <?php $cor = $obterCorStatus($o->status); ?>
                             <tr>
                                 <td>
                                     <?= $o->idOs ?>
@@ -854,40 +739,7 @@
                 <tbody>
                     <?php if ($ordens_status != null) : ?>
                         <?php foreach ($ordens_status as $o) : ?>
-                                <?php
-                                    switch ($o->status) {
-                                        case 'Aberto':
-                                            $cor = '#00cd00';
-                                            break;
-                                        case 'Em Andamento':
-                                            $cor = '#436eee';
-                                            break;
-                                        case 'Orçamento':
-                                            $cor = '#CDB380';
-                                            break;
-                                        case 'Negociação':
-                                            $cor = '#AEB404';
-                                            break;
-                                        case 'Cancelado':
-                                            $cor = '#CD0000';
-                                            break;
-                                        case 'Finalizado':
-                                            $cor = '#256';
-                                            break;
-                                        case 'Faturado':
-                                            $cor = '#B266FF';
-                                            break;
-                                        case 'Aguardando Peças':
-                                            $cor = '#FF7F00';
-                                            break;
-                                        case 'Aprovado':
-                                            $cor = '#808080';
-                                            break;
-                                        default:
-                                            $cor = '#E0E4CC';
-                                            break;
-                                    }
-                            ?>
+                                <?php $cor = $obterCorStatus($o->status); ?>
                             <tr>
                                 <td>
                                     <?= $o->idOs ?>
@@ -941,40 +793,7 @@
                 <tbody>
                     <?php if ($vendasstatus != null) : ?>
                         <?php foreach ($vendasstatus as $v) : ?>
-                            <?php
-                                    switch ($v->status) {
-                                        case 'Aberto':
-                                            $cor = '#00cd00';
-                                            break;
-                                        case 'Em Andamento':
-                                            $cor = '#436eee';
-                                            break;
-                                        case 'Orçamento':
-                                            $cor = '#CDB380';
-                                            break;
-                                        case 'Negociação':
-                                            $cor = '#AEB404';
-                                            break;
-                                        case 'Cancelado':
-                                            $cor = '#CD0000';
-                                            break;
-                                        case 'Finalizado':
-                                            $cor = '#256';
-                                            break;
-                                        case 'Faturado':
-                                            $cor = '#B266FF';
-                                            break;
-                                        case 'Aguardando Peças':
-                                            $cor = '#FF7F00';
-                                            break;
-                                        case 'Aprovado':
-                                            $cor = '#808080';
-                                            break;
-                                        default:
-                                            $cor = '#E0E4CC';
-                                            break;
-                                    }
-                            ?>
+                            <?php $cor = $obterCorStatus($v->status); ?>
                             <tr>
                                 <td>
                                     <?= $v->idVendas ?>

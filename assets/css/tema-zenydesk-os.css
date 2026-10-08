@@ -8,21 +8,54 @@
    ============================================================ */
 
 :root {
+  /* ---- Paleta (valores colhidos do SNDesk) ---- */
+  --dk-primaria: #0f7ade;        /* azul principal: links, ativos, cabeçalho de tabela */
+  --dk-azul: #3c94e6;            /* títulos e botões "Novo" */
+  --dk-ciano: #50cdf9;           /* info / destaque de hover */
+  --dk-sucesso: #23aa58;         /* sucesso, "cumprido" */
+  --dk-lima: #8ec541;            /* botão salvar / criar */
+  --dk-alerta: #faaf3c;          /* atenção */
+  --dk-amarelo: #f9d53e;
+  --dk-perigo: #dd4b6b;          /* erro, excluir, contador */
+  --dk-roxo: #8557ce;
+  --dk-rosa-claro: #ea71b9;
+  --dk-cinza: #737f9b;           /* secundário */
+  --dk-ardosia: #4a5c72;         /* texto/borda forte (cor mais usada deles) */
+  --dk-escuro: #2c3e50;
+
+  /* ---- Superfícies e texto ---- */
   --dk-bg: #eef5fb;
   --dk-card: #ffffff;
-  --dk-azul: #3c94e6;
-  --dk-azul-forte: #0f7ade;
-  --dk-azul-claro: #ebf3fc;
+  --dk-azul-claro: #ebf3fc;      /* item ativo / hoje no calendário */
   --dk-azul-hover: #f3f8fd;
   --dk-texto: #4d5357;
   --dk-texto-forte: #2b3035;
   --dk-texto-suave: #8a94a0;
   --dk-borda: #dce6f1;
-  --dk-verde: #8ec541;
-  --dk-rosa: #dd4b6b;
-  --dk-sombra: 0 0 10px rgba(0, 0, 0, 0.08);
+  --dk-borda-suave: rgba(192, 207, 226, 0.24);
+
+  /* ---- Forma, sombra e foco ---- */
   --dk-raio: 10px;
+  --dk-raio-sm: 6px;
+  --dk-raio-pilula: 24px;
+  --dk-sombra: 0 0 10px rgba(0, 0, 0, 0.08);
+  --dk-sombra-sm: 0 1px 2px rgba(25, 25, 28, 0.04);
+  --dk-sombra-hover: 0 6px 16px rgba(20, 50, 90, 0.12);
+  --dk-foco: 0 0 0 0.2rem rgba(15, 122, 222, 0.25);
+
+  /* ---- Movimento ---- */
+  --dk-rapido: 0.15s;
+  --dk-medio: 0.3s;
+  --dk-curva: ease-in-out;
+  --dk-curva-mola: cubic-bezier(0.2, 0.85, 0.32, 1.2);
+
+  /* ---- Tipografia ---- */
   --dk-fonte: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+
+  /* nomes antigos (compatibilidade) */
+  --dk-azul-forte: var(--dk-primaria);
+  --dk-verde: var(--dk-lima);
+  --dk-rosa: var(--dk-perigo);
 }
 
 /* ===== BASE ===== */
@@ -129,8 +162,8 @@ hr { border-top: 1px solid var(--dk-borda); border-bottom: 0; }
 
 /* Ícones coloridos, como no SNDesk */
 #sidebar li .iconX { color: var(--dk-azul) !important; }
-#sidebar .menu-links li:nth-child(5n+2) > a > .iconX { color: #8b6fe8 !important; }
-#sidebar .menu-links li:nth-child(5n+3) > a > .iconX { color: #22a6b8 !important; }
+#sidebar .menu-links li:nth-child(5n+2) > a > .iconX { color: var(--dk-roxo) !important; }
+#sidebar .menu-links li:nth-child(5n+3) > a > .iconX { color: var(--dk-ciano) !important; }
 #sidebar .menu-links li:nth-child(5n+4) > a > .iconX { color: #f0943a !important; }
 #sidebar .menu-links li:nth-child(5n+5) > a > .iconX { color: #e05a7a !important; }
 #sidebar li.active .iconX { color: var(--dk-azul-forte) !important; }
@@ -252,14 +285,14 @@ hr { border-top: 1px solid var(--dk-borda); border-bottom: 0; }
   color: #fff !important;
 }
 
-.btn-danger { background: #e5484d !important; background-image: none !important; color: #fff !important; }
-.btn-warning { background: #f0a43a !important; background-image: none !important; color: #fff !important; }
+.btn-danger { background: var(--dk-perigo) !important; background-image: none !important; color: #fff !important; }
+.btn-warning { background: var(--dk-alerta) !important; background-image: none !important; color: #fff !important; }
 .btn-inverse { background: var(--dk-texto-forte) !important; background-image: none !important; color: #fff !important; }
 .btn-primary:hover, .btn-success:hover, .btn-danger:hover, .btn-warning:hover { filter: brightness(0.94); }
 
 /* Ícones de ação nas listas (ver, editar, excluir...) */
 .btn-nwe, .btn-nwe1, .btn-nwe2, .btn-nwe3, .btn-nwe5, .btn-nwe6 { color: var(--dk-azul-forte) !important; }
-.btn-nwe4 { color: #e5484d !important; }
+.btn-nwe4 { color: var(--dk-perigo) !important; }
 
 .badge, .badge-important { background: var(--dk-rosa); }
 
@@ -333,12 +366,12 @@ input:focus, select:focus, textarea:focus {
   border: 2px solid var(--dk-c, var(--dk-azul)) !important;
 }
 
-.cardBox .card:nth-child(6n+1) { --dk-c: #4caf50; background: #eef8ee !important; }
-.cardBox .card:nth-child(6n+2) { --dk-c: #3c94e6; background: #edf5fd !important; }
-.cardBox .card:nth-child(6n+3) { --dk-c: #f0a43a; background: #fff6ea !important; }
-.cardBox .card:nth-child(6n+4) { --dk-c: #dd4b6b; background: #fdeff2 !important; }
-.cardBox .card:nth-child(6n+5) { --dk-c: #8b6fe8; background: #f3effd !important; }
-.cardBox .card:nth-child(6n+6) { --dk-c: #22a6b8; background: #e9f7f9 !important; }
+.cardBox .card:nth-child(6n+1) { --dk-c: var(--dk-sucesso); background: #eef8ee !important; }
+.cardBox .card:nth-child(6n+2) { --dk-c: var(--dk-primaria); background: #edf5fd !important; }
+.cardBox .card:nth-child(6n+3) { --dk-c: var(--dk-alerta); background: #fff6ea !important; }
+.cardBox .card:nth-child(6n+4) { --dk-c: var(--dk-perigo); background: #fdeff2 !important; }
+.cardBox .card:nth-child(6n+5) { --dk-c: var(--dk-roxo); background: #f3effd !important; }
+.cardBox .card:nth-child(6n+6) { --dk-c: #29b6e8; background: #e8f8fe !important; }
 
 .cardBox .card .numbers, .cardBox .card .cardName, .cardBox .card .cardName2 {
   color: var(--dk-texto-forte) !important;
@@ -355,10 +388,72 @@ input:focus, select:focus, textarea:focus {
   background: #fff !important;
   border: 1px solid var(--dk-borda) !important;
   border-radius: var(--dk-raio) !important;
+  box-shadow: var(--dk-sombra-sm) !important;
 }
 
-.new-bottons .card:hover { border-color: var(--dk-azul) !important; background: var(--dk-azul-hover) !important; }
-.new-bottons .card .cardName, .new-bottons .card .cardName2 { color: var(--dk-texto-forte) !important; }
+.new-bottons .card:hover {
+  border-color: var(--dk-azul) !important;
+  background: var(--dk-azul-hover) !important;
+  transform: translateY(-2px);
+  box-shadow: var(--dk-sombra-hover) !important;
+}
+
+.new-bottons .card .cardName, .new-bottons .card .cardName2 {
+  color: var(--dk-texto-forte) !important;
+  font-family: var(--dk-fonte) !important;
+}
+
+.new-bottons .card .cardName2 {
+  font-weight: 800 !important;
+  font-size: 22px !important;
+}
+
+.new-bottons .card .cardName {
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  color: var(--dk-texto) !important;
+}
+
+/* Ícones vibrantes com cores do SNDesk nos atalhos */
+.new-bottons .card .iconBx  { color: #0f7ade !important; text-shadow: none !important; }
+.new-bottons .card .iconBx2 { color: #f0943a !important; text-shadow: none !important; }
+.new-bottons .card .iconBx3 { color: #0cdbae !important; text-shadow: none !important; }
+.new-bottons .card .iconBx4 { color: #dd4b6b !important; text-shadow: none !important; }
+.new-bottons .card .iconBx6 { color: #8557ce !important; text-shadow: none !important; }
+.new-bottons .card .iconBx5 { color: #23aa58 !important; text-shadow: none !important; }
+.new-bottons .card .iconBx7 { color: #23aa58 !important; text-shadow: none !important; }
+.new-bottons .card .iconBx8 { color: #dd4b6b !important; text-shadow: none !important; }
+
+/* Títulos de cabeçalho nos widgets */
+.cardHeader {
+  color: var(--dk-azul) !important;
+  font-weight: 700 !important;
+  font-size: 16px !important;
+  padding: 14px 18px 10px !important;
+  margin: 0 !important;
+  border-bottom: 2px solid rgba(192, 207, 226, 0.3) !important;
+}
+
+#content-bemv {
+  padding: 10px 0 16px !important;
+}
+#content-bemv .bemv {
+  font-size: 26px !important;
+  font-weight: 800 !important;
+  color: var(--dk-texto-forte) !important;
+  letter-spacing: -0.5px !important;
+}
+
+.badge {
+  font-family: var(--dk-fonte) !important;
+  font-weight: 700 !important;
+  font-size: 11px !important;
+  padding: 4px 10px !important;
+  border-radius: var(--dk-raio-pilula) !important;
+  letter-spacing: 0.3px !important;
+  text-shadow: none !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
+}
 
 /* ===== KANBAN ===== */
 .kanban-coluna {
@@ -469,3 +564,80 @@ input:focus, select:focus, textarea:focus {
 
 /* ===== FORM-ACTIONS e rodapé ===== */
 .form-actions { background: transparent !important; border-top: 1px solid var(--dk-borda) !important; }
+
+/* ============================================================
+   MOVIMENTO — tempos e efeitos inspirados no SNDesk
+   (controles 0,15s ease-in-out · blocos 0,3s · entrada suave 10px)
+   ============================================================ */
+
+@keyframes zd-entrada {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes zd-sobe {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes zd-surge {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Entrada da página: o conteúdo "assenta" ao abrir cada tela.
+   'backwards' devolve o elemento ao normal no fim (não atrapalha modais). */
+#content .container-flu > .row-fluid > .span12 > div:not(.modal),
+#content .container-flu > .row-fluid > .span12 > .new122 {
+  animation: zd-entrada 0.45s var(--dk-curva) backwards;
+}
+
+/* Cards do painel entram em sequência */
+.cardBox .card { animation: zd-sobe 0.4s ease-out backwards; }
+.cardBox .card:nth-child(2) { animation-delay: 0.04s; }
+.cardBox .card:nth-child(3) { animation-delay: 0.08s; }
+.cardBox .card:nth-child(4) { animation-delay: 0.12s; }
+.cardBox .card:nth-child(5) { animation-delay: 0.16s; }
+.cardBox .card:nth-child(6) { animation-delay: 0.20s; }
+.cardBox .card:nth-child(7) { animation-delay: 0.24s; }
+
+/* Cards que levantam ao passar o mouse */
+.cardBox .card, .new-bottons .card, .kanban-card, .av-card {
+  transition: transform var(--dk-medio) ease, box-shadow var(--dk-medio) ease, border-color var(--dk-rapido) var(--dk-curva) !important;
+}
+.cardBox .card:hover, .new-bottons .card:hover, .kanban-card:hover, .av-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--dk-sombra-hover) !important;
+}
+
+/* Kanban: cards sobem ao carregar */
+.kanban-card { animation: zd-sobe 0.3s ease backwards; }
+
+/* Botões, links do menu, campos: transição curta como no SNDesk */
+.btn, .button, .cad-btn-novo, .cad-btn-salvar, .os-btn-assumir, .pagination ul > li > a {
+  transition: color var(--dk-rapido) var(--dk-curva), background-color var(--dk-rapido) var(--dk-curva),
+              border-color var(--dk-rapido) var(--dk-curva), box-shadow var(--dk-rapido) var(--dk-curva),
+              transform var(--dk-rapido) var(--dk-curva) !important;
+}
+.btn:hover, .button:hover, .cad-btn-novo:hover, .cad-btn-salvar:hover, .os-btn-assumir:hover { transform: translateY(-1px); }
+.btn:active, .button:active, .cad-btn-novo:active, .cad-btn-salvar:active, .os-btn-assumir:active { transform: translateY(0) scale(0.97); }
+.btn:focus-visible, .button:focus-visible, .cad-btn-novo:focus-visible, .cad-btn-salvar:focus-visible, a:focus-visible {
+  outline: none;
+  box-shadow: var(--dk-foco) !important;
+}
+#sidebar li a { transition: background-color var(--dk-rapido) var(--dk-curva), color var(--dk-rapido) var(--dk-curva) !important; }
+#sidebar li a .iconX { transition: transform var(--dk-medio) var(--dk-curva-mola) !important; }
+#sidebar li a:hover .iconX { transform: scale(1.12); }
+input, select, textarea { transition: border-color var(--dk-rapido) var(--dk-curva), box-shadow var(--dk-rapido) var(--dk-curva), background-color var(--dk-rapido) var(--dk-curva) !important; }
+.table tbody tr td { transition: background-color var(--dk-rapido) var(--dk-curva); }
+
+/* Chave liga/desliga com "mola" */
+.cad-switch span, .cad-switch span::before { transition: transform var(--dk-medio) var(--dk-curva-mola), background-color var(--dk-rapido) var(--dk-curva) !important; }
+.cad-switch input:checked + span { background: var(--dk-primaria) !important; }
+
+/* Janelas (modais) surgem suavemente */
+.modal.in { animation: zd-surge 0.25s ease-out; }
+.dropdown-menu { animation: zd-entrada 0.18s ease-out; }
+
+/* Calendário: hoje com o azul-claro oficial */
+.fc { --fc-today-bg-color: var(--dk-azul-claro); }

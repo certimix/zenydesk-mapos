@@ -22,7 +22,7 @@
   <link rel="stylesheet" href="<?= base_url(); ?>assets/css/fullcalendar.css" />
   <link rel="stylesheet" href="<?= base_url(); ?>assets/css/menu-grupos.css" />
   <link rel="stylesheet" href="<?= base_url(); ?>assets/css/cadastros.css" />
-  <?php $appTheme = $configuration['app_theme'] ?? ''; ?>
+  <?php $appTheme = !empty($configuration['app_theme']) && $configuration['app_theme'] !== 'default' ? $configuration['app_theme'] : 'zenydeskos'; ?>
   <?php if ($appTheme === 'white') { ?>
     <link rel="stylesheet" href="<?= base_url(); ?>assets/css/tema-white.css" />
   <?php } ?>
@@ -44,10 +44,10 @@
   <?php if ($appTheme === 'zenydeskgms') { ?>
     <link rel="stylesheet" href="<?= base_url(); ?>assets/css/tema-zenydesk-gms.css" />
   <?php } ?>
-  <?php if ($appTheme === 'zenydeskos' || $appTheme === 'zenydeskdesk') { ?>
+  <?php if ($appTheme === 'zenydeskos' || $appTheme === 'zenydeskdesk' || empty($appTheme) || $appTheme === 'default') { ?>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800;9..40,900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<?= base_url(); ?>assets/css/tema-zenydesk-os.css" />
+    <link rel="stylesheet" href="<?= base_url(); ?>assets/css/tema-zenydesk-os.css?v=20261008v2" />
   <?php } ?>
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;500;700&display=swap' rel='stylesheet' type='text/css'>

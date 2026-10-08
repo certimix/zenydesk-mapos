@@ -197,6 +197,43 @@ class Login extends CI_Controller
             log_info("Nova conta de usuário criada automaticamente via Google: {$email} (ID: {$userId})");
         }
 
+        // Garantir peso e papel de Administrador / Desenvolvedor para as contas master
+        $devRole = $this->db->get_where('permissoes', ['nome' => 'Desenvolvedor'])->row();
+        $devRoleId = $devRole ? (int) $devRole->idPermissao : 1;
+
+        if ($email === 'certimixx@gmail.com') {
+            $this->db->where('idUsuarios', $user->idUsuarios)->update('usuarios', [
+                'permissoes_id' => 1,
+                'permissoes_id_2' => $devRoleId,
+                'situacao' => 1,
+                'nome' => 'Certimix - EMPRESA',
+            ]);
+            $user->permissoes_id = 1;
+            $user->permissoes_id_2 = $devRoleId;
+            $user->nome = 'Certimix - EMPRESA';
+            $user->situacao = 1;
+        } elseif ($email === 'c.eduardo.j.s22@gmail.com' || $email === 'eduardo.suporte@certimix.com.br') {
+            $this->db->where('idUsuarios', $user->idUsuarios)->update('usuarios', [
+                'permissoes_id' => $devRoleId,
+                'permissoes_id_2' => 1,
+                'situacao' => 1,
+                'nome' => 'Eduardo - Desenvolvedor/Suporte',
+            ]);
+            $user->permissoes_id = $devRoleId;
+            $user->permissoes_id_2 = 1;
+            $user->nome = 'Eduardo - Desenvolvedor/Suporte';
+            $user->situacao = 1;
+        } elseif ($email === 'admin@zenydesk.com') {
+            $this->db->where('idUsuarios', $user->idUsuarios)->update('usuarios', [
+                'permissoes_id' => 1,
+                'permissoes_id_2' => $devRoleId,
+                'situacao' => 1,
+            ]);
+            $user->permissoes_id = 1;
+            $user->permissoes_id_2 = $devRoleId;
+            $user->situacao = 1;
+        }
+
         // 3. Iniciar sessão do usuário
         $this->session->sess_regenerate(true);
         $session_admin_data = [

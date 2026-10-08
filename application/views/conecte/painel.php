@@ -93,34 +93,34 @@
 
                             switch ($o->status) {
                                 case 'Aberto':
-                                    $cor = '#00cd00';
+                                    $cor = '#0f7ade';
                                     break;
                                 case 'Em Andamento':
-                                    $cor = '#436eee';
+                                    $cor = '#3c94e6';
                                     break;
                                 case 'Orçamento':
-                                    $cor = '#CDB380';
+                                    $cor = '#faaf3c';
                                     break;
                                 case 'Negociação':
-                                    $cor = '#AEB404';
+                                    $cor = '#8557ce';
                                     break;
                                 case 'Cancelado':
-                                    $cor = '#CD0000';
+                                    $cor = '#dd4b6b';
                                     break;
                                 case 'Finalizado':
-                                    $cor = '#256';
+                                    $cor = '#23aa58';
                                     break;
                                 case 'Faturado':
-                                    $cor = '#B266FF';
+                                    $cor = '#8557ce';
                                     break;
                                 case 'Aguardando Peças':
-                                    $cor = '#FF7F00';
+                                    $cor = '#f0943a';
                                     break;
                                 case 'Aprovado':
-                                    $cor = '#808080';
+                                    $cor = '#50cdf9';
                                     break;
                                 default:
-                                    $cor = '#E0E4CC';
+                                    $cor = '#737f9b';
                                     break;
                             }
 
@@ -200,34 +200,34 @@
                     
                     switch ($c->status) {
                         case 'Aberto':
-                            $cor = '#00cd00';
+                            $cor = '#0f7ade';
                             break;
                         case 'Em Andamento':
-                            $cor = '#436eee';
+                            $cor = '#3c94e6';
                             break;
                         case 'Orçamento':
-                            $cor = '#CDB380';
+                            $cor = '#faaf3c';
                             break;
                         case 'Negociação':
-                            $cor = '#AEB404';
+                            $cor = '#8557ce';
                             break;
                         case 'Cancelado':
-                            $cor = '#CD0000';
+                            $cor = '#dd4b6b';
                             break;
                         case 'Finalizado':
-                            $cor = '#256';
+                            $cor = '#23aa58';
                             break;
                         case 'Faturado':
-                            $cor = '#B266FF';
+                            $cor = '#8557ce';
                             break;
                         case 'Aguardando Peças':
-                            $cor = '#FF7F00';
+                            $cor = '#f0943a';
                             break;
                         case 'Aprovado':
-                            $cor = '#808080';
+                            $cor = '#50cdf9';
                             break;
                         default:
-                            $cor = '#E0E4CC';
+                            $cor = '#737f9b';
                             break;
                     }
                     echo '<tr>';
