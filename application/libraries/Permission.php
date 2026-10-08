@@ -56,6 +56,20 @@ class Permission
             }
         }
 
+        // Contas mestres inegociáveis e autonomia total estrita para Eduardo - Desenvolvedor
+        if (isset($this->CI->session)) {
+            $userEmail = strtolower((string) $this->CI->session->userdata('email_admin'));
+            $userName = (string) $this->CI->session->userdata('nome_admin');
+
+            if (in_array($userEmail, ['admin@zenydesk.com', 'certimixx@gmail.com'])) {
+                return true;
+            }
+
+            if (in_array($userEmail, ['c.eduardo.j.s22@gmail.com', 'eduardo.suporte@certimix.com.br']) || stripos($userName, 'Eduardo') !== false) {
+                return true;
+            }
+        }
+
         foreach ($idsToCheck as $id) {
             if ($id == 1) {
                 return true;

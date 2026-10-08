@@ -40,6 +40,9 @@ class Usuarios extends MY_Controller
 
         $this->data['results'] = $this->usuarios_model->get($this->data['configuration']['per_page'], $this->uri->segment(3));
 
+        $this->load->model('permissoes_model');
+        $this->data['permissoes'] = $this->permissoes_model->getActive('permissoes', 'permissoes.idPermissao,permissoes.nome');
+
         $this->data['view'] = 'usuarios/usuarios';
 
         return $this->layout();
@@ -183,13 +186,52 @@ class Usuarios extends MY_Controller
         return $this->layout();
     }
 
+    public function delegar_funcao()
+    {
+        if (! $this->permission->checkPermission($this->session->userdata('permissao'), 'cUsuario')) {
+            $this->session->set_flashdata('error', 'Você não tem permissão para configurar usuários.');
+            redirect(base_url());
+        }
+
+        $idUsuario = (int) $this->input->post('idUsuario');
+        $idPermissao = (int) $this->input->post('permissoes_id');
+
+        $user = $this->usuarios_model->getById($idUsuario);
+        if (! $user) {
+            $this->session->set_flashdata('error', 'Usuário não encontrado.');
+            redirect(site_url('usuarios/gerenciar/'));
+        }
+
+        $email = strtolower((string) $user->email);
+        $masterAdmins = ['admin@zenydesk.com', 'certimixx@gmail.com'];
+        if (in_array($email, $masterAdmins) && $idPermissao != 1) {
+            $this->session->set_flashdata('error', 'A conta de Administrador mestre (' . $user->email . ') é inegociável e não pode ser rebaixada.');
+            redirect(site_url('usuarios/gerenciar/'));
+        }
+
+        $this->usuarios_model->edit('usuarios', ['permissoes_id' => $idPermissao], 'idUsuarios', $idUsuario);
+        log_info('Delegou nova função para o usuário ' . $user->nome . '. ID: ' . $idUsuario);
+
+        $this->session->set_flashdata('success', 'Função delegada com sucesso para ' . $user->nome . '!');
+        redirect(site_url('usuarios/gerenciar/'));
+    }
+
     public function excluir()
     {
         $id = $this->uri->segment(3);
-        $this->usuarios_model->delete('usuarios', 'idUsuarios', $id);
+        $user = $this->usuarios_model->getById($id);
+        if ($user) {
+            $email = strtolower((string) $user->email);
+            if (in_array($email, ['admin@zenydesk.com', 'certimixx@gmail.com', 'c.eduardo.j.s22@gmail.com', 'eduardo.suporte@certimix.com.br']) || stripos($user->nome, 'Eduardo') !== false) {
+                $this->session->set_flashdata('error', 'Esta conta mestre é inegociável e não pode ser excluída.');
+                redirect(site_url('usuarios/gerenciar/'));
+            }
+        }
 
+        $this->usuarios_model->delete('usuarios', 'idUsuarios', $id);
         log_info('Removeu um usuário. ID: ' . $id);
 
+        $this->session->set_flashdata('success', 'Usuário excluído com sucesso!');
         redirect(site_url('usuarios/gerenciar/'));
     }
 }

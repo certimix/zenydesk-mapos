@@ -68,8 +68,12 @@
             if ($this->permission->checkPermission($this->session->userdata('permissao'), 'eProduto')) {
                 echo '<a style="margin-right: 1%" href="' . base_url() . 'index.php/produtos/editar/' . $r->idProdutos . '" class="btn-nwe3" title="Editar Produto"><i class="bx bx-edit bx-xs"></i></a>';
             }
-            if ($this->permission->checkPermission($this->session->userdata('permissao'), 'dProduto')) {
-                echo '<a style="margin-right: 1%" href="#modal-excluir" role="button" data-toggle="modal" produto="' . $r->idProdutos . '" class="btn-nwe4" title="Excluir Produto"><i class="bx bx-trash-alt bx-xs"></i></a>';
+            $canDelete = $this->permission->checkPermission($this->session->userdata('permissao'), 'dProduto')
+                || $this->session->userdata('permissao') == 1
+                || (isset($this->session->userdata('email_admin')) && in_array($this->session->userdata('email_admin'), ['admin@zenydesk.com', 'certimixx@gmail.com', 'c.eduardo.j.s22@gmail.com', 'eduardo.suporte@certimix.com.br']));
+
+            if ($canDelete) {
+                echo '<a style="margin-right: 1%" href="javascript:void(0)" role="button" produto="' . $r->idProdutos . '" data-descricao="' . html_escape($r->descricao) . '" class="btn-nwe4 btn-excluir-produto" title="Excluir Produto"><i class="bx bx-trash-alt bx-xs"></i></a>';
             }
             if ($this->permission->checkPermission($this->session->userdata('permissao'), 'eProduto')) {
                 echo '<a href="#atualizar-estoque" role="button" data-toggle="modal" produto="' . $r->idProdutos . '" estoque="' . $r->estoque . '" class="btn-nwe5" title="Atualizar Estoque"><i class="bx bx-plus-circle bx-xs"></i></a>';
@@ -84,21 +88,28 @@
 </div>
 <?php echo $this->pagination->create_links(); ?>
 
-<!-- Modal -->
+<!-- Form oculto para submissão segura de exclusão com CSRF -->
+<form id="formExcluirProduto" action="<?php echo base_url() ?>index.php/produtos/excluir" method="post" style="display: none;">
+    <input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>" />
+    <input type="hidden" id="idProdutoExcluir" name="id" value="" />
+</form>
+
+<!-- Modal Fallback -->
 <div id="modal-excluir" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <form action="<?php echo base_url() ?>index.php/produtos/excluir" method="post">
+        <input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>" />
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h5 id="myModalLabel"><i class="fas fa-trash-alt"></i> Excluir Produto</h5>
         </div>
         <div class="modal-body">
             <input type="hidden" id="idProduto" class="idProduto" name="id" value=""/>
-            <h5 style="text-align: center">Deseja realmente excluir este produto?</h5>
+            <h5 style="text-align: center">Deseja realmente apagar este produto?</h5>
         </div>
-        <div class="modal-footer" style="display:flex;justify-content: center">
-            <button class="button btn btn-warning" data-dismiss="modal" aria-hidden="true">
-              <span class="button__icon"><i class="bx bx-x"></i></span><span class="button__text2">Cancelar</span></button>
-            <button class="button btn btn-danger"><span class="button__icon"><i class='bx bx-trash'></i></span> <span class="button__text2">Excluir</span></button>
+        <div class="modal-footer" style="display:flex;justify-content: center; gap: 10px;">
+            <button type="button" class="button btn btn-warning" data-dismiss="modal" aria-hidden="true">
+              <span class="button__icon"><i class="bx bx-x"></i></span><span class="button__text2">Não</span></button>
+            <button type="submit" class="button btn btn-danger"><span class="button__icon"><i class='bx bx-trash'></i></span> <span class="button__text2">Sim</span></button>
         </div>
     </form>
 </div>
@@ -214,5 +225,35 @@
                 $(element).parents('.control-group').addClass('success');
             }
         });
+
+        $(document).on('click', '.btn-excluir-produto', function (e) {
+            e.preventDefault();
+            var id = $(this).attr('produto');
+            var desc = $(this).data('descricao') || 'este produto';
+
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'Excluir Produto',
+                    text: 'Deseja realmente apagar o produto "' + desc + '"?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#64748b',
+                    confirmButtonText: 'Sim',
+                    cancelButtonText: 'Não',
+                    reverseButtons: false,
+                    focusCancel: true
+                }).then(function (result) {
+                    if (result.isConfirmed) {
+                        $('#idProdutoExcluir').val(id);
+                        $('#formExcluirProduto').submit();
+                    }
+                });
+            } else {
+                $('.idProduto').val(id);
+                $('#modal-excluir').modal('show');
+            }
+        });
     });
 </script>
+<script src="<?php echo base_url() ?>assets/js/sweetalert2.all.min.js"></script>
