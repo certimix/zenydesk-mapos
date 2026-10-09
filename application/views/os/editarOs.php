@@ -8,6 +8,115 @@
 
 <link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/custom.css" />
 
+<style>
+/* =========================================================================
+   Estilização do Painel Unificado de Diagnóstico e Laudo (4 Blocos)
+   ========================================================================= */
+.painel-detalhes-container {
+    margin-top: 15px !important;
+}
+.grid-detalhes-os {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 16px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+@media (max-width: 900px) {
+    .grid-detalhes-os {
+        grid-template-columns: 1fr !important;
+    }
+}
+.card-detalhe-os {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    padding: 14px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03) !important;
+    transition: all 0.2s ease !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-sizing: border-box !important;
+}
+.card-detalhe-os:hover {
+    border-color: #cbd5e1 !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+}
+.card-detalhe-os:focus-within {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12) !important;
+}
+.card-detalhe-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin-bottom: 6px !important;
+    padding-bottom: 8px !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+}
+.card-detalhe-title {
+    margin: 0 !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    font-weight: 700 !important;
+    color: #1e293b !important;
+    font-size: 13px !important;
+}
+.card-detalhe-subtitle {
+    color: #64748b !important;
+    font-size: 11px !important;
+    margin-bottom: 8px !important;
+    display: block !important;
+    line-height: 1.3 !important;
+}
+.card-detalhe-os .trumbowyg-box {
+    margin: 0 !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 6px !important;
+    background: #ffffff !important;
+    overflow: hidden !important;
+}
+.card-detalhe-os .trumbowyg-editor {
+    min-height: 120px !important;
+    max-height: 220px !important;
+    overflow-y: auto !important;
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+    color: #1e293b !important;
+}
+.card-detalhe-os .trumbowyg-button-pane {
+    background: #f8fafc !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    padding: 2px 4px !important;
+}
+.card-detalhe-os .trumbowyg-button-pane button {
+    height: 26px !important;
+    line-height: 26px !important;
+}
+.pill-detalhe {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    border-radius: 6px !important;
+    padding: 6px 12px !important;
+    cursor: pointer !important;
+}
+.grid-detalhes-os.modo-abas {
+    display: block !important;
+}
+.grid-detalhes-os.modo-abas .card-detalhe-os {
+    display: none !important;
+}
+.grid-detalhes-os.modo-abas .card-detalhe-os.aba-ativa {
+    display: flex !important;
+}
+</style>
+
 <div class="row-fluid" style="margin-top:0">
     <div class="span12">
         <div class="widget-box">
@@ -153,32 +262,118 @@
                                         </div>
                                     </div>
 
-                                    <!-- CAMPO PARA DESCREVER O QUE FOI FEITO -->
-                                    <div class="span12" style="padding: 1%; margin-left: 0; margin-top: -5px;">
-                                        <label for="laudoTecnico" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
-                                            <span style="font-size: 13px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 6px;">
-                                                <i class="bx bx-wrench" style="color: #2563eb; font-size: 17px;"></i>
-                                                Descrição do que foi feito <small style="color: #64748b; font-weight: normal; font-size: 11px;">(Procedimentos realizados / Relato do atendimento)</small>
-                                            </span>
-                                            <span style="font-size: 11px; color: #64748b; font-weight: normal;">
-                                                <i class="bx bx-info-circle"></i> Ficará gravado no laudo técnico e visível no histórico do cliente
-                                            </span>
-                                        </label>
-                                        <textarea class="span12 editor" name="laudoTecnico" id="laudoTecnico" cols="30" rows="5"><?php echo $result->laudoTecnico ?></textarea>
-                                    </div>
-
                                     <?php $this->load->view('os/_atendimento', ['atendimento' => $atendimento, 'atual' => $result]); ?>
-                                    <div class="span6" style="padding: 1%; margin-left: 0">
-                                        <label for="descricaoProduto"><h4>Descrição Produto/Serviço</h4></label>
-                                        <textarea class="span12 editor" name="descricaoProduto" id="descricaoProduto" cols="30" rows="5"><?php echo $result->descricaoProduto ?></textarea>
-                                    </div>
-                                    <div class="span6" style="padding: 1%; margin-left: 0">
-                                        <label for="defeito"><h4>Defeito Reclamado</h4></label>
-                                        <textarea class="span12 editor" name="defeito" id="defeito" cols="30" rows="5"><?php echo $result->defeito ?></textarea>
-                                    </div>
-                                    <div class="span12" style="padding: 1%; margin-left: 0">
-                                        <label for="observacoes"><h4>Observações Adicionais</h4></label>
-                                        <textarea class="span12 editor" name="observacoes" id="observacoes" cols="30" rows="4"><?php echo $result->observacoes ?></textarea>
+
+                                    <!-- ========================================================================= -->
+                                    <!-- PAINEL UNIFICADO DE DIAGNÓSTICO, DEFEITO E LAUDO (4 BLOCOS INTEGRADOS)    -->
+                                    <!-- ========================================================================= -->
+                                    <div class="span12 painel-detalhes-container" style="padding: 1%; margin-left: 0;">
+                                        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); overflow: hidden;">
+                                            
+                                            <!-- Cabeçalho do Painel Unificado -->
+                                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%); border-bottom: 1px solid #e2e8f0;">
+                                                <div style="display: flex; align-items: center; gap: 10px;">
+                                                    <div style="width: 32px; height: 32px; border-radius: 6px; background: #eff6ff; border: 1px solid #bfdbfe; display: flex; align-items: center; justify-content: center;">
+                                                        <i class="bx bx-layer" style="color: #2563eb; font-size: 18px;"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h5 style="margin: 0; font-size: 14px; font-weight: 700; color: #1e293b; line-height: 1.2;">
+                                                            Diagnóstico, Defeito & Procedimentos Técnicos
+                                                        </h5>
+                                                        <small style="color: #64748b; font-size: 11px;">
+                                                            Detalhamento do equipamento, relato do cliente, observações e laudo técnico
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                                <!-- Alternador de Visualização (Grade 2x2 vs Abas Focadas) -->
+                                                <div class="btn-group" data-toggle="buttons-radio" style="margin: 0;">
+                                                    <button type="button" class="btn btn-mini active" id="btnModoGrid" style="display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 4px 0 0 4px;">
+                                                        <i class="bx bx-grid-alt"></i> Grade 2x2
+                                                    </button>
+                                                    <button type="button" class="btn btn-mini" id="btnModoTabs" style="display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 0 4px 4px 0;">
+                                                        <i class="bx bx-window"></i> Abas Focadas
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <!-- Seletor de Abas (visível no modo Abas) -->
+                                            <div id="navTabsDetalhes" style="display: none; padding: 10px 18px 0 18px; background: #ffffff; border-bottom: 1px solid #e2e8f0;">
+                                                <ul class="nav nav-pills" style="margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 6px;">
+                                                    <li class="active"><a href="javascript:void(0)" class="pill-detalhe" data-target="blocoDescricao"><i class="bx bx-package" style="color:#0284c7"></i> Descrição Produto/Serviço</a></li>
+                                                    <li><a href="javascript:void(0)" class="pill-detalhe" data-target="blocoDefeito"><i class="bx bx-error-alt" style="color:#ea580c"></i> Defeito Reclamado</a></li>
+                                                    <li><a href="javascript:void(0)" class="pill-detalhe" data-target="blocoObservacoes"><i class="bx bx-notepad" style="color:#475569"></i> Observações</a></li>
+                                                    <li><a href="javascript:void(0)" class="pill-detalhe" data-target="blocoLaudo"><i class="bx bx-wrench" style="color:#2563eb"></i> Laudo Técnico</a></li>
+                                                </ul>
+                                            </div>
+
+                                            <!-- Container do Conteúdo (Suporta Modo Grid 2x2 e Modo Abas) -->
+                                            <div id="conteudoDetalhesOs" style="padding: 16px; background: #f8fafc;">
+                                                <div class="grid-detalhes-os">
+                                                    
+                                                    <!-- 1. Descrição Produto/Serviço -->
+                                                    <div class="card-detalhe-os" id="blocoDescricao">
+                                                        <div class="card-detalhe-header">
+                                                            <label for="descricaoProduto" class="card-detalhe-title">
+                                                                <i class="bx bx-package" style="font-size: 17px; color: #0284c7;"></i>
+                                                                Descrição Produto/Serviço
+                                                            </label>
+                                                            <span class="badge" style="background: #e0f2fe; color: #0369a1; font-weight: 600; font-size: 10px; padding: 2px 8px; border-radius: 10px; border: 1px solid #bae6fd;">Item / Ativo</span>
+                                                        </div>
+                                                        <small class="card-detalhe-subtitle">
+                                                            Identificação do equipamento, marca, modelo, cor ou número de série.
+                                                        </small>
+                                                        <textarea class="span12 editor-compacto" name="descricaoProduto" id="descricaoProduto" placeholder="Ex: Notebook Dell Inspiron 15, Serial: ABC1234, com fonte..." cols="30" rows="4"><?php echo $result->descricaoProduto ?></textarea>
+                                                    </div>
+
+                                                    <!-- 2. Defeito Reclamado -->
+                                                    <div class="card-detalhe-os" id="blocoDefeito">
+                                                        <div class="card-detalhe-header">
+                                                            <label for="defeito" class="card-detalhe-title">
+                                                                <i class="bx bx-error-alt" style="font-size: 17px; color: #ea580c;"></i>
+                                                                Defeito Reclamado
+                                                            </label>
+                                                            <span class="badge" style="background: #ffedd5; color: #c2410c; font-weight: 600; font-size: 10px; padding: 2px 8px; border-radius: 10px; border: 1px solid #fed7aa;">Reclamação</span>
+                                                        </div>
+                                                        <small class="card-detalhe-subtitle">
+                                                            Sintoma ou falha informada pelo cliente na abertura do chamado.
+                                                        </small>
+                                                        <textarea class="span12 editor-compacto" name="defeito" id="defeito" placeholder="Ex: Não liga, desliga sozinho após 10 minutos ou tela azul..." cols="30" rows="4"><?php echo $result->defeito ?></textarea>
+                                                    </div>
+
+                                                    <!-- 3. Observações -->
+                                                    <div class="card-detalhe-os" id="blocoObservacoes">
+                                                        <div class="card-detalhe-header">
+                                                            <label for="observacoes" class="card-detalhe-title">
+                                                                <i class="bx bx-notepad" style="font-size: 17px; color: #475569;"></i>
+                                                                Observações
+                                                            </label>
+                                                            <span class="badge" style="background: #f1f5f9; color: #475569; font-weight: 600; font-size: 10px; padding: 2px 8px; border-radius: 10px; border: 1px solid #e2e8f0;">Geral</span>
+                                                        </div>
+                                                        <small class="card-detalhe-subtitle">
+                                                            Estado físico de entrada (marcas, arranhões) ou notas adicionais.
+                                                        </small>
+                                                        <textarea class="span12 editor-compacto" name="observacoes" id="observacoes" placeholder="Ex: Equipamento com marcas de uso na carcaça, acompanha carregador original..." cols="30" rows="4"><?php echo $result->observacoes ?></textarea>
+                                                    </div>
+
+                                                    <!-- 4. Laudo Técnico -->
+                                                    <div class="card-detalhe-os" id="blocoLaudo">
+                                                        <div class="card-detalhe-header">
+                                                            <label for="laudoTecnico" class="card-detalhe-title">
+                                                                <i class="bx bx-wrench" style="font-size: 17px; color: #2563eb;"></i>
+                                                                Laudo Técnico
+                                                            </label>
+                                                            <span class="badge" style="background: #dbeafe; color: #1d4ed8; font-weight: 600; font-size: 10px; padding: 2px 8px; border-radius: 10px; border: 1px solid #bfdbfe;">Técnico</span>
+                                                        </div>
+                                                        <small class="card-detalhe-subtitle">
+                                                            Diagnóstico do técnico, procedimentos executados e o que foi feito.
+                                                        </small>
+                                                        <textarea class="span12 editor-compacto" name="laudoTecnico" id="laudoTecnico" placeholder="Ex: Constatado curto no circuito de entrada. Substituído componente e realizados testes..." cols="30" rows="4"><?php echo $result->laudoTecnico ?></textarea>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
                                     </div>
                                     <div class="span12" style="padding: 1%; margin-left: 0">
                                         <div class="span12" style="display:flex; justify-content: center; gap: 8px;">
@@ -1476,9 +1671,80 @@ if (!$anotacoes) {
             dateFormat: 'dd/mm/yy'
         });
 
+        // Editor Compacto Trumbowyg para os 4 campos técnicos (layout organizado)
+        var trumboConfigCompacto = {
+            lang: 'pt_br',
+            semantic: { 'strikethrough': 's' },
+            autogrow: false,
+            btns: [
+                ['undo', 'redo'],
+                ['formatting'],
+                ['strong', 'em', 'underline'],
+                ['unorderedList', 'orderedList'],
+                ['link'],
+                ['removeformat'],
+                ['fullscreen']
+            ]
+        };
+        $('.editor-compacto').trumbowyg(trumboConfigCompacto);
+
         $('.editor').trumbowyg({
             lang: 'pt_br',
             semantic: { 'strikethrough': 's', }
         });
+
+        // Alternância de Visualização: Grade 2x2 vs Abas Focadas
+        function aplicarModoVisualizacao(modo) {
+            if (modo === 'tabs') {
+                $("#btnModoTabs").addClass('active btn-primary').removeClass('btn-default');
+                $("#btnModoGrid").removeClass('active btn-primary');
+                $("#navTabsDetalhes").slideDown(150);
+                $(".grid-detalhes-os").addClass('modo-abas');
+                var activeTarget = $("#navTabsDetalhes li.active a").data('target') || 'blocoDescricao';
+                $(".card-detalhe-os").removeClass('aba-ativa');
+                $("#" + activeTarget).addClass('aba-ativa');
+            } else {
+                $("#btnModoGrid").addClass('active btn-primary').removeClass('btn-default');
+                $("#btnModoTabs").removeClass('active btn-primary');
+                $("#navTabsDetalhes").slideUp(150);
+                $(".grid-detalhes-os").removeClass('modo-abas');
+                $(".card-detalhe-os").removeClass('aba-ativa');
+            }
+            try {
+                localStorage.setItem('zenydesk_os_detalhes_view', modo);
+            } catch(e) {}
+        }
+
+        $("#btnModoGrid").on('click', function(e) {
+            e.preventDefault();
+            aplicarModoVisualizacao('grid');
+        });
+
+        $("#btnModoTabs").on('click', function(e) {
+            e.preventDefault();
+            aplicarModoVisualizacao('tabs');
+        });
+
+        $("#navTabsDetalhes a.pill-detalhe").on('click', function(e) {
+            e.preventDefault();
+            $("#navTabsDetalhes li").removeClass('active');
+            $(this).parent('li').addClass('active');
+            var targetId = $(this).data('target');
+            $(".card-detalhe-os").removeClass('aba-ativa');
+            $("#" + targetId).addClass('aba-ativa');
+            $("#" + targetId).find('.editor-compacto').trigger('tbwresize');
+        });
+
+        // Restaura preferência salva (padrão Grade 2x2)
+        try {
+            var modoSalvo = localStorage.getItem('zenydesk_os_detalhes_view');
+            if (modoSalvo === 'tabs') {
+                aplicarModoVisualizacao('tabs');
+            } else {
+                aplicarModoVisualizacao('grid');
+            }
+        } catch(e) {
+            aplicarModoVisualizacao('grid');
+        }
     });
 </script>
