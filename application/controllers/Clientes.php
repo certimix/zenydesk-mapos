@@ -252,4 +252,93 @@ class Clientes extends MY_Controller
         $this->session->set_flashdata('success', 'Cliente excluído com sucesso!');
         redirect(site_url('clientes/gerenciar/'));
     }
+
+    /**
+     * Consulta pública/autenticada de dados cadastrais de CNPJ via Receita Federal
+     * Executa cascata com BrasilAPI, Minha Receita e ReceitaWS como fail-safe
+     */
+    public function consultaCnpj($cnpj = null)
+    {
+        if (! $this->session->userdata('logado') && ! $this->session->userdata('cliente_logado')) {
+            return $this->output
+                ->set_content_type('application/json')
+                ->set_status_header(401)
+                ->set_output(json_encode(['status' => 'error', 'message' => 'Sessão expirada ou não autorizada.']));
+        }
+
+        $cnpjLimpo = preg_replace('/\D/', '', (string) ($cnpj ?: $this->input->get('cnpj') ?: $this->input->post('cnpj')));
+        if (strlen($cnpjLimpo) !== 14) {
+            return $this->output
+                ->set_content_type('application/json')
+                ->set_status_header(400)
+                ->set_output(json_encode(['status' => 'error', 'message' => 'CNPJ deve conter 14 dígitos.']));
+        }
+
+        $headers = [
+            'User-Agent: ZenyDesk-OS/1.0',
+            'Accept: application/json',
+        ];
+
+        // 1. BrasilAPI (primário, rápido)
+        $ch = curl_init("https://brasilapi.com.br/api/cnpj/v1/{$cnpjLimpo}");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 6);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        $resp = curl_exec($ch);
+        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($code === 200 && $resp) {
+            $data = json_decode($resp, true);
+            if (!empty($data) && empty($data['type'])) {
+                return $this->output
+                    ->set_content_type('application/json')
+                    ->set_output(json_encode(['status' => 'OK', 'source' => 'brasilapi', 'data' => $data]));
+            }
+        }
+
+        // 2. Minha Receita (fallback 1)
+        $ch = curl_init("https://minhareceita.org/{$cnpjLimpo}");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 6);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        $resp = curl_exec($ch);
+        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($code === 200 && $resp) {
+            $data = json_decode($resp, true);
+            if (!empty($data) && !empty($data['razao_social'])) {
+                return $this->output
+                    ->set_content_type('application/json')
+                    ->set_output(json_encode(['status' => 'OK', 'source' => 'minhareceita', 'data' => $data]));
+            }
+        }
+
+        // 3. ReceitaWS (fallback 2)
+        $ch = curl_init("https://www.receitaws.com.br/v1/cnpj/{$cnpjLimpo}");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 7);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        $resp = curl_exec($ch);
+        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($code === 200 && $resp) {
+            $data = json_decode($resp, true);
+            if (!empty($data) && ($data['status'] ?? '') === 'OK') {
+                return $this->output
+                    ->set_content_type('application/json')
+                    ->set_output(json_encode(['status' => 'OK', 'source' => 'receitaws', 'data' => $data]));
+            }
+        }
+
+        return $this->output
+            ->set_content_type('application/json')
+            ->set_status_header(404)
+            ->set_output(json_encode(['status' => 'error', 'message' => 'CNPJ não encontrado nas bases oficiais da Receita Federal.']));
+    }
 }

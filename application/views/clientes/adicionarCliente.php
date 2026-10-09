@@ -94,9 +94,11 @@
                     <div class="span6">
                         <div class="control-group">
                             <label for="documento" class="control-label">CPF/CNPJ</label>
-                            <div class="controls">
-                                <input id="documento" class="cpfcnpj" type="text" name="documento" value="<?php echo set_value('documento'); ?>" />
-                                <button id="buscar_info_cnpj" class="btn btn-xs" type="button">Buscar(CNPJ)</button>
+                            <div class="controls" style="display: flex; align-items: center; gap: 6px;">
+                                <input id="documento" class="cpfcnpj" type="text" name="documento" value="<?php echo set_value('documento'); ?>" placeholder="Digite CPF ou CNPJ" />
+                                <button id="buscar_info_cnpj" class="btn btn-xs btn-info" type="button" title="Consultar dados da empresa na Receita Federal" style="padding: 4px 10px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+                                    <i class="bx bx-search"></i> Buscar (CNPJ)
+                                </button>
                             </div>
                         </div>
                         <div class="control-group">
