@@ -37,10 +37,27 @@ class Usuarios_model extends CI_Model
         $this->db->limit($perpage, $start);
         $this->db->join('permissoes', 'usuarios.permissoes_id = permissoes.idPermissao', 'left');
         $this->db->join('permissoes as permissoes_sec', 'usuarios.permissoes_id_2 = permissoes_sec.idPermissao', 'left');
+        $this->db->order_by('usuarios.idUsuarios', 'asc');
 
         $query = $this->db->get();
 
         $result = ! $one ? $query->result() : $query->row();
+
+        if (! $one && is_array($result)) {
+            $seen = [];
+            $filtered = [];
+            foreach ($result as $u) {
+                $email = strtolower(trim((string) $u->email));
+                $cpf = preg_replace('/\D/', '', (string) $u->cpf);
+                $key = ! empty($email) ? 'email:' . $email : 'cpf:' . $cpf;
+                if (! isset($seen[$key])) {
+                    $seen[$key] = true;
+                    $filtered[] = $u;
+                }
+            }
+
+            return $filtered;
+        }
 
         return $result;
     }
