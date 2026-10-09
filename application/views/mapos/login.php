@@ -58,7 +58,7 @@
               <div class="content">
                 <div id="newlog" style="display: flex; justify-content: center; align-items: center; margin-bottom: 8px;">
                   <a href="https://zenydesk.com" target="_blank" style="display: inline-block; text-decoration: none;">
-                    <img src="<?= base_url() ?>assets/img/logo-zenydesk.png" alt="ZenyDesk" style="max-height: 45px; max-width: 220px; width: auto; height: auto; object-fit: contain;">
+                    <img src="<?= base_url() ?>assets/img/logo-zenydesk.png?v=20261009v2" alt="ZenyDesk" style="max-height: 45px; max-width: 220px; width: auto; height: auto; object-fit: contain;">
                   </a>
                 </div>
                 <div id="mcell" style="padding: 0 0 18px 0; color: #a0aec0; font-size: 11px; text-align: center;">Zenydesk-O.S &bull; v<?= $this->config->item('app_version'); ?></div>
