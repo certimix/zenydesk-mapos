@@ -115,6 +115,127 @@
 .grid-detalhes-os.modo-abas .card-detalhe-os.aba-ativa {
     display: flex !important;
 }
+
+/* =========================================================================
+   Grid dos Campos Principais da OS (Status, Datas, Garantia, Fotos)
+   Elimina sobreposições e descompassos causados por floats legados
+   ========================================================================= */
+.os-campos-principais-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 16px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin-left: 0 !important;
+    padding: 1% 1% 0 1% !important;
+    align-items: start !important;
+}
+@media (max-width: 980px) {
+    .os-campos-principais-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+@media (max-width: 580px) {
+    .os-campos-principais-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+.os-campo-col {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    float: none !important;
+    margin: 0 !important;
+}
+.os-campo-col label {
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #334155 !important;
+    margin-bottom: 6px !important;
+    display: block !important;
+}
+.os-campo-col input,
+.os-campo-col select {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    height: 36px !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 6px !important;
+    padding: 6px 10px !important;
+    font-size: 13px !important;
+    color: #1e293b !important;
+    background-color: #ffffff !important;
+    margin: 0 0 10px 0 !important;
+    float: none !important;
+}
+.os-campo-col select {
+    line-height: 24px !important;
+}
+.os-campo-col input:focus,
+.os-campo-col select:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+    outline: none !important;
+}
+.card-box-fotos {
+    background: #f8fafc !important;
+    border: 1px dashed #cbd5e1 !important;
+    border-radius: 8px !important;
+    padding: 10px !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    margin-top: 4px !important;
+    clear: both !important;
+}
+.card-box-fotos-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin-bottom: 6px !important;
+    width: 100% !important;
+}
+.card-box-fotos-title {
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    color: #334155 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    margin: 0 !important;
+}
+.card-box-fotos-badge {
+    font-size: 9px !important;
+    padding: 2px 6px !important;
+    font-weight: 700 !important;
+    background-color: #10b981 !important;
+    color: #ffffff !important;
+    border-radius: 4px !important;
+}
+.card-box-fotos-btn {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    padding: 7px 10px !important;
+    font-weight: 600 !important;
+    font-size: 12px !important;
+    border-radius: 6px !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+    cursor: pointer !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+}
+.card-box-fotos-info {
+    display: block !important;
+    margin-top: 6px !important;
+    font-size: 10px !important;
+    color: #64748b !important;
+    line-height: 1.2 !important;
+    text-align: center !important;
+}
 </style>
 
 <div class="row-fluid" style="margin-top:0">
@@ -196,10 +317,11 @@
                                             <input id="usuarios_id" class="span12" type="hidden" name="usuarios_id" value="<?php echo $result->usuarios_id ?>" />
                                         </div>
                                     </div>
-                                    <div class="span12" style="padding: 1%; margin-left: 0">
-                                        <div class="span3">
+                                    <div class="os-campos-principais-grid">
+                                        <!-- 1. Status + Fotos do Atendimento -->
+                                        <div class="os-campo-col">
                                             <label for="status">Status<span class="required">*</span></label>
-                                            <select class="span12" name="status" id="status" value="">
+                                            <select name="status" id="status" value="">
                                                 <option <?php if ($result->status == 'Aberto') {
                                                     echo 'selected';
                                                 } ?> value="Aberto">Aberto</option>
@@ -230,35 +352,43 @@
                                             </select>
 
                                             <!-- Atalho Fotos do Atendimento com Retenção de 5 Anos -->
-                                            <div style="margin-top: 10px;">
-                                                <label style="font-size: 11px; font-weight: 600; color: #475569; display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                                                    <span>Fotos do Atendimento</span>
-                                                    <span class="badge badge-success" style="font-size: 9px; padding: 2px 6px; font-weight: 600; background-color: #10b981; border-radius: 4px;">5 Anos</span>
-                                                </label>
-                                                <a href="#tab5" data-toggle="tab" class="btn btn-info" id="btnAtalhoFotos" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 6px 10px; font-weight: 600; font-size: 12px; border-radius: 6px; box-sizing: border-box; text-decoration: none;">
-                                                    <i class="bx bx-camera" style="font-size: 16px;"></i>
+                                            <div class="card-box-fotos">
+                                                <div class="card-box-fotos-header">
+                                                    <span class="card-box-fotos-title">
+                                                        <i class="bx bx-camera" style="color: #0284c7; font-size: 14px;"></i> Fotos Atendimento
+                                                    </span>
+                                                    <span class="card-box-fotos-badge">5 Anos</span>
+                                                </div>
+                                                <a href="#tab5" data-toggle="tab" class="btn btn-info card-box-fotos-btn" id="btnAtalhoFotos" style="text-decoration: none;">
+                                                    <i class="bx bx-camera" style="font-size: 15px;"></i>
                                                     <span>Ver Fotos (<?= count($anexos); ?>)</span>
                                                 </a>
-                                                <small style="display: block; margin-top: 4px; font-size: 10px; color: #64748b; line-height: 1.2;">
+                                                <small class="card-box-fotos-info">
                                                     <i class="bx bx-shield-quarter" style="color: #16a34a;"></i> Retenção 5 anos (auto-limpeza)
                                                 </small>
                                             </div>
                                         </div>
-                                        <div class="span3">
+
+                                        <!-- 2. Data Inicial -->
+                                        <div class="os-campo-col">
                                             <label for="dataInicial">Data Inicial<span class="required">*</span></label>
-                                            <input id="dataInicial" autocomplete="off" class="span12 datepicker" type="text" name="dataInicial" value="<?php echo date('d/m/Y', strtotime($result->dataInicial)); ?>" />
+                                            <input id="dataInicial" autocomplete="off" class="datepicker" type="text" name="dataInicial" value="<?php echo date('d/m/Y', strtotime($result->dataInicial)); ?>" />
                                         </div>
-                                        <div class="span3">
+
+                                        <!-- 3. Data Final -->
+                                        <div class="os-campo-col">
                                             <label for="dataFinal">Data Final<span class="required">*</span></label>
-                                            <input id="dataFinal" autocomplete="off" class="span12 datepicker" type="text" name="dataFinal" value="<?php echo date('d/m/Y', strtotime($result->dataFinal)); ?>" />
+                                            <input id="dataFinal" autocomplete="off" class="datepicker" type="text" name="dataFinal" value="<?php echo date('d/m/Y', strtotime($result->dataFinal)); ?>" />
                                         </div>
-                                        <div class="span3">
+
+                                        <!-- 4. Garantia & Termo -->
+                                        <div class="os-campo-col">
                                             <label for="garantia">Garantia (dias)</label>
-                                            <input id="garantia" type="number" placeholder="Status s/g inserir nº/0" min="0" max="9999" class="span12" name="garantia" value="<?php echo $result->garantia ?>" />
+                                            <input id="garantia" type="number" placeholder="Status s/g inserir nº/0" min="0" max="9999" name="garantia" value="<?php echo $result->garantia ?>" />
                                             <?php echo form_error('garantia'); ?>
                                             <label for="termoGarantia">Termo Garantia</label>
-                                            <input id="termoGarantia" class="span12" type="text" name="termoGarantia" value="<?php echo $result->refGarantia ?>" />
-                                            <input id="garantias_id" class="span12" type="hidden" name="garantias_id" value="<?php echo $result->garantias_id ?>" />
+                                            <input id="termoGarantia" type="text" name="termoGarantia" value="<?php echo $result->refGarantia ?>" />
+                                            <input id="garantias_id" type="hidden" name="garantias_id" value="<?php echo $result->garantias_id ?>" />
                                         </div>
                                     </div>
 
