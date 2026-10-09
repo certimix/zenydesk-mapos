@@ -213,7 +213,7 @@ class Clientes extends MY_Controller
     {
         $canDelete = $this->permission->checkPermission($this->session->userdata('permissao'), 'dCliente')
             || $this->session->userdata('permissao') == 1
-            || (isset($this->session->userdata('email_admin')) && in_array($this->session->userdata('email_admin'), ['admin@zenydesk.com', 'certimixx@gmail.com', 'c.eduardo.j.s22@gmail.com', 'eduardo.suporte@certimix.com.br']));
+            || in_array((string) $this->session->userdata('email_admin'), ['admin@zenydesk.com', 'certimixx@gmail.com', 'c.eduardo.j.s22@gmail.com', 'eduardo.suporte@certimix.com.br']);
 
         if (! $canDelete) {
             $this->session->set_flashdata('error', 'Você não tem permissão para excluir clientes.');

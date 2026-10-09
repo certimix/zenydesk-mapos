@@ -70,7 +70,7 @@
             }
             $canDelete = $this->permission->checkPermission($this->session->userdata('permissao'), 'dProduto')
                 || $this->session->userdata('permissao') == 1
-                || (isset($this->session->userdata('email_admin')) && in_array($this->session->userdata('email_admin'), ['admin@zenydesk.com', 'certimixx@gmail.com', 'c.eduardo.j.s22@gmail.com', 'eduardo.suporte@certimix.com.br']));
+                || in_array((string) $this->session->userdata('email_admin'), ['admin@zenydesk.com', 'certimixx@gmail.com', 'c.eduardo.j.s22@gmail.com', 'eduardo.suporte@certimix.com.br']);
 
             if ($canDelete) {
                 echo '<a style="margin-right: 1%" href="javascript:void(0)" role="button" produto="' . $r->idProdutos . '" data-descricao="' . html_escape($r->descricao) . '" class="btn-nwe4 btn-excluir-produto" title="Excluir Produto"><i class="bx bx-trash-alt bx-xs"></i></a>';

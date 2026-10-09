@@ -246,7 +246,7 @@ foreach ($results as $r) {
     echo '<a style="margin-right: 1%" href="#modal-fotos" role="button" data-toggle="modal" os="' . $r->idOs . '" class="btn-nwe-foto btn-abrir-fotos" title="Fotos da OS (JPEG, PNG, JPG) - Retenção 5 Anos"><i class="bx bx-camera"></i></a>';
     $canDeleteOs = $this->permission->checkPermission($this->session->userdata('permissao'), 'dOs')
         || $this->session->userdata('permissao') == 1
-        || (isset($this->session->userdata('email_admin')) && in_array($this->session->userdata('email_admin'), ['admin@zenydesk.com', 'certimixx@gmail.com', 'c.eduardo.j.s22@gmail.com', 'eduardo.suporte@certimix.com.br']));
+        || in_array((string) $this->session->userdata('email_admin'), ['admin@zenydesk.com', 'certimixx@gmail.com', 'c.eduardo.j.s22@gmail.com', 'eduardo.suporte@certimix.com.br']);
 
     if ($canDeleteOs && $editavel) {
         echo '<a href="javascript:void(0)" role="button" os="' . $r->idOs . '" class="btn-nwe4 btn-excluir-os" title="Excluir OS"><i class="bx bx-trash-alt"></i></a>  ';

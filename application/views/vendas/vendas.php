@@ -141,7 +141,7 @@
 
             $canDelete = $this->permission->checkPermission($this->session->userdata('permissao'), 'dVenda')
                 || $this->session->userdata('permissao') == 1
-                || (isset($this->session->userdata('email_admin')) && in_array($this->session->userdata('email_admin'), ['admin@zenydesk.com', 'certimixx@gmail.com', 'c.eduardo.j.s22@gmail.com', 'eduardo.suporte@certimix.com.br']));
+                || in_array((string) $this->session->userdata('email_admin'), ['admin@zenydesk.com', 'certimixx@gmail.com', 'c.eduardo.j.s22@gmail.com', 'eduardo.suporte@certimix.com.br']);
 
             if ($this->permission->checkPermission($this->session->userdata('permissao'), 'eVenda')) {
                 echo '<a style="margin-right: 1%" href="' . base_url() . 'index.php/vendas/editar/' . $r->idVendas . '" class="btn-nwe3" title="Editar venda"><i class="bx bx-edit bx-xs"></i></a>';

@@ -60,7 +60,7 @@
             }
             $canDelete = $this->permission->checkPermission($this->session->userdata('permissao'), 'dServico')
                 || $this->session->userdata('permissao') == 1
-                || (isset($this->session->userdata('email_admin')) && in_array($this->session->userdata('email_admin'), ['admin@zenydesk.com', 'certimixx@gmail.com', 'c.eduardo.j.s22@gmail.com', 'eduardo.suporte@certimix.com.br']));
+                || in_array((string) $this->session->userdata('email_admin'), ['admin@zenydesk.com', 'certimixx@gmail.com', 'c.eduardo.j.s22@gmail.com', 'eduardo.suporte@certimix.com.br']);
 
             if ($canDelete) {
                 echo '<a href="javascript:void(0)" role="button" servico="' . $r->idServicos . '" data-nome="' . html_escape($r->nome) . '" class="btn-nwe4 btn-excluir-servico" title="Excluir Serviço"><i class="bx bx-trash-alt bx-xs"></i></a>  ';
