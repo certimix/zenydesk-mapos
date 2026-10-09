@@ -340,7 +340,7 @@
               <span class="checkout-subdomain-domain">.os.zenydesk.com</span>
             </div>
             <p class="checkout-helper-text">
-              <svg class="size-3 text-primary inline mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <svg width="12" height="12" style="width: 12px; height: 12px; display: inline-block; vertical-align: middle; margin-right: 4px; color: #0f7ade;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
               Seu painel exclusivo será: <strong class="text-ink" id="preview-subdomain-full">https://suaempresa.os.zenydesk.com</strong>
             </p>
           </div>
@@ -714,18 +714,23 @@
   to { opacity: 1; }
 }
 
+.checkout-modal-overlay svg {
+  max-width: 24px;
+  max-height: 24px;
+}
+
 .checkout-modal-card {
   position: relative;
   width: 100%;
-  max-width: 530px;
+  max-width: 500px;
   background: #ffffff !important;
-  border-radius: 24px !important;
+  border-radius: 22px !important;
   box-shadow: 0 30px 70px -15px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(226, 232, 240, 0.9) !important;
   overflow: hidden;
   margin: auto;
   display: flex;
   flex-direction: column;
-  max-height: 92vh;
+  max-height: 94vh;
   animation: modalScaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
@@ -741,7 +746,7 @@
 }
 
 .checkout-header {
-  padding: 22px 26px 14px 26px;
+  padding: 16px 22px 10px 22px;
   border-bottom: 1px solid #f1f5f9;
   display: flex;
   align-items: flex-start;
@@ -767,11 +772,11 @@
   gap: 4px;
   background-color: #fef3c7;
   color: #b45309;
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  padding: 3px 10px;
+  padding: 3px 9px;
   border-radius: 9999px;
 }
 
@@ -781,33 +786,33 @@
   gap: 4px;
   background-color: #ecfdf5;
   color: #047857;
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 700;
-  padding: 3px 10px;
+  padding: 3px 9px;
   border-radius: 9999px;
 }
 
 .checkout-title {
   font-family: var(--font-title);
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 800;
   color: #0f172a;
-  margin-top: 6px;
+  margin-top: 4px;
   line-height: 1.2;
 }
 
 .checkout-subtitle {
-  font-size: 12px;
+  font-size: 11px;
   color: #64748b;
-  margin-top: 4px;
-  line-height: 1.4;
+  margin-top: 2px;
+  line-height: 1.35;
 }
 
 /* Botão Fechar Redondo Autônomo */
 .checkout-close-circle {
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
   border-radius: 50%;
   background-color: #f8fafc;
   border: 1px solid #e2e8f0;
@@ -827,27 +832,41 @@
 }
 
 .checkout-body {
-  padding: 20px 26px 26px 26px;
+  padding: 14px 22px 20px 22px;
   overflow-y: auto;
   flex: 1;
+}
+
+.checkout-body::-webkit-scrollbar {
+  width: 5px;
+}
+.checkout-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.checkout-body::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+.checkout-body::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 /* Summary Box Fintech */
 .checkout-summary-box {
   background: radial-gradient(circle at 100% 0%, #1e293b 0%, #0f172a 100%);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  padding: 16px 20px;
+  border-radius: 14px;
+  padding: 12px 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 10px 24px -6px rgba(15, 23, 42, 0.3);
-  margin-bottom: 20px;
+  box-shadow: 0 8px 20px -6px rgba(15, 23, 42, 0.3);
+  margin-bottom: 14px;
 }
 
 .checkout-summary-label {
   display: block;
-  font-size: 10px;
+  font-size: 9.5px;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -856,11 +875,11 @@
 
 .checkout-summary-price {
   font-family: var(--font-title);
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 800;
   color: #10b981;
   line-height: 1.1;
-  margin-top: 3px;
+  margin-top: 2px;
 }
 
 .checkout-cycle-pill {
@@ -868,34 +887,34 @@
   background: rgba(255, 255, 255, 0.12);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 9999px;
-  padding: 4px 12px;
-  font-size: 11px;
+  padding: 3px 10px;
+  font-size: 10.5px;
   font-weight: 700;
   color: #ffffff;
 }
 
 .checkout-summary-tagline {
-  font-size: 10px;
+  font-size: 9.5px;
   color: #94a3b8;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 /* Campos de Formulário Modernos */
 .checkout-form {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
   text-align: left;
 }
 
 .checkout-field-group {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 4px;
 }
 
 .checkout-label {
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 700;
   color: #334155;
   display: flex;
@@ -910,11 +929,11 @@
 
 .checkout-input {
   width: 100%;
-  border-radius: 12px;
+  border-radius: 10px;
   border: 1.5px solid #cbd5e1;
   background-color: #f8fafc;
-  padding: 10px 14px;
-  font-size: 12.5px;
+  padding: 8px 12px;
+  font-size: 12px;
   font-weight: 500;
   color: #0f172a;
   outline: none;
@@ -930,7 +949,7 @@
 .checkout-grid-2 {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 12px;
+  gap: 10px;
 }
 
 @media (min-width: 520px) {
@@ -944,7 +963,7 @@
   display: flex;
   align-items: center;
   border: 1.5px solid #cbd5e1;
-  border-radius: 12px;
+  border-radius: 10px;
   background-color: #ffffff;
   overflow: hidden;
   transition: all 0.2s ease;
@@ -956,8 +975,8 @@
 }
 
 .checkout-subdomain-protocol {
-  padding: 10px 12px;
-  font-size: 12px;
+  padding: 8px 10px;
+  font-size: 11px;
   font-weight: 700;
   color: #64748b;
   background-color: #f1f5f9;
@@ -967,8 +986,8 @@
 
 .checkout-subdomain-input {
   flex: 1;
-  padding: 10px 12px;
-  font-size: 13px;
+  padding: 8px 10px;
+  font-size: 12px;
   font-weight: 700;
   color: #0f172a;
   border: none;
@@ -977,8 +996,8 @@
 }
 
 .checkout-subdomain-domain {
-  padding: 10px 14px;
-  font-size: 12px;
+  padding: 8px 12px;
+  font-size: 11px;
   font-weight: 800;
   color: #0f7ade;
   background-color: #eff6ff;
@@ -987,20 +1006,20 @@
 }
 
 .checkout-helper-text {
-  font-size: 10.5px;
+  font-size: 10px;
   color: #64748b;
-  margin-top: 2px;
+  margin-top: 1px;
 }
 
 .checkout-error-box {
   background-color: #fef2f2;
   border: 1.5px solid #fecaca;
   color: #b91c1c;
-  padding: 10px 14px;
-  border-radius: 12px;
-  font-size: 11.5px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  font-size: 11px;
   font-weight: 600;
-  margin-top: 6px;
+  margin-top: 4px;
 }
 
 /* Botão de Envio Principal */
@@ -1012,19 +1031,19 @@
   gap: 8px;
   background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
   color: #ffffff;
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 800;
-  padding: 14px 20px;
-  border-radius: 14px;
+  padding: 12px 18px;
+  border-radius: 12px;
   border: none;
   cursor: pointer;
-  box-shadow: 0 10px 24px -5px rgba(245, 158, 11, 0.45);
+  box-shadow: 0 8px 20px -4px rgba(245, 158, 11, 0.45);
   transition: all 0.2s ease;
 }
 
 .checkout-btn-submit:hover {
   transform: translateY(-2px);
-  box-shadow: 0 14px 30px -5px rgba(245, 158, 11, 0.58);
+  box-shadow: 0 12px 26px -4px rgba(245, 158, 11, 0.58);
   filter: brightness(1.03);
 }
 
@@ -1043,18 +1062,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 14px;
   flex-wrap: wrap;
-  margin-top: 14px;
-  padding-top: 12px;
+  margin-top: 10px;
+  padding-top: 10px;
   border-top: 1px solid #f1f5f9;
 }
 
 .checkout-trust-item {
   display: flex;
   align-items: center;
-  gap: 5px;
-  font-size: 10.5px;
+  gap: 4px;
+  font-size: 10px;
   font-weight: 700;
   color: #64748b;
 }
