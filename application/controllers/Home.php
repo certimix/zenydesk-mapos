@@ -106,77 +106,182 @@ class Home extends CI_Controller
         $valor = $ciclo === 'anual' ? $planoInfo['anual'] : $planoInfo['mensal'];
         $txId = 'zdos' . substr(md5(uniqid(mt_rand(), true)), 0, 16);
 
-        // Chave Pix Oficial ZenyDesk / Certimix
-        $pixKey = 'atendimento@zenydesk.com';
-        $receiverName = 'ZENYDESK OS TECNOLOGIA';
-        $receiverCity = 'PARIPIRANGA';
-
-        // Geração do Pix BACEN EMV QRCPS oficial com CRC16-CCITT
-        $copyPaste = $this->_gerarPixEmv($pixKey, $receiverName, $receiverCity, $valor, $txId);
-
         // Divisão rigorosa de split (55% Dono / 45% Desenvolvedor)
         $splitDono = round($valor * 0.55, 2);
         $splitDev = round($valor * 0.45, 2);
 
-        // Integração nativa com Asaas se configurado
-        $asaasId = null;
-        try {
-            $this->load->config('payment_gateways');
-            $gateways = $this->config->item('payment_gateways');
-            if (!empty($gateways['Asaas']['credentials']['api_key'])) {
-                $apiKey = $gateways['Asaas']['credentials']['api_key'];
-                $isProd = !empty($gateways['Asaas']['production']);
-                $asaasEndpoint = $isProd ? 'https://api.asaas.com/v3' : 'https://sandbox.asaas.com/api/v3';
+        // Carrega credenciais oficiais do Asaas
+        $this->load->config('payment_gateways');
+        $gateways = $this->config->item('payment_gateways');
+        $apiKey = $gateways['Asaas']['credentials']['api_key'] ?? $_ENV['PAYMENT_GATEWAYS_ASAAS_CREDENTIAIS_API_KEY'] ?? '';
 
-                $payloadAsaas = [
-                    'billingType' => 'PIX',
-                    'value' => $valor,
-                    'dueDate' => date('Y-m-d', strtotime('+1 day')),
-                    'description' => "ZenyDesk O.S - Assinatura {$planoInfo['nome']} [{$subdominio}]",
-                    'externalReference' => $txId,
-                    'postalService' => false,
-                ];
-
-                $ch = curl_init("{$asaasEndpoint}/payments");
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                    'Content-Type: application/json',
-                    'access_token: ' . $apiKey,
-                ]);
-                curl_setopt($ch, CURLOPT_POST, true);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payloadAsaas));
-                curl_setopt($ch, CURLOPT_TIMEOUT, 8);
-                $resp = curl_exec($ch);
-                curl_close($ch);
-
-                if ($resp) {
-                    $jsonRes = json_decode($resp, true);
-                    if (!empty($jsonRes['id'])) {
-                        $asaasId = $jsonRes['id'];
-                        // Buscar QR Code oficial do Asaas
-                        $chQr = curl_init("{$asaasEndpoint}/payments/{$asaasId}/pixQrCode");
-                        curl_setopt($chQr, CURLOPT_RETURNTRANSFER, true);
-                        curl_setopt($chQr, CURLOPT_HTTPHEADER, ['access_token: ' . $apiKey]);
-                        curl_setopt($chQr, CURLOPT_TIMEOUT, 8);
-                        $respQr = curl_exec($chQr);
-                        curl_close($chQr);
-                        if ($respQr) {
-                            $jsonQr = json_decode($respQr, true);
-                            if (!empty($jsonQr['payload'])) {
-                                $copyPaste = $jsonQr['payload'];
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (\Throwable $e) {
-            // Se o Asaas estiver offline, o Pix EMV nativo do BACEN garante 100% de disponibilidade
+        if (empty($apiKey) || strpos($apiKey, 'insira_aqui') !== false || strpos($apiKey, 'sua_chave') !== false) {
+            echo json_encode([
+                'success' => false,
+                'error' => 'A contratação requer a chave da API do Banco Asaas configurada no servidor (Configurações > Pagamentos). Nenhuma chave Pix fictícia é permitida.',
+            ]);
+            return;
         }
+
+        $isProd = !empty($gateways['Asaas']['production']) || (!empty($_ENV['PAYMENT_GATEWAYS_ASAAS_PRODUCTION']) && filter_var($_ENV['PAYMENT_GATEWAYS_ASAAS_PRODUCTION'], FILTER_VALIDATE_BOOLEAN));
+        $asaasEndpoint = $isProd ? 'https://api.asaas.com/v3' : 'https://sandbox.asaas.com/api/v3';
+
+        // 1. Localiza ou cria cliente no Asaas
+        $customerId = null;
+        $chCustSearch = curl_init("{$asaasEndpoint}/customers?cpfCnpj=" . urlencode($cpf_cnpj));
+        curl_setopt($chCustSearch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($chCustSearch, CURLOPT_HTTPHEADER, ['access_token: ' . $apiKey]);
+        curl_setopt($chCustSearch, CURLOPT_TIMEOUT, 10);
+        $respCustSearch = curl_exec($chCustSearch);
+        curl_close($chCustSearch);
+
+        if ($respCustSearch) {
+            $jsonCustSearch = json_decode($respCustSearch, true);
+            if (!empty($jsonCustSearch['data'][0]['id'])) {
+                $customerId = $jsonCustSearch['data'][0]['id'];
+            }
+        }
+
+        if (!$customerId) {
+            $payloadCust = [
+                'name' => $nome_empresa,
+                'email' => $email,
+                'cpfCnpj' => $cpf_cnpj,
+                'mobilePhone' => preg_replace('/\D/', '', $telefone),
+                'notificationDisabled' => false,
+            ];
+            $chCust = curl_init("{$asaasEndpoint}/customers");
+            curl_setopt($chCust, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($chCust, CURLOPT_HTTPHEADER, [
+                'Content-Type: application/json',
+                'access_token: ' . $apiKey,
+            ]);
+            curl_setopt($chCust, CURLOPT_POST, true);
+            curl_setopt($chCust, CURLOPT_POSTFIELDS, json_encode($payloadCust));
+            curl_setopt($chCust, CURLOPT_TIMEOUT, 10);
+            $respCust = curl_exec($chCust);
+            curl_close($chCust);
+
+            if ($respCust) {
+                $jsonCust = json_decode($respCust, true);
+                if (!empty($jsonCust['id'])) {
+                    $customerId = $jsonCust['id'];
+                } else {
+                    $errMsg = $jsonCust['errors'][0]['description'] ?? 'Erro ao cadastrar cliente no Asaas.';
+                    echo json_encode(['success' => false, 'error' => $errMsg]);
+                    return;
+                }
+            } else {
+                echo json_encode(['success' => false, 'error' => 'Falha na comunicação com os servidores do Asaas.']);
+                return;
+            }
+        }
+
+        // 2. Cria Assinatura no Asaas com Split 55% Dono / 45% Dev
+        $ownerWalletId = $_ENV['SPLIT_OWNER_WALLET_ID'] ?? '';
+        $devWalletId = $_ENV['SPLIT_DEVELOPER_WALLET_ID'] ?? '';
+
+        $splitArray = [];
+        if (!empty($ownerWalletId) && strpos($ownerWalletId, 'placeholder') === false) {
+            $splitArray[] = [
+                'walletId' => $ownerWalletId,
+                'percentualValue' => 55,
+            ];
+        }
+        if (!empty($devWalletId) && strpos($devWalletId, 'placeholder') === false) {
+            $splitArray[] = [
+                'walletId' => $devWalletId,
+                'percentualValue' => 45,
+            ];
+        }
+
+        $payloadSub = [
+            'customer' => $customerId,
+            'billingType' => 'PIX',
+            'value' => $valor,
+            'nextDueDate' => date('Y-m-d'),
+            'cycle' => $ciclo === 'anual' ? 'YEARLY' : 'MONTHLY',
+            'description' => "Assinatura ZenyDesk O.S - {$planoInfo['nome']} [{$subdominio}]",
+            'externalReference' => $txId,
+        ];
+        if (!empty($splitArray)) {
+            $payloadSub['split'] = $splitArray;
+        }
+
+        $chSub = curl_init("{$asaasEndpoint}/subscriptions");
+        curl_setopt($chSub, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($chSub, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            'access_token: ' . $apiKey,
+        ]);
+        curl_setopt($chSub, CURLOPT_POST, true);
+        curl_setopt($chSub, CURLOPT_POSTFIELDS, json_encode($payloadSub));
+        curl_setopt($chSub, CURLOPT_TIMEOUT, 10);
+        $respSub = curl_exec($chSub);
+        curl_close($chSub);
+
+        if (!$respSub) {
+            echo json_encode(['success' => false, 'error' => 'Falha na criação da assinatura no Asaas.']);
+            return;
+        }
+
+        $jsonSub = json_decode($respSub, true);
+        if (empty($jsonSub['id'])) {
+            $errMsg = $jsonSub['errors'][0]['description'] ?? 'Erro ao criar assinatura no Asaas.';
+            echo json_encode(['success' => false, 'error' => $errMsg]);
+            return;
+        }
+
+        $subscriptionId = $jsonSub['id'];
+
+        // 3. Busca a cobrança gerada para a assinatura
+        $chPayments = curl_init("{$asaasEndpoint}/subscriptions/{$subscriptionId}/payments");
+        curl_setopt($chPayments, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($chPayments, CURLOPT_HTTPHEADER, ['access_token: ' . $apiKey]);
+        curl_setopt($chPayments, CURLOPT_TIMEOUT, 10);
+        $respPayments = curl_exec($chPayments);
+        curl_close($chPayments);
+
+        if (!$respPayments) {
+            echo json_encode(['success' => false, 'error' => 'Falha ao buscar cobrança da assinatura no Asaas.']);
+            return;
+        }
+
+        $jsonPayments = json_decode($respPayments, true);
+        if (empty($jsonPayments['data'][0]['id'])) {
+            echo json_encode(['success' => false, 'error' => 'Cobrança da assinatura não localizada no Asaas.']);
+            return;
+        }
+
+        $paymentId = $jsonPayments['data'][0]['id'];
+
+        // 4. Busca QR Code Pix Oficial do Asaas
+        $chPix = curl_init("{$asaasEndpoint}/payments/{$paymentId}/pixQrCode");
+        curl_setopt($chPix, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($chPix, CURLOPT_HTTPHEADER, ['access_token: ' . $apiKey]);
+        curl_setopt($chPix, CURLOPT_TIMEOUT, 10);
+        $respPix = curl_exec($chPix);
+        curl_close($chPix);
+
+        if (!$respPix) {
+            echo json_encode(['success' => false, 'error' => 'Falha ao buscar QR Code Pix no Asaas.']);
+            return;
+        }
+
+        $jsonPix = json_decode($respPix, true);
+        if (empty($jsonPix['payload'])) {
+            echo json_encode(['success' => false, 'error' => 'O Asaas não retornou o payload do Pix. Verifique se o Pix está ativado na conta Asaas.']);
+            return;
+        }
+
+        $copyPaste = $jsonPix['payload'];
+        $encodedImage = $jsonPix['encodedImage'] ?? '';
 
         echo json_encode([
             'success' => true,
             'txId' => $txId,
-            'asaasId' => $asaasId,
+            'subscriptionId' => $subscriptionId,
+            'paymentId' => $paymentId,
             'plano' => $plano,
             'planoNome' => $planoInfo['nome'],
             'ciclo' => $ciclo,
@@ -185,64 +290,14 @@ class Home extends CI_Controller
             'subdominio' => $subdominio,
             'subdominioUrl' => "https://{$subdominio}.os.zenydesk.com",
             'copyPaste' => $copyPaste,
+            'qrBase64' => $encodedImage ? (strpos($encodedImage, 'data:') === 0 ? $encodedImage : 'data:image/png;base64,' . $encodedImage) : null,
             'split' => [
                 'dono_percentual' => 55,
                 'dono_valor' => $splitDono,
                 'dev_percentual' => 45,
                 'dev_valor' => $splitDev,
             ],
-            'beneficiario' => $receiverName,
+            'beneficiario' => 'Asaas Gestão Financeira S.A. (Banco 461) - ZenyDesk',
         ]);
-    }
-
-    private function _formatEmvTag($id, $value)
-    {
-        $len = str_pad(strlen($value), 2, '0', STR_PAD_LEFT);
-        return $id . $len . $value;
-    }
-
-    private function _calculateCrc16Ccitt($payload)
-    {
-        $crc = 0xFFFF;
-        $polynomial = 0x1021;
-        $len = strlen($payload);
-        for ($i = 0; $i < $len; $i++) {
-            $crc ^= (ord($payload[$i]) << 8);
-            for ($j = 0; $j < 8; $j++) {
-                if (($crc & 0x8000) != 0) {
-                    $crc = (($crc << 1) ^ $polynomial) & 0xFFFF;
-                } else {
-                    $crc = ($crc << 1) & 0xFFFF;
-                }
-            }
-        }
-        return strtoupper(str_pad(dechex($crc), 4, '0', STR_PAD_LEFT));
-    }
-
-    private function _gerarPixEmv($pixKey, $receiverName, $receiverCity, $amount, $txId)
-    {
-        $amountStr = number_format($amount, 2, '.', '');
-        $cleanName = substr(preg_replace('/[^A-Za-z0-9 ]/', '', iconv('UTF-8', 'ASCII//TRANSLIT', $receiverName)), 0, 25);
-        $cleanCity = substr(preg_replace('/[^A-Za-z0-9 ]/', '', iconv('UTF-8', 'ASCII//TRANSLIT', $receiverCity)), 0, 15);
-        $cleanTxId = substr(preg_replace('/[^A-Za-z0-9]/', '', $txId), 0, 25);
-        if (empty($cleanTxId)) {
-            $cleanTxId = '***';
-        }
-
-        $accountInfo = $this->_formatEmvTag('00', 'br.gov.bcb.pix') . $this->_formatEmvTag('01', $pixKey);
-
-        $raw = $this->_formatEmvTag('00', '01')
-             . $this->_formatEmvTag('26', $accountInfo)
-             . $this->_formatEmvTag('52', '0000')
-             . $this->_formatEmvTag('53', '986')
-             . $this->_formatEmvTag('54', $amountStr)
-             . $this->_formatEmvTag('58', 'BR')
-             . $this->_formatEmvTag('59', $cleanName)
-             . $this->_formatEmvTag('60', $cleanCity)
-             . $this->_formatEmvTag('62', $this->_formatEmvTag('05', $cleanTxId))
-             . '6304';
-
-        $crc = $this->_calculateCrc16Ccitt($raw);
-        return $raw . $crc;
     }
 }

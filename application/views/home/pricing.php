@@ -551,10 +551,10 @@ function enviarAssinatura(event) {
     document.getElementById('pix-plano-titulo').textContent = data.planoNome + ' (' + (data.ciclo === 'anual' ? 'Anual' : 'Mensal') + ')';
     document.getElementById('pix-valor-display').textContent = data.valorFormatado;
     document.getElementById('pix-subdominio-display').textContent = data.subdominio + '.os.zenydesk.com';
-    document.getElementById('pix-beneficiario-display').textContent = data.beneficiario || 'ZENYDESK OS TECNOLOGIA';
+    document.getElementById('pix-beneficiario-display').textContent = data.beneficiario || 'Asaas Gestão Financeira S.A. (Banco 461) - ZenyDesk';
     
-    // QR Code dinâmico do Pix oficial (URL-encoded)
-    var qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=8&data=' + encodeURIComponent(data.copyPaste);
+    // QR Code dinâmico do Pix oficial do Asaas
+    var qrUrl = data.qrBase64 ? data.qrBase64 : ('https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=8&data=' + encodeURIComponent(data.copyPaste));
     document.getElementById('pix-qrcode-img').src = qrUrl;
     document.getElementById('pix-copia-cola').value = data.copyPaste;
 

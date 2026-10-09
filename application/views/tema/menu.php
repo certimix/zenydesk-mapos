@@ -117,7 +117,7 @@ $secao = function ($rotulo) {
 <nav id="sidebar">
     <div id="newlog" style="display: flex; justify-content: center; align-items: center; padding: 16px 18px; margin-bottom: 6px; box-sizing: border-box; width: 100%; overflow: hidden;">
         <a href="<?= site_url('Zenydesk.OS'); ?>" style="display: flex; justify-content: center; align-items: center; text-decoration: none; width: 100%;">
-            <img src="<?= base_url(); ?>assets/img/logo-zenydesk.png?v=20261009v2" alt="ZenyDesk" class="logo-expanded" style="max-height: 34px; max-width: 100%; width: auto; height: auto; object-fit: contain; display: block; margin: 0 auto;">
+            <img src="<?= base_url(); ?>assets/img/logo-zenydesk.png?v=20261009v4" alt="ZenyDesk" class="logo-expanded" style="max-height: 34px; max-width: 100%; width: auto; height: auto; object-fit: contain; display: block; margin: 0 auto;">
             <img src="<?= base_url(); ?>assets/img/favicon.png" alt="ZenyDesk" class="logo-collapsed" style="max-height: 32px; max-width: 32px; width: auto; display: none; margin: 0 auto;">
         </a>
     </div>
