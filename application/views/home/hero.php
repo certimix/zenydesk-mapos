@@ -2,24 +2,23 @@
   <div class="pointer-events-none absolute inset-0 opacity-50" style="background: radial-gradient(circle at 15% 10%, rgba(15,122,222,0.35), transparent 45%), radial-gradient(circle at 85% 30%, rgba(245,158,11,0.18), transparent 40%);"></div>
   <div class="relative mx-auto grid max-w-7xl gap-12 px-6 py-20 lg:grid-cols-2 lg:items-center lg:py-28">
     <div>
-      <span class="badge badge-dark">Zenydesk OS · Ordens de serviço &amp; atendimento</span>
+      <span class="badge badge-dark">Zenydesk OS · Plataforma Especializada para Prestadores de Serviços &amp; Assistências</span>
 
       <h1 class="font-title mt-6 text-4xl font-extrabold leading-[1.08] sm:text-5xl lg:text-[3.1rem]">
-        Atenda mais rápido, feche mais ordens de serviço e não perca mais cliente
+        Gestão Inteligente de Ordens de Serviço, Chamados e Operações Técnicas
       </h1>
 
       <p class="mt-6 max-w-lg text-lg text-white/70">
-        Clientes, produtos, serviços, orçamento e garantia em um só lugar
-        — com atendimento por WhatsApp integrado ao Zenydesk OS.
+        Do checklist com fotos de guarda jurídica por 5 anos (Art. 27 CDC) até a busca automática de CNPJ na Receita, laudos técnicos, impressão 80mm/A4 e portal do cliente em nuvem segura.
       </p>
 
       <div class="mt-8 flex flex-wrap items-center gap-4">
-        <a href="<?= htmlspecialchars($signup_url ?? site_url('login?action=cadastrar')) ?>" class="btn btn-signal btn-lg shadow-lg">
-          <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
-          Criar Conta Grátis
+        <a href="#precos" class="btn btn-signal btn-lg shadow-lg">
+          <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Ver Planos &amp; Assinar
         </a>
         <a href="<?= htmlspecialchars($login_url) ?>" class="btn btn-outline-dark btn-lg">
-          Já tenho conta (Entrar)
+          Já sou Cliente (Entrar no Painel)
           <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
         </a>
       </div>
@@ -27,21 +26,24 @@
       <div class="mt-4 flex flex-wrap items-center gap-4 text-xs text-white/60">
         <span class="inline-flex items-center gap-1.5">
           <svg class="size-3.5 text-signal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-          Sem cartão de crédito
+          Fotos com Guarda de 5 Anos (Art. 27 CDC)
         </span>
         <span class="inline-flex items-center gap-1.5">
           <svg class="size-3.5 text-signal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-          Ativação instantânea
+          Busca de CNPJ na Receita Federal
         </span>
         <span class="inline-flex items-center gap-1.5">
           <svg class="size-3.5 text-signal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-          100% em Nuvem no Brasil
+          Térmica 80mm &amp; Relatório A4
+        </span>
+        <span class="inline-flex items-center gap-1.5">
+          <svg class="size-3.5 text-signal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          Banco Isolado por Empresa (LGPD)
         </span>
       </div>
 
-      <p class="mt-10 text-sm text-white/50">
-        Parte da plataforma Zenydesk — acesso remoto, service desk e
-        gestão de TI com infraestrutura própria no Brasil.
+      <p class="mt-8 text-sm text-white/50">
+        Atendimento técnico de ponta com infraestrutura própria de alto desempenho.
       </p>
     </div>
 

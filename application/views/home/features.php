@@ -1,78 +1,125 @@
 <?php
+$segmentos = [
+  [
+    'nome' => 'Assistências Técnicas & TI',
+    'badge' => 'Celulares & PCs',
+    'desc' => 'Smartphones, notebooks, videogames, placas e computadores. Checklist de entrada com fotos de riscos prévios e via de bancada.',
+  ],
+  [
+    'nome' => 'Oficinas & Auto Centers',
+    'badge' => 'Mecânica & Elétrica',
+    'desc' => 'Mecânica, suspensão, motos e caminhões. Busca rápida por Placa e KM, separando Peças e Serviços com termos de garantia automotiva.',
+  ],
+  [
+    'nome' => 'Climatização & Refrigeração',
+    'badge' => 'Ar-Condicionado & PMOC',
+    'desc' => 'Ar-condicionado residencial, comercial, câmaras frias e conformidade com laudo PMOC. Registro fotográfico antes e depois.',
+  ],
+  [
+    'nome' => 'Segurança Eletrônica & CFTV',
+    'badge' => 'Câmeras & Alarmes',
+    'desc' => 'Câmeras, alarmes, interfonia, portaria e cercas elétricas. Inventário de pontos, laudo com fotos de cobertura e senhas seguras.',
+  ],
+  [
+    'nome' => 'Provedores de Internet & Redes',
+    'badge' => 'Fibra & Telecom',
+    'desc' => 'Provedores regionais, fibra óptica e roteadores em comodato. Filas de atendimento e acompanhamento de equipes de rua.',
+  ],
+  [
+    'nome' => 'Manutenção Predial & Elétrica',
+    'badge' => 'Instalações & Reformas',
+    'desc' => 'Instalações elétricas, hidráulica e condomínios. Vistoria com apontamento de riscos e laudos em A4 para síndicos.',
+  ],
+  [
+    'nome' => 'Energia Solar Fotovoltaica',
+    'badge' => 'Inversores & Painéis',
+    'desc' => 'Projetos solares e homologação com laudo fotográfico do quadro de distribuição, números de série e comissionamento.',
+  ],
+  [
+    'nome' => 'Máquinas & Equipamentos',
+    'badge' => 'Industrial & Motores',
+    'desc' => 'Geradores, compressores, ferramentas e maquinário pesado. Horímetro, calibração e guarda probatória de 5 anos de manutenções.',
+  ],
+];
+
 $features = [
   [
-    'icon' => '<rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 14h.01"/><path d="M9 18h.01"/><path d="M13 14h2"/><path d="M13 18h2"/>',
-    'title' => 'Clientes, produtos e serviços',
-    'description' => 'Cadastro único de clientes/fornecedores, produtos e serviços, com todo o histórico de OS e vendas à mão.',
-  ],
-  [
     'icon' => '<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3Z"/><circle cx="12" cy="13" r="3"/>',
-    'title' => 'Laudo com foto e termo de garantia',
-    'description' => 'Técnico registra o laudo com fotos direto do campo e emite o termo de garantia automaticamente.',
+    'badge' => 'Art. 27 CDC',
+    'title' => 'Fotos com Guarda Jurídica de 5 Anos',
+    'description' => 'Fotografe o aparelho na entrada (avarias prévias) e na entrega. Armazenamento em nuvem com retenção permanente para respaldo jurídico contra contestações indevidas.',
   ],
   [
-    'icon' => '<rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/>',
-    'title' => 'Financeiro e cobranças',
-    'description' => 'Lançamentos, cobranças e saldo em tempo real, com OS em orçamento, aberto, aprovada ou finalizada num painel só.',
+    'icon' => '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+    'badge' => 'Receita Federal',
+    'title' => 'Busca Automática de CNPJ',
+    'description' => 'Basta digitar o CNPJ do cliente e o ZenyDesk preenche automaticamente Razão Social, Nome Fantasia, Endereço, Bairro, CEP, Cidade, Estado, E-mail e Telefone em 3 segundos.',
+  ],
+  [
+    'icon' => '<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/>',
+    'badge' => 'Impressão Flexível',
+    'title' => 'Térmica 80mm & Folha A4',
+    'description' => 'Emita cupom térmico para balcão ou termo detalhado em folha A4 com QR Code, peças substituídas e assinatura para respaldo técnico e fiscal.',
+  ],
+  [
+    'icon' => '<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7h.01"/><path d="M17 7h.01"/><path d="M7 17h.01"/><path d="M17 17h.01"/>',
+    'badge' => 'QR Code Online',
+    'title' => 'Portal do Cliente na Nuvem',
+    'description' => 'Cada OS gera um link exclusivo e QR Code. Seu cliente acompanha o status e laudo em tempo real pelo celular sem precisar ligar toda hora.',
+  ],
+  [
+    'icon' => '<rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 14h.01"/><path d="M9 18h.01"/><path d="M13 14h2"/><path d="M13 18h2"/>',
+    'badge' => 'Estoque & Peças',
+    'title' => 'Controle de Peças e Garantias',
+    'description' => 'Baixa automática de peças na bancada, controle de custo e lucro por serviço e emissão de termo de garantia com prazos específicos.',
+  ],
+  [
+    'icon' => '<rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><line x1="6" x2="6.01" y1="6" y2="6"/><line x1="6" x2="6.01" y1="18" y2="18"/>',
+    'badge' => '100% LGPD',
+    'title' => 'Instância & Banco Isolado',
+    'description' => 'Cada empresa opera com seu contêiner e banco de dados exclusivo, eliminando risco de contaminação e garantindo sigilo absoluto.',
   ],
 ];
 ?>
 <section id="funcionalidades" class="mx-auto max-w-7xl px-6 py-16 lg:py-24">
-  <div class="mx-auto max-w-2xl text-center">
-    <span class="badge badge-default">Zenydesk OS</span>
-    <h2 class="font-title mt-4 text-3xl font-extrabold text-ink sm:text-4xl">Você no controle de cada ordem de serviço</h2>
-    <p class="mt-4 text-muted">Veja o que está em aberto, atrasado ou perto de vencer a garantia — tudo em um só lugar.</p>
+  <!-- Multi-Segmentos -->
+  <div class="mx-auto max-w-3xl text-center">
+    <span class="badge badge-default">Multi-Segmento Operacional</span>
+    <h2 class="font-title mt-4 text-3xl font-extrabold text-ink sm:text-4xl">Feito para Todas as Operações Técnicas</h2>
+    <p class="mt-3 text-muted">O ZenyDesk O.S adapta seu vocabulário, laudos e termos para o segmento exato da sua empresa.</p>
   </div>
 
-  <div class="mt-12 grid gap-6 md:grid-cols-3">
-    <?php foreach ($features as $f): ?>
-      <div class="card">
-        <span class="flex size-12 items-center justify-center rounded-[var(--radius-md)] bg-tint text-primary">
-          <svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><?= $f['icon'] ?></svg>
-        </span>
-        <h3 class="font-title text-lg font-bold text-ink"><?= htmlspecialchars($f['title']) ?></h3>
-        <p class="text-sm leading-relaxed text-muted"><?= htmlspecialchars($f['description']) ?></p>
+  <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <?php foreach ($segmentos as $seg): ?>
+      <div class="card p-5 gap-2 hover:shadow-md transition-shadow">
+        <span class="badge badge-tint w-fit text-[11px]"><?= htmlspecialchars($seg['badge']) ?></span>
+        <h3 class="font-title text-base font-bold text-ink mt-1"><?= htmlspecialchars($seg['nome']) ?></h3>
+        <p class="text-xs text-muted leading-relaxed"><?= htmlspecialchars($seg['desc']) ?></p>
       </div>
     <?php endforeach; ?>
   </div>
 
-  <div class="card mt-6 grid gap-10 overflow-hidden p-0 lg:grid-cols-2">
-    <div class="flex flex-col justify-center gap-5 p-8 lg:p-12">
-      <div class="flex items-center gap-3">
-        <span class="flex size-10 items-center justify-center rounded-[var(--radius-md)] bg-tint text-primary">
-          <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        </span>
-        <span class="badge badge-signal">Orçamento automático</span>
+  <!-- Recursos Técnicos -->
+  <div class="mx-auto max-w-3xl text-center mt-20">
+    <span class="badge badge-signal">Engenharia &amp; Blindagem Jurídica</span>
+    <h2 class="font-title mt-4 text-3xl font-extrabold text-ink sm:text-4xl">Tudo o que uma operação moderna precisa</h2>
+    <p class="mt-3 text-muted">Elimine retrabalho, processos manuais e contestações infundadas com ferramentas especializadas.</p>
+  </div>
+
+  <div class="mt-12 grid gap-6 md:grid-cols-3">
+    <?php foreach ($features as $f): ?>
+      <div class="card justify-between hover:shadow-md transition-shadow">
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="flex size-12 items-center justify-center rounded-[var(--radius-md)] bg-tint text-primary">
+              <svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><?= $f['icon'] ?></svg>
+            </span>
+            <span class="badge badge-default text-[10px]"><?= htmlspecialchars($f['badge']) ?></span>
+          </div>
+          <h3 class="font-title text-lg font-bold text-ink"><?= htmlspecialchars($f['title']) ?></h3>
+          <p class="text-sm leading-relaxed text-muted"><?= htmlspecialchars($f['description']) ?></p>
+        </div>
       </div>
-      <h3 class="font-title text-2xl font-extrabold leading-tight text-ink sm:text-3xl">Mais ordens de serviço fechadas por dia, sem ligação nem papel</h3>
-      <ul class="flex flex-col gap-3">
-        <li class="flex items-center gap-3 text-sm font-medium text-ink">
-          <svg class="size-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 4-3 1-3-1-3 1v15l3-1 3 1 3-1 3 1V5l-3 1z"/></svg>
-          Orçamento gerado automaticamente a partir do laudo
-        </li>
-        <li class="flex items-center gap-3 text-sm font-medium text-ink">
-          <svg class="size-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
-          Envio do orçamento e da OS direto pelo WhatsApp
-        </li>
-        <li class="flex items-center gap-3 text-sm font-medium text-ink">
-          <svg class="size-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-4"/><path d="m9 11 3-7 3 7"/><path d="M9 11h6"/></svg>
-          Aprovação do cliente com um clique, sem ligação
-        </li>
-      </ul>
-      <div class="mt-2 flex flex-wrap items-center gap-3">
-        <a href="<?= htmlspecialchars($signup_url ?? site_url('login?action=cadastrar')) ?>" class="btn btn-primary w-fit">
-          <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
-          Criar Conta Grátis
-        </a>
-        <a href="<?= htmlspecialchars($login_url) ?>" class="text-sm font-medium text-ink/70 hover:text-ink">
-          Já tem conta? Entrar &rarr;
-        </a>
-      </div>
-    </div>
-    <div class="relative hidden min-h-[320px] lg:flex lg:items-center lg:justify-center" style="background: linear-gradient(160deg, var(--color-paper) 0%, var(--color-tint) 100%);">
-      <div class="flex size-44 items-center justify-center rounded-full text-white" style="background-image: var(--gradient-primary); box-shadow: var(--shadow-lg);">
-        <svg class="size-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
-      </div>
-    </div>
+    <?php endforeach; ?>
   </div>
 </section>
