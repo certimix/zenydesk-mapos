@@ -30,7 +30,7 @@
                                         <strong>Dados incompletos:</strong> Verifique os campos com asterisco (*), certifique-se de clicar na sugestão da lista para selecionar o <strong>Cliente</strong> e confira se há termo de garantia selecionado.
                                     </div>
                                 <?php } ?>
-                                <form action="<?php echo current_url(); ?>" method="post" id="formOs">
+                                <form action="<?php echo current_url(); ?>" method="post" id="formOs" enctype="multipart/form-data">
                                     <div class="span12" style="padding: 1%; margin-left: 0">
                                         <div class="span6" style="margin-left: 0">
                                             <label for="cliente">Cliente <span class="required">*</span></label>
@@ -59,6 +59,22 @@
                                                 <option value="Faturado">Faturado</option>
                                                 <option value="Cancelado">Cancelado</option>
                                             </select>
+
+                                            <!-- CAIXA VERMELHA SUPERIOR: Botão Registro de Fotos do Atendimento -->
+                                            <div style="margin-top: 10px;">
+                                                <label style="font-size: 11px; font-weight: 600; color: #475569; display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                                                    <span>Fotos do Atendimento</span>
+                                                    <span class="badge badge-success" style="font-size: 9px; padding: 2px 6px; font-weight: 600; background-color: #10b981; border-radius: 4px;">5 Anos</span>
+                                                </label>
+                                                <button type="button" class="btn btn-info" id="btnAdicionarFotos" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 6px 10px; font-weight: 600; font-size: 12px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); cursor: pointer;">
+                                                    <i class="bx bx-camera" style="font-size: 16px;"></i>
+                                                    <span id="btnFotosTexto">Adicionar Fotos</span>
+                                                </button>
+                                                <input type="file" name="fotos_atendimento[]" id="inputFotosAtendimento" multiple="multiple" accept="image/jpeg,image/png,image/jpg" style="display: none;" />
+                                                <small id="fotosInfo" style="display: block; margin-top: 4px; font-size: 10px; color: #64748b; line-height: 1.2;">
+                                                    <i class="bx bx-shield-quarter" style="color: #16a34a;"></i> Retenção 5 anos (auto-limpeza)
+                                                </small>
+                                            </div>
                                         </div>
                                         <div class="span3">
                                             <label for="dataInicial">Data Inicial <span class="required">*</span></label>
@@ -78,6 +94,37 @@
                                         </div>
                                     </div>
 
+                                    <!-- CAIXA VERMELHA INFERIOR: Campo para Descrever o Que Foi Feito -->
+                                    <div class="span12" style="padding: 1%; margin-left: 0; margin-top: -5px;">
+                                        <label for="laudoTecnico" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                                            <span style="font-size: 13px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 6px;">
+                                                <i class="bx bx-wrench" style="color: #2563eb; font-size: 17px;"></i>
+                                                Descrição do que foi feito
+                                                <small style="color: #64748b; font-weight: normal; font-size: 11px;">(Procedimentos realizados / Relato do atendimento)</small>
+                                            </span>
+                                            <span style="font-size: 11px; color: #64748b; font-weight: normal;">
+                                                <i class="bx bx-info-circle"></i> Ficará gravado no laudo técnico e visível no histórico do cliente
+                                            </span>
+                                        </label>
+                                        <textarea class="span12 editor" name="laudoTecnico" id="laudoTecnico" placeholder="Descreva aqui detalhadamente o que foi feito no atendimento, procedimentos realizados, testes e diagnósticos..." rows="4"></textarea>
+                                    </div>
+
+                                    <!-- Painel de Pré-visualização de Fotos Selecionadas -->
+                                    <div class="span12" id="previewFotosContainer" style="display: none; padding: 0 1% 1% 1%; margin-left: 0;">
+                                        <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 12px;">
+                                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                                                <div style="font-size: 12px; font-weight: 600; color: #334155; display: flex; align-items: center; gap: 6px;">
+                                                    <i class="bx bx-images" style="color: #0284c7; font-size: 16px;"></i>
+                                                    <span id="previewFotosTitulo">Fotos Selecionadas (0)</span>
+                                                </div>
+                                                <div style="font-size: 11px; color: #166534; background: #dcfce7; border: 1px solid #bbf7d0; padding: 2px 8px; border-radius: 12px; font-weight: 500;">
+                                                    <i class="bx bx-time-five"></i> Retenção de 5 anos até: <?= date('d/m/Y', strtotime('+5 years')); ?>
+                                                </div>
+                                            </div>
+                                            <div id="previewFotosGaleria" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
+                                        </div>
+                                    </div>
+
                                     <?php $this->load->view('os/_atendimento', ['atendimento' => $atendimento, 'atual' => null]); ?>
 
                                     <div class="span6" style="padding: 1%; margin-left: 0">
@@ -92,17 +139,11 @@
                                         </label>
                                         <textarea class="span12 editor" name="defeito" id="defeito" cols="30" rows="5"></textarea>
                                     </div>
-                                    <div class="span6" style="padding: 1%; margin-left: 0">
+                                    <div class="span12" style="padding: 1%; margin-left: 0">
                                         <label for="observacoes">
-                                            <h4>Observações</h4>
+                                            <h4>Observações Adicionais</h4>
                                         </label>
-                                        <textarea class="span12 editor" name="observacoes" id="observacoes" cols="30" rows="5"></textarea>
-                                    </div>
-                                    <div class="span6" style="padding: 1%; margin-left: 0">
-                                        <label for="laudoTecnico">
-                                            <h4>Laudo Técnico</h4>
-                                        </label>
-                                        <textarea class="span12 editor" name="laudoTecnico" id="laudoTecnico" cols="30" rows="5"></textarea>
+                                        <textarea class="span12 editor" name="observacoes" id="observacoes" cols="30" rows="4"></textarea>
                                     </div>
                                     <div class="span12" style="padding: 1%; margin-left: 0">
                                         <div class="span12" style="display:flex; justify-content: center; gap: 8px;">
@@ -224,6 +265,117 @@
         $('.editor').trumbowyg({
             lang: 'pt_br',
             semantic: { 'strikethrough': 's' }
+        });
+
+        // =========================================================================
+        // Gerenciamento de Fotos do Atendimento com Retenção de 5 Anos
+        // =========================================================================
+        var dtFotos = (typeof DataTransfer !== 'undefined') ? new DataTransfer() : null;
+
+        $("#btnAdicionarFotos").on('click', function(e) {
+            e.preventDefault();
+            $("#inputFotosAtendimento").trigger('click');
+        });
+
+        $("#inputFotosAtendimento").on('change', function() {
+            var inputEl = this;
+            var files = inputEl.files;
+            if (!files || files.length === 0) return;
+
+            if (dtFotos) {
+                for (var i = 0; i < files.length; i++) {
+                    var file = files[i];
+                    var ext = file.name.split('.').pop().toLowerCase();
+                    if (['jpg', 'jpeg', 'png'].indexOf(ext) !== -1) {
+                        // Evita duplicatas pelo nome e tamanho
+                        var existe = false;
+                        for (var j = 0; j < dtFotos.items.length; j++) {
+                            var itemFile = dtFotos.items[j].getAsFile();
+                            if (itemFile && itemFile.name === file.name && itemFile.size === file.size) {
+                                existe = true;
+                                break;
+                            }
+                        }
+                        if (!existe) {
+                            dtFotos.items.add(file);
+                        }
+                    } else {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Formato não suportado',
+                            text: 'Apenas fotos JPEG, JPG e PNG são permitidas para retenção de 5 anos.',
+                            confirmButtonText: 'Entendido'
+                        });
+                    }
+                }
+                inputEl.files = dtFotos.files;
+            }
+
+            renderizarFotosPreview();
+        });
+
+        function renderizarFotosPreview() {
+            var galeria = $("#previewFotosGaleria");
+            galeria.empty();
+
+            var inputEl = $("#inputFotosAtendimento")[0];
+            var files = dtFotos ? dtFotos.files : (inputEl ? inputEl.files : []);
+            var total = files ? files.length : 0;
+
+            if (total === 0) {
+                $("#previewFotosContainer").slideUp(200);
+                $("#btnFotosTexto").text("Adicionar Fotos");
+                $("#fotosInfo").html('<i class="bx bx-shield-quarter" style="color: #16a34a;"></i> Retenção 5 anos (auto-limpeza)');
+                return;
+            }
+
+            $("#previewFotosContainer").slideDown(200);
+            $("#previewFotosTitulo").text("Fotos Selecionadas (" + total + ")");
+            $("#btnFotosTexto").text(total + " Foto(s) Adicionada(s)");
+            $("#fotosInfo").html('<span style="color:#16a34a;font-weight:600;"><i class="bx bx-check-circle"></i> ' + total + ' foto(s) pronta(s) para envio</span>');
+
+            Array.from(files).forEach(function(file, index) {
+                var reader = new FileReader();
+                var cardId = "foto_card_" + index;
+                var kb = (file.size / 1024).toFixed(0);
+
+                var cardHtml = $(
+                    '<div id="' + cardId + '" style="position: relative; width: 110px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); text-align: center;">' +
+                        '<div style="height: 80px; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 4px; background: #0f172a;">' +
+                            '<img id="img_' + cardId + '" src="" alt="' + file.name + '" style="max-height: 100%; max-width: 100%; object-fit: contain;">' +
+                        '</div>' +
+                        '<div style="font-size: 10px; color: #475569; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="' + file.name + '">' +
+                            file.name +
+                        '</div>' +
+                        '<div style="font-size: 9px; color: #94a3b8;">' +
+                            kb + ' KB' +
+                        '</div>' +
+                        '<button type="button" class="btn-remover-foto" data-index="' + index + '" title="Remover esta foto" style="position: absolute; top: -6px; right: -6px; width: 20px; height: 20px; background: #ef4444; color: #fff; border: none; border-radius: 50%; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 2px rgba(0,0,0,0.2);">' +
+                            '<i class="bx bx-x"></i>' +
+                        '</button>' +
+                    '</div>'
+                );
+
+                reader.onload = function(e) {
+                    $("#img_" + cardId).attr('src', e.target.result);
+                };
+                reader.readAsDataURL(file);
+
+                galeria.append(cardHtml);
+            });
+        }
+
+        $(document).on('click', '.btn-remover-foto', function(e) {
+            e.preventDefault();
+            var idx = parseInt($(this).data('index'), 10);
+            if (dtFotos && dtFotos.items) {
+                dtFotos.items.remove(idx);
+                var inputEl = $("#inputFotosAtendimento")[0];
+                if (inputEl) {
+                    inputEl.files = dtFotos.files;
+                }
+                renderizarFotosPreview();
+            }
         });
     });
 </script>

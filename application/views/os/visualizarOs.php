@@ -189,7 +189,7 @@ if (!empty($result->cidade) || !empty($result->estado) || !empty($result->cep)) 
                                 <?php if ($result->laudoTecnico != null) { ?>
                                     <tr>
                                         <td colspan="5">
-                                            <b>LAUDO TÉCNICO: </b>
+                                            <b>DESCRIÇÃO DO QUE FOI FEITO / LAUDO TÉCNICO: </b>
                                             <?php echo printSafeHtml($result->laudoTecnico) ?>
                                         </td>
                                     </tr>

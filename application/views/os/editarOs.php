@@ -119,6 +119,21 @@
                                                     echo 'selected';
                                                 } ?> value="Cancelado">Cancelado</option>                                                          
                                             </select>
+
+                                            <!-- Atalho Fotos do Atendimento com Retenção de 5 Anos -->
+                                            <div style="margin-top: 10px;">
+                                                <label style="font-size: 11px; font-weight: 600; color: #475569; display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                                                    <span>Fotos do Atendimento</span>
+                                                    <span class="badge badge-success" style="font-size: 9px; padding: 2px 6px; font-weight: 600; background-color: #10b981; border-radius: 4px;">5 Anos</span>
+                                                </label>
+                                                <a href="#tab5" data-toggle="tab" class="btn btn-info" id="btnAtalhoFotos" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 6px 10px; font-weight: 600; font-size: 12px; border-radius: 6px; box-sizing: border-box; text-decoration: none;">
+                                                    <i class="bx bx-camera" style="font-size: 16px;"></i>
+                                                    <span>Ver Fotos (<?= count($anexos); ?>)</span>
+                                                </a>
+                                                <small style="display: block; margin-top: 4px; font-size: 10px; color: #64748b; line-height: 1.2;">
+                                                    <i class="bx bx-shield-quarter" style="color: #16a34a;"></i> Retenção 5 anos (auto-limpeza)
+                                                </small>
+                                            </div>
                                         </div>
                                         <div class="span3">
                                             <label for="dataInicial">Data Inicial<span class="required">*</span></label>
@@ -137,27 +152,38 @@
                                             <input id="garantias_id" class="span12" type="hidden" name="garantias_id" value="<?php echo $result->garantias_id ?>" />
                                         </div>
                                     </div>
+
+                                    <!-- CAMPO PARA DESCREVER O QUE FOI FEITO -->
+                                    <div class="span12" style="padding: 1%; margin-left: 0; margin-top: -5px;">
+                                        <label for="laudoTecnico" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                                            <span style="font-size: 13px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 6px;">
+                                                <i class="bx bx-wrench" style="color: #2563eb; font-size: 17px;"></i>
+                                                Descrição do que foi feito <small style="color: #64748b; font-weight: normal; font-size: 11px;">(Procedimentos realizados / Relato do atendimento)</small>
+                                            </span>
+                                            <span style="font-size: 11px; color: #64748b; font-weight: normal;">
+                                                <i class="bx bx-info-circle"></i> Ficará gravado no laudo técnico e visível no histórico do cliente
+                                            </span>
+                                        </label>
+                                        <textarea class="span12 editor" name="laudoTecnico" id="laudoTecnico" cols="30" rows="5"><?php echo $result->laudoTecnico ?></textarea>
+                                    </div>
+
                                     <?php $this->load->view('os/_atendimento', ['atendimento' => $atendimento, 'atual' => $result]); ?>
                                     <div class="span6" style="padding: 1%; margin-left: 0">
                                         <label for="descricaoProduto"><h4>Descrição Produto/Serviço</h4></label>
                                         <textarea class="span12 editor" name="descricaoProduto" id="descricaoProduto" cols="30" rows="5"><?php echo $result->descricaoProduto ?></textarea>
                                     </div>
                                     <div class="span6" style="padding: 1%; margin-left: 0">
-                                        <label for="defeito"><h4>Defeito</h4></label>
+                                        <label for="defeito"><h4>Defeito Reclamado</h4></label>
                                         <textarea class="span12 editor" name="defeito" id="defeito" cols="30" rows="5"><?php echo $result->defeito ?></textarea>
                                     </div>
-                                    <div class="span6" style="padding: 1%; margin-left: 0">
-                                        <label for="observacoes"><h4>Observações</h4></label>
-                                        <textarea class="span12 editor" name="observacoes" id="observacoes" cols="30" rows="5"><?php echo $result->observacoes ?></textarea>
+                                    <div class="span12" style="padding: 1%; margin-left: 0">
+                                        <label for="observacoes"><h4>Observações Adicionais</h4></label>
+                                        <textarea class="span12 editor" name="observacoes" id="observacoes" cols="30" rows="4"><?php echo $result->observacoes ?></textarea>
                                     </div>
-                                    <div class="span6" style="padding: 1%; margin-left: 0">
-                                        <label for="laudoTecnico"><h4>Laudo Técnico</h4></label>
-                                        <textarea class="span12 editor" name="laudoTecnico" id="laudoTecnico" cols="30" rows="5"><?php echo $result->laudoTecnico ?></textarea>
-                                    </div>
-                                    <div class="span12" style="padding: 0; margin-left: 0">
-                                        <div class="span12" style="display:flex; justify-content: center;">
+                                    <div class="span12" style="padding: 1%; margin-left: 0">
+                                        <div class="span12" style="display:flex; justify-content: center; gap: 8px;">
                                             <button class="button btn btn-primary" id="btnContinuar"><span class="button__icon"><i class="bx bx-sync"></i></span><span class="button__text2">Atualizar</span></button>
-                                            <a href="<?php echo base_url() ?>index.php/os" class="button btn btn-mini btn-warning"><span class="button__icon"><i class="bx bx-undo"></i></span> <span class="button__text2">Voltar</span></a>
+                                            <a href="<?php echo base_url() ?>index.php/os" class="button btn btn-warning" style="max-width: 160px"><span class="button__icon"><i class="bx bx-undo"></i></span> <span class="button__text2">Voltar</span></a>
                                         </div>
                                     </div>
                                 </form>

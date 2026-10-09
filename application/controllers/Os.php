@@ -186,6 +186,11 @@ class Os extends MY_Controller
                 $this->load->model('usuarios_model');
 
                 $idOs = $id;
+
+                // Processar upload de fotos do atendimento vinculadas no cadastro da OS (Retenção 5 anos)
+                $uploadResult = $this->processarUploadFotosOs($idOs);
+                $totalFotos = count($uploadResult['success']);
+
                 $os = $this->os_model->getById($idOs);
                 $emitente = $this->mapos_model->getEmitente();
 
@@ -220,7 +225,14 @@ class Os extends MY_Controller
                     $this->enviarOsPorEmail($idOs, $remetentes, 'Ordem de Serviço - Criada');
                 }
 
-                $this->session->set_flashdata('success', 'OS adicionada com sucesso, você pode adicionar produtos ou serviços a essa OS nas abas de Produtos e Serviços!');
+                $msgSucesso = 'OS adicionada com sucesso!';
+                if ($totalFotos > 0) {
+                    $msgSucesso .= " {$totalFotos} foto(s) do atendimento anexada(s) com retenção de 5 anos.";
+                } else {
+                    $msgSucesso .= ' Você pode adicionar fotos, produtos ou serviços nas abas da OS.';
+                }
+
+                $this->session->set_flashdata('success', $msgSucesso);
                 log_info('Adicionou uma OS. ID: ' . $id);
                 redirect(site_url('os/editar/') . $id);
             } else {
@@ -1092,8 +1104,44 @@ class Os extends MY_Controller
             exit();
         }
 
-        // Executa a auto-exclusão preventiva de fotos que atingiram 5 anos
+        $uploadResult = $this->processarUploadFotosOs($idOsServico);
+        $success = $uploadResult['success'];
+        $error = $uploadResult['errors'];
+
+        if (count($success) > 0) {
+            $dataExp = !empty($success[0]['data_expiracao']) ? $success[0]['data_expiracao'] : date('d/m/Y', strtotime('+5 years'));
+            echo json_encode([
+                'result' => true,
+                'mensagem' => count($success) . ' foto(s) enviada(s) com sucesso! Guardadas no banco por 5 anos (até ' . $dataExp . ').',
+                'fotos' => $success,
+                'erros' => $error,
+            ]);
+        } else {
+            echo json_encode([
+                'result' => false,
+                'mensagem' => !empty($error) ? ('Não foi possível enviar as fotos. ' . implode(' ', $error)) : 'Nenhuma foto selecionada. Selecione arquivos nos formatos JPEG, PNG ou JPG.',
+                'erros' => $error,
+            ]);
+        }
+    }
+
+    /**
+     * Processa upload e gravação de fotos do atendimento com política estrita de retenção de 5 anos.
+     * Salva em FCPATH . assets/anexos/<m-Y>/OS-<idOs>/ com thumbs e grava data_expiracao = +5 anos no BD.
+     *
+     * @param int $idOsServico
+     * @param string|array|null $customInput
+     * @return array ['success' => array, 'errors' => array]
+     */
+    private function processarUploadFotosOs(int $idOsServico, $customInput = null): array
+    {
         $this->os_model->limparFotosExpiradas();
+
+        $fotosInput = $customInput ?: (!empty($_FILES['fotos_atendimento']) ? $_FILES['fotos_atendimento'] : (!empty($_FILES['fotos']) ? $_FILES['fotos'] : (!empty($_FILES['userfile']) ? $_FILES['userfile'] : null)));
+
+        if (!$fotosInput || empty($fotosInput['name']) || (is_array($fotosInput['name']) && empty($fotosInput['name'][0]))) {
+            return ['success' => [], 'errors' => []];
+        }
 
         $this->load->library('upload');
         $this->load->library('image_lib');
@@ -1104,12 +1152,10 @@ class Os extends MY_Controller
             try {
                 mkdir($directory . DIRECTORY_SEPARATOR . 'thumbs', 0755, true);
             } catch (Exception $e) {
-                echo json_encode(['result' => false, 'mensagem' => 'Erro ao criar diretório para fotos: ' . $e->getMessage()]);
-                exit();
+                return ['success' => [], 'errors' => ['Erro ao criar diretório para fotos: ' . $e->getMessage()]];
             }
         }
 
-        // Formatos estritamente permitidos para fotos: JPEG, PNG e JPG
         $upload_conf = [
             'upload_path' => $directory,
             'allowed_types' => 'jpg|jpeg|png|JPG|JPEG|PNG',
@@ -1118,17 +1164,10 @@ class Os extends MY_Controller
 
         $this->upload->initialize($upload_conf);
 
-        $fotosInput = !empty($_FILES['fotos']) ? $_FILES['fotos'] : (!empty($_FILES['userfile']) ? $_FILES['userfile'] : null);
-
-        if (!$fotosInput || empty($fotosInput['name'][0])) {
-            echo json_encode(['result' => false, 'mensagem' => 'Nenhuma foto selecionada. Selecione arquivos nos formatos JPEG, PNG ou JPG.']);
-            exit();
-        }
-
         $filesToUpload = [];
         if (is_array($fotosInput['name'])) {
             foreach ($fotosInput['name'] as $idx => $name) {
-                if (!empty($name)) {
+                if (!empty($name) && empty($fotosInput['error'][$idx])) {
                     $filesToUpload['foto_' . $idx] = [
                         'name' => $fotosInput['name'][$idx],
                         'type' => $fotosInput['type'][$idx],
@@ -1198,19 +1237,9 @@ class Os extends MY_Controller
 
         if (count($success) > 0) {
             log_info("Fotos enviadas para a OS ID {$idOsServico}. Total: " . count($success) . " fotos (retenção 5 anos até " . date('d/m/Y', strtotime($dataExpiracao)) . ").");
-            echo json_encode([
-                'result' => true,
-                'mensagem' => count($success) . ' foto(s) enviada(s) com sucesso! Guardadas no banco por 5 anos (até ' . date('d/m/Y', strtotime($dataExpiracao)) . ').',
-                'fotos' => $success,
-                'erros' => $error,
-            ]);
-        } else {
-            echo json_encode([
-                'result' => false,
-                'mensagem' => 'Não foi possível enviar as fotos. ' . implode(' ', $error),
-                'erros' => $error,
-            ]);
         }
+
+        return ['success' => $success, 'errors' => $error];
     }
 
     public function getFotosOs($id = null)
