@@ -269,179 +269,228 @@
     </div>
 
   </div>
+</section>
 
-  <!-- Modal de Checkout Direto (Totalmente Real e Operacional) -->
-  <div id="checkout-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4" style="background-color: rgba(15, 23, 42, 0.8); backdrop-filter: blur(4px);">
-    <div class="relative w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl max-h-[92vh] overflow-y-auto" style="border: 1px solid #e2e8f0;">
-      
-      <!-- Botão Fechar -->
-      <button type="button" onclick="fecharCheckout()" class="checkout-close-btn" aria-label="Fechar">
-        <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
+<!-- Modal de Checkout Direto (Design Fintech Premium & Scroll-Locked) -->
+<div id="checkout-modal" class="checkout-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-plano-nome">
+  <div class="checkout-modal-card">
+    
+    <!-- Top Accent Line -->
+    <div class="checkout-top-accent"></div>
 
-      <!-- Etapa 1: Formulário de Contratação -->
-      <div id="checkout-etapa-form">
-        <div class="flex items-center gap-2">
-          <span class="badge badge-signal">Contratação Direta</span>
-          <span class="text-xs font-semibold flex items-center gap-1" style="color: #10b981;">
-            <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+    <!-- Header com Badges, Título e Botão Fechar Separado -->
+    <div class="checkout-header">
+      <div class="checkout-header-content">
+        <div class="checkout-badge-row">
+          <span class="checkout-badge-signal">
+            <svg class="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Contratação Direta
+          </span>
+          <span class="checkout-badge-success">
+            <svg class="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
             Ativação Imediata
           </span>
         </div>
-        
-        <h3 class="font-title mt-2 text-2xl font-extrabold text-ink" id="modal-plano-nome">Assinar Plano</h3>
-        <p class="text-xs text-muted">Informe os dados da sua empresa para reservar o seu subdomínio exclusivo e gerar o Pix.</p>
+        <h3 class="checkout-title" id="modal-plano-nome">Assinar Plano</h3>
+        <p class="checkout-subtitle">Reserve seu subdomínio exclusivo e ative o seu sistema via Pix oficial BACEN.</p>
+      </div>
 
-        <!-- Resumo do Valor -->
-        <div class="mt-4 flex items-center justify-between rounded-xl p-3.5" style="background-color: #f8fafc; border: 1px solid #e2e8f0;">
+      <!-- Botão Fechar Redondo e Destacado (Sem Sobreposição) -->
+      <button type="button" onclick="fecharCheckout()" class="checkout-close-circle" aria-label="Fechar checkout">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Corpo com Rolagem Interna Autônoma -->
+    <div class="checkout-body">
+
+      <!-- Etapa 1: Formulário de Contratação -->
+      <div id="checkout-etapa-form">
+        
+        <!-- Summary Box Estilo Cartão Fintech -->
+        <div class="checkout-summary-box">
           <div>
-            <span class="text-[11px] font-bold uppercase tracking-wider text-muted">Total a Pagar</span>
-            <div class="font-title text-xl font-extrabold" style="color: #10b981;" id="modal-valor-total">R$ 247,00</div>
+            <span class="checkout-summary-label">Total do Investimento</span>
+            <div class="checkout-summary-price" id="modal-valor-total">R$ 247,00</div>
           </div>
-          <span class="badge badge-tint" id="modal-ciclo-tag">Plano Mensal</span>
+          <div class="text-right">
+            <span class="checkout-cycle-pill" id="modal-ciclo-tag">Plano Mensal</span>
+            <div class="checkout-summary-tagline">Cobrança Oficial • Sem fidelidade</div>
+          </div>
         </div>
 
-        <form id="form-assinar" onsubmit="enviarAssinatura(event)" class="mt-5 flex flex-col gap-3.5 text-left">
+        <form id="form-assinar" onsubmit="enviarAssinatura(event)" class="checkout-form">
           <input type="hidden" id="input-plano" name="plano" value="basico">
           <input type="hidden" id="input-ciclo" name="ciclo" value="mensal">
 
           <!-- Subdomínio Exclusivo -->
-          <div>
-            <label for="subdominio" class="block text-xs font-bold text-slate-700 mb-1" style="color: #334155;">
-              Subdomínio Exclusivo Desejado <span style="color: #ef4444;">*</span>
+          <div class="checkout-field-group">
+            <label for="subdominio" class="checkout-label">
+              <span>Subdomínio Exclusivo Desejado</span>
+              <span class="checkout-required">*</span>
             </label>
-            <div class="flex items-center rounded-lg overflow-hidden" style="border: 1px solid #cbd5e1;">
+            <div class="checkout-subdomain-wrapper">
+              <span class="checkout-subdomain-protocol">https://</span>
               <input type="text" id="subdominio" name="subdominio" required placeholder="suaempresa"
-                     class="w-full px-3 py-2 text-xs font-semibold outline-none" style="color: #0f172a; background: #fff;"
+                     class="checkout-subdomain-input"
                      oninput="sanitizarSubdominio(this)">
-              <span class="px-3 py-2 text-xs font-medium select-none" style="background-color: #f1f5f9; color: #64748b; border-left: 1px solid #cbd5e1;">
-                .os.zenydesk.com
-              </span>
+              <span class="checkout-subdomain-domain">.os.zenydesk.com</span>
             </div>
-            <p class="mt-1 text-[10px] text-muted">Apenas letras, números e traço. Ex: certimix, oficinax, eletro-silva.</p>
+            <p class="checkout-helper-text">
+              <svg class="size-3 text-primary inline mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Seu painel exclusivo será: <strong class="text-ink" id="preview-subdomain-full">https://suaempresa.os.zenydesk.com</strong>
+            </p>
           </div>
 
-          <!-- Nome da Empresa -->
-          <div>
-            <label for="nome_empresa" class="block text-xs font-bold mb-1" style="color: #334155;">
-              Razão Social ou Nome Fantasia <span style="color: #ef4444;">*</span>
+          <!-- Razão Social ou Nome Fantasia -->
+          <div class="checkout-field-group">
+            <label for="nome_empresa" class="checkout-label">
+              <span>Razão Social ou Nome Fantasia</span>
+              <span class="checkout-required">*</span>
             </label>
             <input type="text" id="nome_empresa" name="nome_empresa" required placeholder="Silva Assistência Técnica LTDA"
-                   class="modal-input">
+                   class="checkout-input">
           </div>
 
           <!-- Responsável e E-mail em 2 colunas -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label for="responsavel" class="block text-xs font-bold mb-1" style="color: #334155;">
-                Nome do Responsável <span style="color: #ef4444;">*</span>
+          <div class="checkout-grid-2">
+            <div class="checkout-field-group">
+              <label for="responsavel" class="checkout-label">
+                <span>Nome do Responsável</span>
+                <span class="checkout-required">*</span>
               </label>
               <input type="text" id="responsavel" name="responsavel" required placeholder="Carlos Silva"
-                     class="modal-input">
+                     class="checkout-input">
             </div>
-            <div>
-              <label for="email" class="block text-xs font-bold mb-1" style="color: #334155;">
-                E-mail Corporativo <span style="color: #ef4444;">*</span>
+            <div class="checkout-field-group">
+              <label for="email" class="checkout-label">
+                <span>E-mail Corporativo</span>
+                <span class="checkout-required">*</span>
               </label>
               <input type="email" id="email" name="email" required placeholder="contato@empresa.com.br"
-                     class="modal-input">
+                     class="checkout-input">
             </div>
           </div>
 
           <!-- Telefone e CPF/CNPJ em 2 colunas -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label for="telefone" class="block text-xs font-bold mb-1" style="color: #334155;">
-                WhatsApp / Telefone <span style="color: #ef4444;">*</span>
+          <div class="checkout-grid-2">
+            <div class="checkout-field-group">
+              <label for="telefone" class="checkout-label">
+                <span>WhatsApp / Telefone</span>
+                <span class="checkout-required">*</span>
               </label>
               <input type="text" id="telefone" name="telefone" required placeholder="(11) 99999-9999"
-                     class="modal-input">
+                     class="checkout-input">
             </div>
-            <div>
-              <label for="cpf_cnpj" class="block text-xs font-bold mb-1" style="color: #334155;">
-                CNPJ ou CPF do Titular <span style="color: #ef4444;">*</span>
+            <div class="checkout-field-group">
+              <label for="cpf_cnpj" class="checkout-label">
+                <span>CNPJ ou CPF do Titular</span>
+                <span class="checkout-required">*</span>
               </label>
               <input type="text" id="cpf_cnpj" name="cpf_cnpj" required placeholder="00.000.000/0001-00"
-                     class="modal-input">
+                     class="checkout-input">
             </div>
           </div>
 
-          <div id="checkout-erro" class="hidden rounded-lg p-2.5 text-xs" style="background-color: #fef2f2; color: #b91c1c; border: 1px solid #fecaca;"></div>
+          <!-- Caixa de Alerta/Erro -->
+          <div id="checkout-erro" class="hidden checkout-error-box"></div>
 
+          <!-- Botão de Ação -->
           <div class="mt-3">
-            <button type="submit" id="btn-submit-assinar" class="btn btn-signal w-full text-xs font-bold py-3 shadow-md flex items-center justify-center gap-2">
+            <button type="submit" id="btn-submit-assinar" class="checkout-btn-submit">
               <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
               <span>Gerar Pix para Ativação Imediata</span>
             </button>
-            <p class="mt-2 text-center text-[10px] text-muted">
-              Ambiente Seguro com Criptografia • Chave Pix Oficial BACEN • Sem carência
-            </p>
+            
+            <!-- Barra de Garantias e Segurança -->
+            <div class="checkout-trust-bar">
+              <div class="checkout-trust-item">
+                <svg class="size-3.5" style="color: #f59e0b;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <span>Criptografia 256-bit</span>
+              </div>
+              <div class="checkout-trust-item">
+                <svg class="size-3.5" style="color: #10b981;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                <span>Chave Pix Oficial BACEN</span>
+              </div>
+              <div class="checkout-trust-item">
+                <svg class="size-3.5" style="color: #0f7ade;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Sem Carência</span>
+              </div>
+            </div>
           </div>
         </form>
       </div>
 
       <!-- Etapa 2: Exibição do QR Code Pix Real & Copia e Cola -->
-      <div id="checkout-etapa-pix" class="hidden text-center">
-        <div class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold" style="background-color: #d1fae5; color: #065f46;">
+      <div id="checkout-etapa-pix" class="hidden text-center py-2">
+        <div class="checkout-pix-pill">
           <span class="size-2 rounded-full" style="background-color: #10b981; animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;"></span>
           Pix Gerado — Aguardando Pagamento
         </div>
 
-        <h3 class="font-title mt-3 text-xl font-extrabold text-ink" id="pix-plano-titulo">Plano Básico</h3>
-        <p class="text-xs text-muted">Escaneie o QR Code abaixo no app do seu banco ou utilize o código Copia e Cola.</p>
+        <h3 class="font-title mt-3 text-2xl font-extrabold text-ink" id="pix-plano-titulo">Plano Profissional</h3>
+        <p class="text-xs text-muted mt-1">Escaneie o QR Code no app do seu banco ou copie o código Pix abaixo.</p>
 
-        <!-- QR Code Real -->
-        <div class="mt-4 flex flex-col items-center justify-center">
-          <div class="rounded-2xl p-3 shadow-md inline-block" style="background: #ffffff; border: 2px solid #e2e8f0;">
-            <img id="pix-qrcode-img" src="" alt="QR Code Pix Oficial" class="size-52 object-contain mx-auto" />
+        <!-- Container do QR Code -->
+        <div class="checkout-qrcode-card">
+          <img id="pix-qrcode-img" src="" alt="QR Code Pix Oficial" class="checkout-qrcode-img" />
+          
+          <div class="mt-3 text-xs font-bold text-ink">
+            Valor a Pagar: <span class="checkout-pix-value" id="pix-valor-display">R$ 0,00</span>
           </div>
-          <div class="mt-2 text-xs font-bold" style="color: #0f172a;">
-            Valor: <span class="text-base" style="color: #10b981;" id="pix-valor-display">R$ 0,00</span>
+          
+          <div class="checkout-subdomain-tag">
+            <svg class="size-3.5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <span>Subdomínio reservado:</span>
+            <strong id="pix-subdominio-display">empresa.os.zenydesk.com</strong>
           </div>
-          <p class="text-[11px] text-muted">Beneficiário: <strong id="pix-beneficiario-display">ZENYDESK OS TECNOLOGIA</strong></p>
-          <p class="text-[11px]" style="color: #475569;">Subdomínio reservado: <code class="font-mono text-primary font-bold" id="pix-subdominio-display">empresa.os.zenydesk.com</code></p>
         </div>
 
-        <!-- Copia e Cola -->
+        <!-- Copia e Cola com 1 Clique -->
         <div class="mt-4 text-left">
-          <label class="block text-xs font-bold mb-1" style="color: #334155;">Código Pix Copia e Cola</label>
-          <div class="flex items-center gap-2">
-            <input type="text" id="pix-copia-cola" readonly
-                   class="w-full rounded-lg px-3 py-2 text-xs font-mono outline-none select-all"
-                   style="border: 1px solid #cbd5e1; background-color: #f8fafc; color: #334155;">
-            <button type="button" id="btn-copiar-pix" onclick="copiarPix()" class="btn btn-primary shrink-0 px-4 py-2 text-xs font-bold">
-              Copiar
+          <label class="checkout-label">Código Pix Copia e Cola</label>
+          <div class="checkout-copy-wrapper">
+            <input type="text" id="pix-copia-cola" readonly class="checkout-copy-input select-all">
+            <button type="button" id="btn-copiar-pix" onclick="copiarPix()" class="checkout-btn-copy">
+              Copiar Código
             </button>
           </div>
         </div>
 
-        <!-- Instruções -->
-        <div class="mt-5 rounded-xl p-3 text-left text-xs" style="background-color: #f8fafc; border: 1px solid #e2e8f0; color: #334155;">
-          <div class="font-bold flex items-center gap-1.5 mb-1" style="color: #0f172a;">
+        <!-- Instruções de Liberação -->
+        <div class="checkout-instructions-box">
+          <div class="font-bold flex items-center gap-1.5 text-ink mb-1">
             <svg class="size-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-            Como funciona a liberação?
+            Como funciona a liberação automática?
           </div>
-          <p class="text-[11px] leading-relaxed" style="color: #475569;">
-            Assim que a transferência for compensada pelo Banco Central, o seu subdomínio será ativado. Você também pode acelerar o processo enviando o comprovante diretamente para a nossa equipe no WhatsApp.
+          <p class="text-[11px] text-muted leading-relaxed">
+            Assim que a transferência for compensada pelo Banco Central, o seu subdomínio será ativado imediatamente. Você também pode acelerar o processo enviando o comprovante via WhatsApp para nossa equipe técnica.
           </p>
         </div>
 
-        <div class="mt-5 flex flex-col sm:flex-row gap-2">
-          <a id="btn-confirmar-whatsapp" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-signal flex-1 text-xs font-bold py-2.5">
-            Já Paguei / Enviar Comprovante
+        <!-- Botões de Ação Final -->
+        <div class="mt-5 flex flex-col sm:flex-row gap-2.5">
+          <a id="btn-confirmar-whatsapp" href="#" target="_blank" rel="noopener noreferrer" class="checkout-btn-whatsapp">
+            <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+            <span>Enviar Comprovante no WhatsApp</span>
           </a>
-          <button type="button" onclick="fecharCheckout()" class="btn btn-outline text-xs font-bold py-2.5">
-            Fechar
+          <button type="button" onclick="fecharCheckout()" class="checkout-btn-secondary">
+            Concluir / Fechar
           </button>
         </div>
       </div>
 
     </div>
   </div>
-</section>
+</div>
 
 <style>
-/* Seletor de Ciclo Mensal / Anual */
+/* ==========================================================================
+   1. SELETOR DE CICLO MENSAL / ANUAL
+   ========================================================================== */
 .pricing-toggle-container {
   display: inline-flex;
   align-items: center;
@@ -499,7 +548,9 @@
   color: #ffffff;
 }
 
-/* Grid de Planos */
+/* ==========================================================================
+   2. GRID DE PLANOS
+   ========================================================================== */
 .pricing-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -542,7 +593,7 @@
   box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
 }
 
-/* Card Profissional (Destaque) */
+/* Card Profissional (Destaque Mais Escolhido) */
 .pricing-card-featured {
   background-color: #ffffff;
   border: 2px solid #f59e0b;
@@ -626,46 +677,529 @@
   color: #ffffff !important;
 }
 
-/* Elementos Utilitários de Preço */
 .pricing-price-box {
   border-top: 1px solid #f1f5f9;
   border-bottom: 1px solid #f1f5f9;
   padding: 16px 0;
 }
 
-.modal-input {
+/* ==========================================================================
+   3. CHECKOUT MODAL ULTRA-PREMIUM (FINTECH LUXURY & SCROLL-LOCK)
+   ========================================================================== */
+.checkout-modal-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 999999 !important;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background-color: rgba(15, 23, 42, 0.78) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  overflow-y: auto;
+}
+
+.checkout-modal-overlay.is-open {
+  display: flex !important;
+  animation: modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.checkout-modal-card {
+  position: relative;
   width: 100%;
-  border-radius: 8px;
-  border: 1px solid #cbd5e1;
-  padding: 8px 12px;
-  font-size: 12px;
+  max-width: 530px;
+  background: #ffffff !important;
+  border-radius: 24px !important;
+  box-shadow: 0 30px 70px -15px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(226, 232, 240, 0.9) !important;
+  overflow: hidden;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  max-height: 92vh;
+  animation: modalScaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes modalScaleUp {
+  from { transform: scale(0.96) translateY(8px); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.checkout-top-accent {
+  height: 4px;
+  width: 100%;
+  background: linear-gradient(90deg, #f59e0b 0%, #0f7ade 50%, #10b981 100%);
+}
+
+.checkout-header {
+  padding: 22px 26px 14px 26px;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  background: #ffffff;
+}
+
+.checkout-header-content {
+  flex: 1;
+}
+
+.checkout-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.checkout-badge-signal {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background-color: #fef3c7;
+  color: #b45309;
+  font-size: 10.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 3px 10px;
+  border-radius: 9999px;
+}
+
+.checkout-badge-success {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background-color: #ecfdf5;
+  color: #047857;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 9999px;
+}
+
+.checkout-title {
+  font-family: var(--font-title);
+  font-size: 22px;
+  font-weight: 800;
   color: #0f172a;
-  background-color: #ffffff;
-  outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  margin-top: 6px;
+  line-height: 1.2;
 }
 
-.modal-input:focus {
-  border-color: var(--color-primary, #0f7ade);
-  box-shadow: 0 0 0 2px rgba(15, 122, 222, 0.15);
+.checkout-subtitle {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 4px;
+  line-height: 1.4;
 }
 
-.checkout-close-btn {
-  position: absolute;
-  right: 16px;
-  top: 16px;
-  border-radius: 8px;
-  padding: 6px;
+/* Botão Fechar Redondo Autônomo */
+.checkout-close-circle {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 50%;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.checkout-close-circle:hover {
+  background-color: #e2e8f0;
+  color: #0f172a;
+  transform: scale(1.06);
+}
+
+.checkout-body {
+  padding: 20px 26px 26px 26px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Summary Box Fintech */
+.checkout-summary-box {
+  background: radial-gradient(circle at 100% 0%, #1e293b 0%, #0f172a 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 10px 24px -6px rgba(15, 23, 42, 0.3);
+  margin-bottom: 20px;
+}
+
+.checkout-summary-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
   color: #94a3b8;
+}
+
+.checkout-summary-price {
+  font-family: var(--font-title);
+  font-size: 26px;
+  font-weight: 800;
+  color: #10b981;
+  line-height: 1.1;
+  margin-top: 3px;
+}
+
+.checkout-cycle-pill {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 9999px;
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.checkout-summary-tagline {
+  font-size: 10px;
+  color: #94a3b8;
+  margin-top: 4px;
+}
+
+/* Campos de Formulário Modernos */
+.checkout-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-align: left;
+}
+
+.checkout-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.checkout-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.checkout-required {
+  color: #ef4444;
+  font-weight: 800;
+}
+
+.checkout-input {
+  width: 100%;
+  border-radius: 12px;
+  border: 1.5px solid #cbd5e1;
+  background-color: #f8fafc;
+  padding: 10px 14px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #0f172a;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.checkout-input:focus {
+  border-color: #0f7ade;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(15, 122, 222, 0.15);
+}
+
+.checkout-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 520px) {
+  .checkout-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Subdomínio URL Box */
+.checkout-subdomain-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 12px;
+  background-color: #ffffff;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.checkout-subdomain-wrapper:focus-within {
+  border-color: #0f7ade;
+  box-shadow: 0 0 0 3px rgba(15, 122, 222, 0.15);
+}
+
+.checkout-subdomain-protocol {
+  padding: 10px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  background-color: #f1f5f9;
+  border-right: 1px solid #e2e8f0;
+  user-select: none;
+}
+
+.checkout-subdomain-input {
+  flex: 1;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+  border: none;
   background: transparent;
+  outline: none;
+}
+
+.checkout-subdomain-domain {
+  padding: 10px 14px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #0f7ade;
+  background-color: #eff6ff;
+  border-left: 1px solid #dbeafe;
+  user-select: none;
+}
+
+.checkout-helper-text {
+  font-size: 10.5px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.checkout-error-box {
+  background-color: #fef2f2;
+  border: 1.5px solid #fecaca;
+  color: #b91c1c;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 11.5px;
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+/* Botão de Envio Principal */
+.checkout-btn-submit {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 800;
+  padding: 14px 20px;
+  border-radius: 14px;
   border: none;
   cursor: pointer;
-  transition: all 0.15s ease;
+  box-shadow: 0 10px 24px -5px rgba(245, 158, 11, 0.45);
+  transition: all 0.2s ease;
 }
 
-.checkout-close-btn:hover {
+.checkout-btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px -5px rgba(245, 158, 11, 0.58);
+  filter: brightness(1.03);
+}
+
+.checkout-btn-submit:active {
+  transform: translateY(0);
+}
+
+.checkout-btn-submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Barra de Confiança */
+.checkout-trust-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.checkout-trust-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #64748b;
+}
+
+/* ==========================================================================
+   4. ETAPA 2: QR CODE PIX REAL
+   ========================================================================== */
+.checkout-pix-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+  font-size: 11.5px;
+  font-weight: 800;
+  padding: 6px 16px;
+  border-radius: 9999px;
+}
+
+.checkout-qrcode-card {
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+  display: inline-block;
+  margin-top: 16px;
+}
+
+.checkout-qrcode-img {
+  width: 210px;
+  height: 210px;
+  object-fit: contain;
+  margin: 0 auto;
+}
+
+.checkout-pix-value {
+  color: #10b981;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.checkout-subdomain-tag {
+  margin-top: 8px;
+  padding: 6px 12px;
   background-color: #f1f5f9;
+  border-radius: 8px;
+  font-size: 11px;
   color: #334155;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.checkout-subdomain-tag strong {
+  color: #0f7ade;
+  font-family: var(--font-mono);
+}
+
+.checkout-copy-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #f8fafc;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 4px 5px 4px 12px;
+  margin-top: 4px;
+}
+
+.checkout-copy-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #334155;
+  outline: none;
+}
+
+.checkout-btn-copy {
+  background-color: #0f7ade;
+  color: #ffffff;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.checkout-btn-copy:hover {
+  background-color: #0284c7;
+}
+
+.checkout-instructions-box {
+  margin-top: 16px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 14px;
+  text-align: left;
+}
+
+.checkout-btn-whatsapp {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #25D366;
+  color: #ffffff !important;
+  font-size: 12.5px;
+  font-weight: 800;
+  padding: 12px 18px;
+  border-radius: 12px;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);
+  transition: all 0.2s ease;
+}
+
+.checkout-btn-whatsapp:hover {
+  background-color: #20ba59;
+  transform: translateY(-1px);
+}
+
+.checkout-btn-secondary {
+  padding: 12px 18px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 12px;
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.checkout-btn-secondary:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
 }
 </style>
 
@@ -701,8 +1235,15 @@ function setCycle(ciclo) {
 
 function sanitizarSubdominio(input) {
   input.value = input.value.toLowerCase().replace(/[^a-z0-9-]/g, '');
+  var preview = document.getElementById('preview-subdomain-full');
+  if (preview) {
+    preview.textContent = 'https://' + (input.value || 'suaempresa') + '.os.zenydesk.com';
+  }
 }
 
+/**
+ * Abre o Modal de Checkout com CONGELAMENTO TOTAL DO SCROLL DE FUNDO
+ */
 function abrirCheckout(planoKey, planoNome, valorMensal, valorAnual) {
   var modal = document.getElementById('checkout-modal');
   var etapaForm = document.getElementById('checkout-etapa-form');
@@ -720,17 +1261,46 @@ function abrirCheckout(planoKey, planoNome, valorMensal, valorAnual) {
 
   var valor = cicloAtual === 'anual' ? valorAnual : valorMensal;
   document.getElementById('modal-valor-total').textContent = 'R$ ' + valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
-  document.getElementById('modal-ciclo-tag').textContent = cicloAtual === 'anual' ? 'Plano Anual' : 'Plano Mensal';
+  document.getElementById('modal-ciclo-tag').textContent = cicloAtual === 'anual' ? 'Plano Anual (-20%)' : 'Plano Mensal';
 
-  modal.classList.remove('hidden');
-  modal.classList.add('flex');
+  // Congelar a rolagem do body e html de forma rigorosa
+  document.body.style.overflow = 'hidden';
+  document.documentElement.style.overflow = 'hidden';
+
+  // Exibir com classe animada
+  modal.classList.add('is-open');
 }
 
+/**
+ * Fecha o Modal de Checkout e DESTRAVA O SCROLL DE FUNDO
+ */
 function fecharCheckout() {
   var modal = document.getElementById('checkout-modal');
-  modal.classList.add('hidden');
-  modal.classList.remove('flex');
+  modal.classList.remove('is-open');
+
+  // Destravar a rolagem da página
+  document.body.style.overflow = '';
+  document.documentElement.style.overflow = '';
 }
+
+// Fechar ao clicar diretamente no fundo (backdrop)
+document.addEventListener('DOMContentLoaded', function() {
+  var modal = document.getElementById('checkout-modal');
+  if (modal) {
+    modal.addEventListener('click', function(e) {
+      if (e.target === this) {
+        fecharCheckout();
+      }
+    });
+  }
+});
+
+// Fechar com a tecla ESC
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' || e.keyCode === 27) {
+    fecharCheckout();
+  }
+});
 
 function enviarAssinatura(event) {
   event.preventDefault();
@@ -769,7 +1339,6 @@ function enviarAssinatura(event) {
     document.getElementById('pix-plano-titulo').textContent = data.planoNome + ' (' + (data.ciclo === 'anual' ? 'Anual' : 'Mensal') + ')';
     document.getElementById('pix-valor-display').textContent = data.valorFormatado;
     document.getElementById('pix-subdominio-display').textContent = data.subdominio + '.os.zenydesk.com';
-    document.getElementById('pix-beneficiario-display').textContent = data.beneficiario || 'Asaas Gestão Financeira S.A. (Banco 461) - ZenyDesk';
     
     // QR Code dinâmico do Pix oficial do Asaas
     var qrUrl = data.qrBase64 ? data.qrBase64 : ('https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=8&data=' + encodeURIComponent(data.copyPaste));
@@ -782,7 +1351,7 @@ function enviarAssinatura(event) {
   })
   .catch(function(err) {
     btn.disabled = false;
-    btn.innerHTML = 'Gerar Pix para Ativação Imediata';
+    btn.innerHTML = '<svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> <span>Gerar Pix para Ativação Imediata</span>';
     erroBox.textContent = 'Falha de comunicação com o servidor. Verifique sua conexão e tente novamente.';
     erroBox.classList.remove('hidden');
   });
@@ -806,11 +1375,11 @@ function copiarPix() {
 function feedbackCopia() {
   var btn = document.getElementById('btn-copiar-pix');
   var originalText = btn.textContent;
-  btn.textContent = 'Copiado! ✓';
-  btn.classList.add('bg-emerald-600');
+  btn.textContent = 'Copiado com Sucesso! ✓';
+  btn.style.backgroundColor = '#10b981';
   setTimeout(function() {
     btn.textContent = originalText;
-    btn.classList.remove('bg-emerald-600');
+    btn.style.backgroundColor = '';
   }, 2500);
 }
 </script>
